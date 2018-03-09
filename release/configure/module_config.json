@@ -1,0 +1,27 @@
+{
+  "default_stack_name": "kernel",
+  "module_list": [
+    {
+      "stack_name": "kernel",
+	  "function_name": "kernel_stack_register",
+	  "libname": "./",
+	  "loadtype": "static",
+      "deploytype": "1",
+      "maxfd": "1024",
+	  "minfd": "0",
+      "priorty": "1",
+      "stackid": "0",
+    },
+    {
+      "stack_name": "stackpool",
+      "function_name": "nstack_stack_register",
+      "libname": "libnstack.so",
+      "loadtype": "dynmic",
+      "deploytype": "3",
+      "maxfd": "1024",
+      "minfd": "0",
+      "priorty": "1",
+      "stackid": "1",
+    },
+  ]
+}
