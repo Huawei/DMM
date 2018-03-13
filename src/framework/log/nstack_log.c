@@ -675,11 +675,7 @@ nstack_log_init_app ()
     }
   init_log_ctrl_info ();
   g_my_pro_type = LOG_PRO_APP;
-#ifdef FOR_NSTACK_UT
-
-#else
   SetGlogCtrlOpt (TRUE);
-#endif
   NSPOL_LOGERR ("app_nStack_version=%s", NSTACK_VERSION);
   return;
 }

@@ -44,7 +44,6 @@
 #include "select_adapt.h"
 #include "nstack_select.h"
 #include "nstack_share_res.h"
-#include "nstack_trace.h"
 #ifndef F_SETFL
 #define    F_SETFL        4
 #endif
@@ -150,7 +149,6 @@ nstack_socket (int domain, int itype, int protocol)
   nstack_rd_key rdkey = { 0 };
   int selectmod = -1;
 
-  nstack_set_tracing_contex (0, 0, -1);
 
   /*check whether module init finish or not */
   NSTACK_INIT_CHECK_RET (socket);
@@ -290,7 +288,6 @@ nstack_bind (int fd, const struct sockaddr *addr, socklen_t addrlen)
   struct sockaddr_in *iaddr = NULL;
   nstack_rd_key rdkey = { 0 };
 
-  nstack_set_tracing_contex (0, 0, fd);
 
   NSSOC_LOGINF ("(sockfd=%d, addr=%p, addrlen=%u) [Caller]", fd, addr,
                 addrlen);
@@ -457,7 +454,6 @@ nstack_listen (int fd, int backlog)
   int tfd;
   int func_called = 0;
 
-  nstack_set_tracing_contex (0, 0, fd);
   NSSOC_LOGINF ("(sockfd=%d, backlog=%d) [Caller]", fd, backlog);
   if (fd < 0)
     {
@@ -524,7 +520,7 @@ nstack_accept (int fd, struct sockaddr *addr, socklen_t * addr_len)
   int ret_fd = -1;
   nstack_fd_Inf *accInf;
   int ret = -1;
-  nstack_set_tracing_contex (0, 0, fd);
+
   NSSOC_LOGINF ("(sockfd=%d, addr=%p, addrlen=%p) [Caller]", fd, addr,
                 addr_len);
   if (fd < 0)
@@ -677,7 +673,7 @@ nstack_accept4 (int fd, struct sockaddr *addr,
   int ret_fd = -1;
   int ret = -1;
   nstack_fd_Inf *accInf;
-  nstack_set_tracing_contex (0, 0, fd);
+
   NSSOC_LOGINF ("(sockfd=%d, addr=%p, addrlen=%p, flags=%d) [Caller]", fd,
                 addr, addr_len, flags);
   if (fd < 0)
@@ -828,7 +824,6 @@ nstack_connect (int fd, const struct sockaddr *addr, socklen_t addrlen)
   int selectmod = -1;
   nstack_rd_key rdkey = { 0 };
 
-  nstack_set_tracing_contex (0, 0, fd);
   NSSOC_LOGINF ("(sockfd=%d, addr=%p, addrlen=%u) [Caller]", fd, addr,
                 addrlen);
 
@@ -947,7 +942,6 @@ nstack_shutdown (int fd, int how)
   int retval = -1;
   int tfd;
 
-  nstack_set_tracing_contex (0, 0, fd);
   if (fd < 0)
     {
       nstack_set_errno (EBADF);
@@ -1065,7 +1059,6 @@ nstack_close (int fd)
 {
   nstack_fd_Inf *fdInf;
   int ret = -1;
-  nstack_set_tracing_contex (0, 0, fd);
 
   /*linux fd check */
   if (!(fdInf = nstack_getValidInf (fd)))
@@ -1128,7 +1121,6 @@ nstack_send (int fd, const void *buf, size_t len, int flags)
   nstack_fd_Inf *fdInf = NULL;
   int size = -1;
 
-  nstack_set_tracing_contex (0, 0, fd);
   NS_LOG_CTRL (LOG_CTRL_SEND, NSOCKET, "NSSOC", NSLOG_DBG,
                "(sockfd=%d, buf=%p, len=%zu, flags=%d) [Caller]", fd, buf,
                len, flags);
@@ -1148,11 +1140,8 @@ nstack_send (int fd, const void *buf, size_t len, int flags)
       return -1;
     }
 
-    /* *INDENT-OFF* */
-    CPUB(stack_x_send)
-    NSTACK_CAL_FUN(fdInf->ops, send, (fdInf->rlfd, buf, len, flags), size);
-    CPUE(stack_x_send)
-    /* *INDENT-ON* */
+  NSTACK_CAL_FUN(fdInf->ops, send, (fdInf->rlfd, buf, len, flags), size);
+
   NSSOC_LOGDBG ("fd=%d,ret=%d [Return]", fd, size);
 
   UNLOCK_SEND (fd, local_lock);
@@ -1165,7 +1154,6 @@ nstack_recv (int fd, void *buf, size_t len, int flags)
   nstack_fd_Inf *fdInf = NULL;
   int size = -1;
 
-  nstack_set_tracing_contex (0, 0, fd);
   NS_LOG_CTRL (LOG_CTRL_RECV, NSOCKET, "NSSOC", NSLOG_DBG,
                "(sockfd=%d, buf=%p, len=%zu, flags=%d) [Caller]", fd, buf,
                len, flags);
@@ -1185,11 +1173,8 @@ nstack_recv (int fd, void *buf, size_t len, int flags)
       return -1;
     }
 
-    /* *INDENT-OFF* */
-    CPUB(stack_x_recv)
-    NSTACK_CAL_FUN(fdInf->ops, recv, (fdInf->rlfd, buf, len, flags), size);
-    CPUE(stack_x_recv)
-    /* *INDENT-ON* */
+  NSTACK_CAL_FUN(fdInf->ops, recv, (fdInf->rlfd, buf, len, flags), size);
+
   NSSOC_LOGDBG ("fd=%d,ret=%d [Return]", fd, size);
 
   UNLOCK_RECV (fd, local_lock);
@@ -1204,7 +1189,6 @@ nstack_write (int fd, const void *buf, size_t count)
 
   NSTACK_FD_LINUX_CHECK (fd, write, fdInf, (fd, buf, count));
 
-  nstack_set_tracing_contex (0, 0, fd);
   NS_LOG_CTRL (LOG_CTRL_WRITE, NSOCKET, "NSSOC", NSLOG_DBG,
                "(fd=%d, buf=%p, count=%zu) [Caller]", fd, buf, count);
 
@@ -1221,11 +1205,7 @@ nstack_write (int fd, const void *buf, size_t count)
       return -1;
     }
 
-    /* *INDENT-OFF* */
-    CPUB(stack_x_write)
-    NSTACK_CAL_FUN(fdInf->ops, write, (fdInf->rlfd, buf, count), size);
-    CPUE(stack_x_write)
-    /* *INDENT-ON* */
+  NSTACK_CAL_FUN(fdInf->ops, write, (fdInf->rlfd, buf, count), size);
 
   NSSOC_LOGDBG ("fd=%d,ret=%d [Return]", fd, size);
 
@@ -1239,7 +1219,6 @@ nstack_read (int fd, void *buf, size_t count)
   nstack_fd_Inf *fdInf = NULL;
   int size = -1;
 
-  nstack_set_tracing_contex (0, 0, fd);
   NS_LOG_CTRL (LOG_CTRL_READ, NSOCKET, "NSSOC", NSLOG_DBG,
                "(fd=%d, buf=%p, count=%zu) [Caller]", fd, buf, count);
 
@@ -1257,11 +1236,7 @@ nstack_read (int fd, void *buf, size_t count)
       return -1;
     }
 
-    /* *INDENT-OFF* */
-    CPUB(stack_x_read)
-    NSTACK_CAL_FUN(fdInf->ops, read, (fdInf->rlfd, buf, count), size);
-    CPUE(stack_x_read)
-    /* *INDENT-ON* */
+  NSTACK_CAL_FUN(fdInf->ops, read, (fdInf->rlfd, buf, count), size);
 
   NSSOC_LOGDBG ("fd=%d,ret=%d [Return]", fd, size);
 
@@ -1275,7 +1250,6 @@ nstack_writev (int fd, const struct iovec * iov, int iovcnt)
   nstack_fd_Inf *fdInf = NULL;
   int size = -1;
 
-  nstack_set_tracing_contex (0, 0, fd);
   NS_LOG_CTRL (LOG_CTRL_WRITEV, NSOCKET, "NSSOC", NSLOG_DBG,
                "(fd=%d, iov=%p, count=%d) [Caller]", fd, iov, iovcnt);
 
@@ -1294,11 +1268,8 @@ nstack_writev (int fd, const struct iovec * iov, int iovcnt)
       return -1;
     }
 
-    /* *INDENT-OFF* */
-    CPUB(stack_x_writev)
-    NSTACK_CAL_FUN(fdInf->ops, writev, (fdInf->rlfd, iov, iovcnt), size);
-    CPUE(stack_x_writev)
-    /* *INDENT-ON* */
+
+  NSTACK_CAL_FUN(fdInf->ops, writev, (fdInf->rlfd, iov, iovcnt), size);
 
   NSSOC_LOGDBG ("fd=%d,ret=%d [Return]", fd, size);
 
@@ -1312,7 +1283,6 @@ nstack_readv (int fd, const struct iovec * iov, int iovcnt)
   nstack_fd_Inf *fdInf = NULL;
   int size = -1;
 
-  nstack_set_tracing_contex (0, 0, fd);
   NS_LOG_CTRL (LOG_CTRL_READV, NSOCKET, "NSSOC", NSLOG_DBG,
                "(fd=%d, iov=%p, count=%d) [Caller]", fd, iov, iovcnt);
 
@@ -1331,11 +1301,7 @@ nstack_readv (int fd, const struct iovec * iov, int iovcnt)
       return -1;
     }
 
-    /* *INDENT-OFF* */
-    CPUB(stack_x_readv)
-    NSTACK_CAL_FUN(fdInf->ops, readv, (fdInf->rlfd, iov, iovcnt), size);
-    CPUE(stack_x_readv)
-    /* *INDENT-ON* */
+  NSTACK_CAL_FUN(fdInf->ops, readv, (fdInf->rlfd, iov, iovcnt), size);
 
   NSSOC_LOGDBG ("fd=%d,ret=%d [Return]", fd, size);
 
@@ -1354,7 +1320,7 @@ nstack_sendto (int fd, const void *buf, size_t len, int flags,
   int selectmod = -1;
   int retval = 0;
   nstack_rd_key rdkey = { 0 };
-  nstack_set_tracing_contex (0, 0, fd);
+
   NSSOC_LOGDBG
     ("(sockfd=%d, buf=%p, len=%zu, flags=%d, dest_addr=%p, addrlen=%u) [Caller]",
      fd, buf, len, flags, dest_addr, addrlen);
@@ -1369,11 +1335,7 @@ nstack_sendto (int fd, const void *buf, size_t len, int flags,
 
   if (fdInf->ops)
     {
-        /* *INDENT-OFF* */
-        CPUB(stack_x_sendto)
-        NSTACK_CAL_FUN(fdInf->ops, sendto, (fdInf->rlfd, buf, len, flags, dest_addr, addrlen), size);
-        CPUE(stack_x_sendto)
-        /* *INDENT-ON* */
+      NSTACK_CAL_FUN(fdInf->ops, sendto, (fdInf->rlfd, buf, len, flags, dest_addr, addrlen), size);
 
       NSSOC_LOGDBG
         ("fdInf->ops:fd=%d buf=%p,len=%zu,size=%d,addr=%p [Return]", fd, buf,
@@ -1439,7 +1401,6 @@ nstack_sendmsg (int fd, const struct msghdr * msg, int flags)
   int retval = 0;
   nstack_rd_key rdkey = { 0 };
 
-  nstack_set_tracing_contex (0, 0, fd);
   NS_LOG_CTRL (LOG_CTRL_SENDMSG, NSOCKET, "NSSOC", NSLOG_DBG,
                "(sockfd=%d, msg=%p, flags=%d) [Caller]", fd, msg, flags);
 
@@ -1460,11 +1421,7 @@ nstack_sendmsg (int fd, const struct msghdr * msg, int flags)
   /*if some module select, just connect */
   if (fdInf->ops)
     {
-        /* *INDENT-OFF* */
-        CPUB(stack_x_sendmsg)
-        NSTACK_CAL_FUN(fdInf->ops, sendmsg, (fdInf->rlfd, msg, flags), size);
-        CPUE(stack_x_sendmsg)
-        /* *INDENT-ON* */
+      NSTACK_CAL_FUN(fdInf->ops, sendmsg, (fdInf->rlfd, msg, flags), size);
       NSSOC_LOGDBG ("]fd=%d,size=%d msg=%p [Return]", fd, size, msg);
       UNLOCK_SEND (fd, local_lock);
       return size;
@@ -1526,7 +1483,6 @@ nstack_recvfrom (int fd, void *buf, size_t len, int flags,
   nstack_fd_Inf *fdInf = NULL;
   int size = -1;
 
-  nstack_set_tracing_contex (0, 0, fd);
   NSSOC_LOGDBG
     ("(sockfd=%d, buf=%p, len=%zu, flags=%d, src_addr=%p, addrlen=%p) [Caller]",
      fd, buf, len, flags, src_addr, addrlen);
@@ -1554,11 +1510,7 @@ nstack_recvfrom (int fd, void *buf, size_t len, int flags,
       return -1;
     }
 
-    /* *INDENT-OFF* */
-    CPUB(stack_x_recvfrom)
-    NSTACK_CAL_FUN(fdInf->ops, recvfrom, (fdInf->rlfd, buf, len, flags, src_addr, addrlen), size);
-    CPUE(stack_x_recvfrom)
-    /* *INDENT-ON* */
+  NSTACK_CAL_FUN(fdInf->ops, recvfrom, (fdInf->rlfd, buf, len, flags, src_addr, addrlen), size);
 
   NSSOC_LOGDBG ("fd=%d,retVal=%d [Return]", fd, size);
 
@@ -1572,7 +1524,6 @@ nstack_recvmsg (int fd, struct msghdr * msg, int flags)
   nstack_fd_Inf *fdInf = NULL;
   int size = -1;
 
-  nstack_set_tracing_contex (0, 0, fd);
   NS_LOG_CTRL (LOG_CTRL_RECVMSG, NSOCKET, "NSSOC", NSLOG_DBG,
                "(sockfd=%d, msg=%p, flags=%d) [Caller]", fd, msg, flags);
 
@@ -1591,11 +1542,7 @@ nstack_recvmsg (int fd, struct msghdr * msg, int flags)
       return -1;
     }
 
-    /* *INDENT-OFF* */
-    CPUB(stack_x_recvmsg)
-    NSTACK_CAL_FUN(fdInf->ops, recvmsg, (fdInf->rlfd, msg, flags), size);
-    CPUE(stack_x_recvmsg)
-    /* *INDENT-ON* */
+  NSTACK_CAL_FUN(fdInf->ops, recvmsg, (fdInf->rlfd, msg, flags), size);
 
   NSSOC_LOGDBG ("fd=%d,ret=%d [Return]", fd, size);
 
@@ -1617,7 +1564,6 @@ nstack_getsockname (int fd, struct sockaddr *addr, socklen_t * addrlen)
   int tfd = -1;
   int ret = -1;
 
-  nstack_set_tracing_contex (0, 0, fd);
   NS_LOG_CTRL (LOG_CTRL_GETSOCKNAME, NSOCKET, "NSSOC", NSLOG_INF,
                "(fd=%d, addr=%p, addrlen=%p) [Caller]", fd, addr, addrlen);
 
@@ -1688,7 +1634,6 @@ nstack_getpeername (int fd, struct sockaddr *addr, socklen_t * addrlen)
   int tfd;
   int ret = -1;
 
-  nstack_set_tracing_contex (0, 0, fd);
   NS_LOG_CTRL (LOG_CTRL_GETPEERNAME, NSOCKET, "NSSOC", NSLOG_INF,
                "(fd=%d, addr=%p, addrlen=%p) [Caller]", fd, addr, addrlen);
 
@@ -1820,7 +1765,7 @@ nstack_getsockopt (int fd, int level, int optname, void *optval,
   int tfd;
   int ret = -1;
   nstack_socket_ops *ops;
-  nstack_set_tracing_contex (0, 0, fd);
+
   NS_LOG_CTRL (LOG_CTRL_GETSOCKOPT, NSOCKET, "NSSOC", NSLOG_INF,
                "(fd=%d, level=%d, optname=%d, optval=%p, optlen=%p) [Caller]",
                fd, level, optname, optval, optlen);
@@ -1905,7 +1850,6 @@ nstack_setsockopt (int fd, int level, int optname, const void *optval,
   int lerror = 0;
   int flag = 0;
 
-  nstack_set_tracing_contex (0, 0, fd);
   NSSOC_LOGINF
     ("(fd=%d, level=%d, optname=%d, optval=%p, optlen=%u) [Caller]", fd,
      level, optname, optval, optlen);
@@ -1996,7 +1940,6 @@ nstack_ioctl (int fd, unsigned long request, unsigned long argp)
   int lerror = 0;
   int flag = 0;
 
-  nstack_set_tracing_contex (0, 0, fd);
   NSSOC_LOGINF ("(fd=%d, request=%lu) [Caller]", fd, request);
   if (fd < 0)
     {
@@ -2076,7 +2019,6 @@ nstack_fcntl (int fd, int cmd, unsigned long argp)
   int lerror = 0;
   int flag = 0;
 
-  nstack_set_tracing_contex (0, 0, fd);
   NSSOC_LOGINF ("(fd=%d, cmd=%d) [Caller]", fd, cmd);
   if (fd < 0)
     {
@@ -2200,7 +2142,6 @@ nstack_select (int nfds, fd_set * readfds, fd_set * writefds,
 
   int i;
 
-  nstack_set_tracing_contex (0, 0, -1);
   if ((nfds > __FD_SETSIZE) || (nfds < 0)
       || ((timeout) && ((timeout->tv_sec < 0) || (timeout->tv_usec < 0))))
     {
@@ -2378,7 +2319,6 @@ nstack_epoll_ctl (int epfd, int op, int fd, struct epoll_event *event)
   struct epoll_event ep_event = { 0 };
   struct epitem *epi = NULL;
 
-  nstack_set_tracing_contex (0, 0, fd);
   NSSOC_LOGINF ("(epfd=%d, op=%d, fd=%d, event=%p) [Caller]", epfd, op, fd,
                 event);
   if (event)
@@ -2510,7 +2450,6 @@ nstack_epoll_create (int size)
   nstack_socket_ops *ops;
   int ret = 0;
 
-  nstack_set_tracing_contex (0, 0, -1);
 
   NSTACK_INIT_CHECK_RET (epoll_create);
 
@@ -2642,7 +2581,6 @@ nstack_epoll_wait (int epfd, struct epoll_event *events, int maxevents,
   int evt = 0;
   int ret = 0;
 
-  nstack_set_tracing_contex (0, 0, epfd);
   NSTACK_FD_LINUX_CHECK (epfd, epoll_wait, fdInf,
                          (epfd, events, maxevents, timeout));
 
@@ -2769,7 +2707,6 @@ nstack_fork (void)
   pid_t pid;
   pid_t parent_pid = sys_get_hostpid_from_file (getpid ());
 
-  nstack_set_tracing_contex (0, 0, -1);
   common_mem_rwlock_write_lock (get_fork_lock ());
   if (NSTACK_MODULE_SUCCESS == g_nStackInfo.fwInited)
     {

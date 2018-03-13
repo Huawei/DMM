@@ -38,7 +38,7 @@
 
 [**4.2.1.5** **DMM-adapter APIs**4bae](#DMM-adapter-APIs)
 
-[**4.2.1.6** **nstack\_adp\t_init**4baf](#nstack_adpt_init)
+[**4.2.1.6** **nstack\_adpt\_init**4baf](#nstack_adpt_init)
 
 [**4.2.2** **epoll architecture** 4bb](#epoll-architecture)
 
@@ -230,8 +230,8 @@ b.	Protocol stack needs to call the nstack\_adpt\_init
   --------- | ------
   event\_notify      |  Section 4.2.2.3
   ep\_pdata\_free    |  Section 4.2.2.4
-  obj\_recycle\_reg  |  Section 4.2.7.1
-  mbuf\_alloc        |  Section 4.2.6.1
+  obj\_recycle\_reg  |  Section 4.2.6.1
+  obj\_recycle\_fun  |  Section 4.2.6.2
 
 List2. The function provided by DMM-adaptor. This will be used by protocol stack
 
@@ -343,7 +343,7 @@ provided by the DMM adapter.
 This field marks whether the stack needs to release the epoll resources. If it
 is 1, DMM will not release resources when close is called, and the stack must
 calls the interface provided by DMM adapter to release after releasing its own
-resources. If it is 0, DMM(nSocket) released the source directly directly.
+resources. If it is 0, DMM(nSocket) released the source directly.
 
 **4.2.1.3 nstack\_stack\_register\_fn**
 
@@ -373,12 +373,12 @@ typedef struct __nstack_event_cb
 
 Detail in the Section 4.2.3
 
-**4.2.1.4 nstack\_proc\_cb:**
+**4.2.1.4 nstack\_proc\_cb**
 
 ```
 typedef struct __nstack_proc_ops{
-         nstack_socket_ops socket_ops; /*posix socket api*/
-     nstack_extern_ops extern_ops; /*other proc callback*/
+    nstack_socket_ops socket_ops; /*posix socket api*/
+    nstack_extern_ops extern_ops; /*other proc callback*/
 } nstack_proc_cb;
 
 typedef struct __nstack_extern_ops {
@@ -389,7 +389,7 @@ typedef struct __nstack_extern_ops {
   void (*fork_free_fd) (int s, pid_t p, pid_t c);       /*for SOCK_CLOEXEC when fork if needed. */
   unsigned int (*ep_ctl) (int epFD, int proFD, int ctl_ops, struct epoll_event * event, void *pdata);   /*when fd add to epoll fd, triggle stack to proc if need */
   unsigned int (*ep_getevt) (int epFD, int profd, unsigned int events); /*check whether some events exist really */
-  int (*ep_prewait_proc) (int epfd);
+  int (*ep_prewait_proc) (int epfd);               /* The pretreatment before epwait by stack-x */
   int (*stack_fd_check) (int s, int flag);      /*check whether fd belong to stack, if belong, return 1, else return 0 */
   int (*stack_alloc_fd) ();     /*alloc a fd id for epoll */
   int (*peak) (int s);          /*used for stack-x , isource maybe no need */
@@ -699,7 +699,7 @@ The following flow chart shows how fork process is handled:
 
 #### **4.2.4.1 fork\_init\_child**
 
-`int (* fork_init_child) (s, pid_t p, pid_t c)`
+`int (* fork_init_child) (pid_t p, pid_t c)`
 
 **Description:**
 
@@ -710,8 +710,8 @@ reaches 0.
 
 **Parameters:**
 
-*s*: file descriptor of the socket to be operated
 *p*: parent process pid
+
 *c*: child process pid
 
 
@@ -730,9 +730,8 @@ It is a special treatment for SOCK_CLOEXEC.
 **Parameters:**
 
 *s*: socket fd
-*p*: parent process pid
-*c*: Child process pid
 
+*p*: parent process pid
 
 **Interface Implemented by:** Protocol stack.
 
@@ -750,7 +749,9 @@ reaches 0.
 **Parameter Description:**
 
 *s*: file descriptor of the socket to be operated
+
 *p*: parent process pid
+
 *c*: child process pid
 
 **Interface Implemented by:** Protocol stack.
@@ -768,7 +769,9 @@ It is a special treatment for SOCK\_CLOEXEC.
 **Parameters:**
 
 *s*: socket fd.
+
 *p*: parent process pid.
+
 *c*: child process pid.
 
 **Interface Implemented by:** Protocol stack
@@ -781,8 +784,8 @@ the feature.
 ### **4.2.6 Resource recovery**
 
 Protocol stack must implement resource recovery. When the application crashes
-or exits, the resources allocated by protocol stack must be released.
-Otherwise, it causes resources leaking and can crash the system.
+or exits, the resources allocated by protocol stack must be released,
+otherwise it causes resources leaking and can crash the system.
 
 DMM provides the following mechanism to support the feature.
 
@@ -826,22 +829,25 @@ The initialization function for the LRD module is defined as follows.
 
 
 ```
- int nstack_rd_init(nstack_stack_info *pstack,  int num,  nstack_get_route_data pfun)
+int nstack_rd_init (nstack_stack_info *pstack, int num, nstack_get_route_data *pfun, int fun_num)
 
-typedef struct __nstack_stack_info {
-    char name[STACK_NAME_MAX];  /*stack name*/
-    int stack_id;               /*stack id*/
-                                /*when route info not found,  high priority stack was chose,
-                                  same priority chose fist input one*/
-    int priority;               /*0:  highest:  route info not found choose first*/
-} nstack_stack_info;
+typedef struct __nstack_rd_stack_info
+{
+    /*stack name */
+    rd_stack_plane_map stack;
+    /*stack id */
+    int stack_id;
+    /*when route info not found, high priority stack was chose, same priority chose fist input one */
+    int priority;                 /*0: highest: route info not found choose first */
+} nstack_rd_stack_info; 
 
 /*rd local data*/
 typedef struct __rd_local_data {
-    nstack_rd_stack_info  *pstack_info;  /* all stack info*/
+    nstack_rd_stack_info *pstack_info;
     int stack_num;
-    nstack_rd_list route_list[RD_DATA_TYPE_MAX];    /*route table*/
-    nstack_get_route_data sys_fun;
+    nstack_rd_list route_list[RD_DATA_TYPE_MAX];  /*route table */
+    nstack_get_route_data sys_fun[NSTACK_SYS_FUN_MAX];    /*rd data sys proc function list */
+    int fun_num;
 } rd_local_data;
 
 rd_local_data *g_rd_local_data = NULL;
@@ -872,7 +878,7 @@ rd_stack_plane_map g_nstack_plane_info[] = {
 ```
 
 When application calls the DMM socket, connect, sendto, sendmsg APIS, it
-triggers the nSocket module to invoke the nStack\_rd\_get\_stackid() API to get
+triggers the nSocket module to invoke the nstack\_rd\_get\_stackid() API to get
 the route information. The protocol stack is then selected based on the
 returned protocol stack ID.
 

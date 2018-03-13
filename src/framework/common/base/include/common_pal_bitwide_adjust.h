@@ -26,26 +26,6 @@
 
 #include "common_func.h"
 
-#ifndef _UT_FUN_DISABLE_
-/*define struct for UT restore global variant*/
-struct ut_adjust_global
-{
-  void **ut_PrimAddr2LocalMap;
-  uint64_t *ut_LocalAddr2PrimMap;
-  void *ut_LocalBaseAddr;
-  void *ut_LocalMaxAddr;
-  void *ut_LocalCfgAddrBase;
-  uint64_t ut_PrimBaseAddr;
-  uint64_t ut_PrimMaxAddr;
-  uint64_t ut_PrimCfgAddrBase;
-  int ut_PrimSameFlg;
-  uint64_t ut_LBitMask;
-  int ut_LBitMaskLen;
-  struct common_mem_memseg *ut_PMemSegArry;
-  void **ut_LMegAddrArry;
-};
-#endif
-
 #define ALIGN_SIZET(size)  ((uint64_t)(size))
 #define ALIGN_PTR(PTR)    ((uint64_t)(PTR))
 

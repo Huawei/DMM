@@ -150,8 +150,6 @@ typedef struct _nsfw_mgr_msg
   u32 src_pid;
   u32 dst_pid;
 
-  u64 traceid;
-
   u8 msg_body[NSFW_MGR_MSG_BODY_LEN];
 } nsfw_mgr_msg;
 

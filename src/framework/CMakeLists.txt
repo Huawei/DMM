@@ -27,7 +27,6 @@ FILE(GLOB LOG log/*.c)
 FILE(GLOB SNAPSHOT snapshot/*.c)
 FILE(GLOB STARTUP startup/*.c)
 FILE(GLOB MAINTAIN maintain/*.c)
-FILE(GLOB TRACEING tracing/*.c)
 FILE(GLOB HAL hal/*.c)
 FILE(GLOB DMM_ADPT ../adapt/*.c)
 

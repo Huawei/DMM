@@ -130,7 +130,6 @@ UNLOCK_EPOLL_CTRL (int fd, nstack_fd_local_lock_info_t * local_lock)
     }
 }
 
-#ifndef FOR_NSTACK_UT
 #define INC_FD_REF(fd, fd_inf, local_lock){ \
     if (local_lock)\
     {\
@@ -146,34 +145,6 @@ UNLOCK_EPOLL_CTRL (int fd, nstack_fd_local_lock_info_t * local_lock)
         }\
     } \
 }
-#else
-static inline int
-ut_inc_fd_ref (int fd, nStack_info_t * fdInf,
-               nstack_fd_local_lock_info_t * local_lock)
-{
-  if (local_lock)
-    {
-      atomic_inc (&local_lock->fd_ref);
-      if (local_lock->fd_status != FD_OPEN)
-        {
-          nstack_set_errno (EBADF);
-          NSSOC_LOGERR ("nstack call, fd_status=%d [return]",
-                        local_lock->fd_status);
-          if (atomic_dec (&local_lock->fd_ref) == 0)
-            {
-              release_fd (fd, local_lock);
-            }
-          return -1;
-        }
-    }
-  return 0;
-}
-
-#define INC_FD_REF(fd, fd_inf, local_lock){\
-    if(ut_inc_fd_ref(fd, fd_inf, local_lock) < 0)\
-        return -1;\
-}
-#endif
 
 #define LOCK_BASE(fd, fd_inf, local_lock){\
     INC_FD_REF(fd, fd_inf, local_lock);\

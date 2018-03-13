@@ -50,7 +50,7 @@ Check hugepage info HugePages_
 ```
 
 ```
-    #mkdir /var/run/ip_module   ##if not exist
+    #mkdir -p /var/run/ip_module
     #export LD_LIBRARY_PATH=/root/xxxx/DMM/release/lib64/
 ```
 Note:
@@ -75,35 +75,4 @@ Note:
 
 ```
     #make -j 8
-```
- Note:
- 
-    Sometimes compilation fails due to GLOB lib dependency, to solve this problem by following steps.
-
-```
-    #cd ../thirdparty/glog/glog-0.3.4
-    #sudo autoreconf -ivf
-    #cd 
-    #make -j 8
-    #bash -x release_tar.sh
-```
-
-Note:
-
-    Update path of DPDK install with /root/dpdk_build/tmp2 in below file 
-```
-    #vim ./release/script/nstack_var.sh    # you can change it
-```
-
-# 4. Bring up the nStackMain process:
-```
-    #rm -rf /product
-    #mkdir /product/
-    #chmod 777 /product/
-    #mkdir /mnt/nstackhuge -p
-    #goto /DMM/
-    #tar zxvf nStackServer.tar.gz
-    #cd nStackServer
-    #./start_nstack.sh
-    #ps -ef | grep nStackMain
 ```

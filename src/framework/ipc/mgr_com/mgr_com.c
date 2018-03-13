@@ -109,7 +109,6 @@ nsfw_mgr_reg_msg_fun (u16 msg_type, nsfw_mgr_msg_fun fun)
     {
       if (NULL == g_mgr_fun[msg_type][i])
         {
-          /*TODO should use cas */
           g_mgr_fun[msg_type][i] = fun;
           NSFW_LOGINF ("reg mgr_msg fun suc]msg_type=%u,fun=%p", msg_type,
                        fun);
@@ -740,7 +739,6 @@ nsfw_mgr_send_msg_socket (u32 fd, nsfw_mgr_msg * msg)
       off_set = NSFW_MGR_MSG_HDR_LEN;
     }
 
-  /*TODO if closed by peer, may send failed, should close this fd */
   do
     {
       off_set += send_len;
@@ -1026,7 +1024,7 @@ nsfw_mgr_msg_in (i32 fd)
       nsfw_mgr_msg_free (msg);
       return FALSE;
     }
-  nstack_get_tracing_contex (msg->traceid, 0, 0, -1);
+
   if (msg->fw_flag != TRUE)
     {
       (void) nsfw_mgr_new_socket (fd, msg->src_proc_type, msg->src_pid);
@@ -1049,7 +1047,6 @@ nsfw_mgr_msg_in (i32 fd)
   if (FALSE != msg_match)
     {
       nsfw_mgr_msg_free (msg);
-      nstack_clear_tracing_contex ();
       return TRUE;
     }
 
@@ -1072,7 +1069,6 @@ nsfw_mgr_msg_in (i32 fd)
       g_mgr_stat.recv_drop[msg->msg_type]++;
     }
   nsfw_mgr_msg_free (msg);
-  nstack_clear_tracing_contex ();
   return FALSE;
 
 }

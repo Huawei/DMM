@@ -798,8 +798,6 @@ nstack_fw_init ()
       nstack_framework_setModuleParam(NSFW_RECYCLE_MODULE, (void*) ((long long)proc_type));
       NSTACK_THREAD_LOAD_SET();
       ret = nstack_framework_init();
-      /*init tracing*/
-      nstack_trace_init(0);
 
       if (ns_success == ret)
       {

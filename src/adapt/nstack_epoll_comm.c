@@ -143,7 +143,6 @@ nsep_initEpInfo (nsep_epollInfo_t * info)
 NSTACK_STATIC void
 nsep_destroy_epinfo (nsep_epollInfo_t * info)
 {
-  // TODO: Here we need to free the semaphore
   return;
 }
 

@@ -34,7 +34,6 @@
 #include <sys/types.h>
 #include <signal.h>
 #include "types.h"
-#include "nstack_trace.h"
 
 #include "glog/nstack_glog.ph"
 #include "glog/nstack_glog_in.h"
@@ -275,65 +274,24 @@ extern __thread unsigned int nstack_log_nonreentry;
 /* hanging up version check log need restrain */
 extern int ctrl_log_switch;
 
-#if defined MPTCP_UT
-#define NS_LOGPID(_module,_prestr,_level,fmt, ...)
-#elif !defined FOR_NSTACK_UT
+
 #define NS_LOGPID(_module,_prestr,_level,fmt, ...) \
 {\
     if (log_shooting(_module, _level) && (0 == nstack_log_nonreentry) && (0 == ctrl_log_switch))\
     {\
         nstack_log_nonreentry = 1;\
-        NSTACK_TRACING(_level, _prestr, fmt,##__VA_ARGS__);\
         if(nstack_log_info_check(_module, _level))\
            glog_print(LOG_TYPE(_module,_level),_prestr,level_stoa(_level),-1,GET_FILE_NAME(__FILE__),\
         __LINE__,__func__,fmt, ##__VA_ARGS__);\
         nstack_log_nonreentry = 0;\
     }\
 }
-#else
-static inline void
-ut_log_info (const char *file_name, int line_no, const char *func_name,
-             int _module, const char *_prestr, unsigned int _level, char *fmt,
-             ...)
-{
-  va_list ap;
 
-  if (log_shooting (_module, _level) && (0 == nstack_log_nonreentry)
-      && (0 == ctrl_log_switch))
-    {
-
-      nstack_log_nonreentry = 1;
-      if (nstack_log_info_check (_module, _level))
-        {
-          char pMsgBuf[MAX_LOG_TRANSITIONAL_LEN] = "\0";
-          va_start (ap, fmt);
-          VSNPRINTF_S (pMsgBuf,
-                       MAX_LOG_TRANSITIONAL_LEN,
-                       MAX_LOG_TRANSITIONAL_LEN - 1, fmt, ap);
-          glog_print (LOG_TYPE (_module, _level), _prestr,
-                      level_stoa (_level), -1, GET_FILE_NAME (file_name),
-                      line_no, func_name, "%s", pMsgBuf);
-          va_end (ap);
-        }
-      nstack_log_nonreentry = 0;
-
-    }
-}
-
-#define NS_LOGPID(_module,_prestr,_level,fmt, ...) \
-{\
-    ut_log_info(__FILE__,__LINE__, __func__, _module,_prestr,_level,fmt, ##__VA_ARGS__); \
-}
-
-#endif
-
-#ifndef FOR_NSTACK_UT
 #define NS_LOG_CTRL(_id, _module, _prestr, _level, fmt, ...) \
 {\
     if (log_shooting(_module, _level) && (0 == nstack_log_nonreentry) && check_log_prt_time(_id))\
     {\
         nstack_log_nonreentry = 1;\
-        NSTACK_TRACING(_level, _prestr, fmt,##__VA_ARGS__);\
         if(nstack_log_info_check(_module, _level))\
            glog_print(LOG_TYPE(_module,_level),_prestr,level_stoa(_level),get_unprt_log_count(_id),\
         GET_FILE_NAME(__FILE__),__LINE__,__func__,fmt, ##__VA_ARGS__);\
@@ -342,42 +300,6 @@ ut_log_info (const char *file_name, int line_no, const char *func_name,
     }\
 }
 
-#else
-static inline void
-ut_ctrl_log_info (char *file_name, int line_no, char *func_name, int _id,
-                  int _module, char *_prestr, unsigned int _level, char *fmt,
-                  ...)
-{
-  va_list ap;
-  if (log_shooting (_module, _level) && (0 == nstack_log_nonreentry)
-      && check_log_prt_time (_id))
-    {
-      nstack_log_nonreentry = 1;
-      if (nstack_log_info_check (_module, _level))
-        {
-          char pMsgBuf[MAX_LOG_TRANSITIONAL_LEN] = "\0";
-          va_start (ap, fmt);
-          VSNPRINTF_S (pMsgBuf,
-                       MAX_LOG_TRANSITIONAL_LEN,
-                       MAX_LOG_TRANSITIONAL_LEN - 1, fmt, ap);
-          glog_print (LOG_TYPE (_module, _level), _prestr,
-                      level_stoa (_level), get_unprt_log_count (_id),
-                      GET_FILE_NAME (file_name), line_no, func_name, "%s",
-                      pMsgBuf);
-          va_end (ap);
-        }
-      clr_unprt_log_count (_id);
-      nstack_log_nonreentry = 0;
-
-    }
-}
-
-#define NS_LOG_CTRL(_id, _module, _prestr, _level, fmt, ...) \
-{\
-    ut_ctrl_log_info(__FILE__,__LINE__, __func__, _id, _module,_prestr,_level,fmt, ##__VA_ARGS__); \
-}
-
-#endif
 
 #define NS_LOG_CTRL_STACKX(_id, dbug,_module,_prestr,_level,fmt, ...) \
 {\
@@ -546,35 +468,5 @@ int get_unprt_log_count (int id);
 void clr_unprt_log_count (int id);
 
 void get_current_time (char *buf, const int len);
-
-#ifdef CPU_CYCLES
-static __inline__ unsigned long long
-nstack_rdtsc (void)
-{
-  unsigned hi, lo;
-  __asm__ __volatile__ ("rdtsc":"=a" (lo), "=d" (hi));
-  return ((unsigned long long) lo) | (((unsigned long long) hi) << 32);
-}
-
-#define CPUB(name) \
-unsigned long long start##name = 0;\
-unsigned long long stop##name = 0;\
-static unsigned long long total##name = 0;\
-static unsigned long long total_cout##name = 0;\
-start##name = nstack_rdtsc();
-
-#define CPUE(name) \
-stop##name = nstack_rdtsc();\
-total##name += (stop##name - start##name);\
-if(++total_cout##name == 1000000)\
-{\
-    NSSOC_LOGINF(#name" cpu %llu-------\n", total##name / total_cout##name);\
-    total##name = 0;\
-    total_cout##name = 0;\
-}
-#else
-#define CPUB(name)
-#define CPUE(name)
-#endif
 
 #endif

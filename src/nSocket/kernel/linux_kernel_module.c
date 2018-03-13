@@ -51,26 +51,26 @@ ks_ep_thread (void *arg)
   int loop = 0;
   struct epoll_event *events =
     (struct epoll_event *) malloc (SK_MAX_EP_EVENT *
-                                   sizeof (struct epoll_event));
+				   sizeof (struct epoll_event));
   struct epoll_event *innerEvt =
     (struct epoll_event *) malloc (SK_MAX_EP_EVENT *
-                                   sizeof (struct epoll_event));
+				   sizeof (struct epoll_event));
 
   if (NULL == events || NULL == innerEvt)
     {
       NSSOC_LOGERR ("malloc events failed");
 
       if (events)
-        {
-          free (events);
-          events = NULL;        /* Set NULL to pointer after free */
-        }
+	{
+	  free (events);
+	  events = NULL;	/* Set NULL to pointer after free */
+	}
 
       if (innerEvt)
-        {
-          free (innerEvt);
-          innerEvt = NULL;      /* Set NULL to pointer after free */
-        }
+	{
+	  free (innerEvt);
+	  innerEvt = NULL;	/* Set NULL to pointer after free */
+	}
       /* When ks_ep_thread failed, it should set g_ksInfo.thread_inited ks_true, otherwise,it will result kernel_stack_register in dead loop */
       g_ksInfo.thread_inited = ks_true;
       return NULL;
@@ -86,16 +86,16 @@ ks_ep_thread (void *arg)
       g_ksInfo.thread_inited = ks_true;
 
       if (events)
-        {
-          free (events);
-          events = NULL;        /* Set NULL to pointer after free */
-        }
+	{
+	  free (events);
+	  events = NULL;	/* Set NULL to pointer after free */
+	}
 
       if (innerEvt)
-        {
-          free (innerEvt);
-          innerEvt = NULL;      /* Set NULL to pointer after free */
-        }
+	{
+	  free (innerEvt);
+	  innerEvt = NULL;	/* Set NULL to pointer after free */
+	}
 
       return NULL;
     }
@@ -106,65 +106,60 @@ ks_ep_thread (void *arg)
     {
 
       NSTACK_CAL_FUN (&g_ksInfo.libcOps, epoll_wait,
-                      (g_ksInfo.epfd, events, SK_MAX_EP_EVENT, -1), eventNum);
+		      (g_ksInfo.epfd, events, SK_MAX_EP_EVENT, -1), eventNum);
 
       if (0 == eventNum)
-        {
-          sys_sleep_ns (0, 100000);
+	{
+	  sys_sleep_ns (0, 100000);
 
-        }
+	}
 
       for (loop = 0; loop < eventNum; loop++)
-        {
+	{
 
-          NSSOC_LOGDBG ("Epoll]events=%u,epfd=%d", events[loop].events,
-                        events[loop].data.fd);
+	  NSSOC_LOGDBG ("Epoll]events=%u,epfd=%d", events[loop].events,
+			events[loop].data.fd);
 
-          if (events[loop].events & EPOLLIN)
-            {
-              int i = 0, num = 0, ret = 0, epfd = events[loop].data.fd;
-              NSTACK_CAL_FUN (&g_ksInfo.libcOps, epoll_wait,
-                              (epfd, innerEvt, SK_MAX_EP_EVENT, 0), num);
+	  if (events[loop].events & EPOLLIN)
+	    {
+	      int i = 0, num = 0, ret = 0, epfd = events[loop].data.fd;
+	      NSTACK_CAL_FUN (&g_ksInfo.libcOps, epoll_wait,
+			      (epfd, innerEvt, SK_MAX_EP_EVENT, 0), num);
 
-              if (0 == num)
-                {
-                  NSSOC_LOGWAR ("Num is zero");
-                  continue;
-                }
+	      if (0 == num)
+		{
+		  NSSOC_LOGWAR ("Num is zero");
+		  continue;
+		}
 
-              NSTACK_CAL_FUN (&g_ksInfo.libcOps, epoll_ctl,
-                              (g_ksInfo.epfd, EPOLL_CTL_DEL, epfd, NULL),
-                              ret);
+	      NSTACK_CAL_FUN (&g_ksInfo.libcOps, epoll_ctl,
+			      (g_ksInfo.epfd, EPOLL_CTL_DEL, epfd, NULL),
+			      ret);
 
-              ret = -1;
-              for (i = 0; i < num; i++)
-                {
-                  ret &=
-                    g_ksInfo.regVal.event_cb (innerEvt[i].data.ptr,
-                                              innerEvt[i].events);
-                  NSSOC_LOGDBG ("Kernel got one event]i=%d,ptr=%d,events=%u",
-                                i, innerEvt[i].data.ptr, innerEvt[i].events);
-                }
+	      ret = -1;
+	      for (i = 0; i < num; i++)
+		{
+		  ret &=
+		    g_ksInfo.regVal.event_cb (innerEvt[i].data.ptr,
+					      innerEvt[i].events);
+		  NSSOC_LOGDBG ("Kernel got one event]i=%d,ptr=%d,events=%u",
+				i, innerEvt[i].data.ptr, innerEvt[i].events);
+		}
 
-              if (ret)
-                {
-                  struct epoll_event ev;
-                  ev.data.fd = epfd;
-                  ev.events = EPOLLIN;
-                  NSTACK_CAL_FUN (&g_ksInfo.libcOps, epoll_ctl,
-                                  (g_ksInfo.epfd, EPOLL_CTL_ADD, epfd, &ev),
-                                  ret);
-                }
-            }
-        }
-#ifndef FOR_NSTACK_UT
+	      if (ret)
+		{
+		  struct epoll_event ev;
+		  ev.data.fd = epfd;
+		  ev.events = EPOLLIN;
+		  NSTACK_CAL_FUN (&g_ksInfo.libcOps, epoll_ctl,
+				  (g_ksInfo.epfd, EPOLL_CTL_ADD, epfd, &ev),
+				  ret);
+		}
+	    }
+	}
     }
   while (1);
-#else
-    }
-  while (0);
-  return NULL;
-#endif
+
 }
 
 int
@@ -213,14 +208,14 @@ kernel_prewait_proc (int epfd)
 
 unsigned int
 kernel_ep_fd_add (int epFD, int proFD, int ctl_ops,
-                  struct epoll_event *events, void *pdata)
+		  struct epoll_event *events, void *pdata)
 {
   struct epoll_event tmpEvt;
   int ret = 0;
   tmpEvt.data.ptr = pdata;
   tmpEvt.events = events->events;
   NSSOC_LOGINF ("epfd=%d,fd=%d,ops=%d, events=%u", epFD, proFD, ctl_ops,
-                events->events);
+		events->events);
   switch (ctl_ops)
     {
     case nstack_ep_triggle_add:
@@ -265,8 +260,8 @@ kernel_module_init ()
   if (retval != 0)
     {
       NSMON_LOGERR
-        ("pthread_setname_np failed for ep_thread]retval=%d, errno:%d",
-         retval, errno);
+	("pthread_setname_np failed for ep_thread]retval=%d, errno:%d",
+	 retval, errno);
       /*set thread name failed no need to return */
     }
 
@@ -321,7 +316,7 @@ kernel_stack_register (nstack_proc_cb * ops, nstack_event_cb * val)
 
   ops->socket_ops = g_ksInfo.libcOps;
   MEMSET_S (&(ops->extern_ops), sizeof (ops->extern_ops), 0,
-            sizeof (ops->extern_ops));
+	    sizeof (ops->extern_ops));
   NSTACK_SET_OPS_FUN (&(ops->socket_ops), listen, lk_listen);
   NSTACK_SET_OPS_FUN (&(ops->socket_ops), epoll_ctl, lk_epollctl);
   NSTACK_SET_OPS_FUN (&(ops->socket_ops), socket, kernel_socket);
