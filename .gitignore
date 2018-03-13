@@ -1,0 +1,25 @@
+#ignoring the changes in sub folders of release folder
+/release/bin/
+/release/lib64/
+/release/include/common/
+/release/include/*.h
+!/release/include/declare_syscalls.h
+!/release/include/nsocket_dmm_api.h
+
+#ignoring the changes in sub folders of build folder
+/build/app_example/
+/build/CMakeFiles/
+/build/GLOG-prefix/
+/build/JSON-prefix/
+/build/clean_compile.sh
+/build/cmake_install.cmake
+/build/CMakeCache.txt
+/build/libdmm_api.a
+/build/libglog.a
+/build/libjson-c.a
+/build/Makefile
+/build/post_compile.sh
+/build/src/
+
+#ignoring the changes in sub folders of thirdparty folder
+/thirdparty/
