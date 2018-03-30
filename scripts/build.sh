@@ -95,9 +95,6 @@ make install  T=x86_64-native-linuxapp-gcc DESTDIR=${DPDK_INSTALL_PATH}
 cd x86_64-native-linuxapp-gcc
 make
 
-mkdir ${DPDK_INSTALL_PATH}/lib64/
-cp -r ${DPDK_INSTALL_PATH}/lib/* ${DPDK_INSTALL_PATH}/lib64/
-
 export LD_LIBRARY_PATH=$LIB_PATH
 export NSTACK_LOG_ON=DBG
 

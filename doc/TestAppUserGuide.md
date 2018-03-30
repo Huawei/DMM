@@ -1,17 +1,20 @@
 # 1.  Introduction:
 
-This document will help to test sample app with DMM.
+This document will help to configure the stack module and protocol routing module,
+and run sample app with DMM.
 
 # 2.  Configuration files:
 
 There are two configuration files need to modify for setting up the
 topology.
 
-release\\configure
+release/configure
 
-**module\_config.json** is the stack module config file.
+**module_config.json** is the stack module config file.
 
-**rd\_config.json** is the rd config file.
+**rd_config.json** is the rd config file.
+
+Copy the two json files to release/bin and configure in next step.
 
 <!-- -->
 
@@ -19,7 +22,7 @@ release\\configure
 
 We need to setup configuration as given below.
 
-# 3.1  module\_config.json for example:
+# 3.1  module_config.json for example:
 
 ```
 {
@@ -30,7 +33,7 @@ We need to setup configuration as given below.
         "stack_name": "kernel",
         "function_name": "kernel_stack_register",
         "libname": "", /*library name, if loadtype is static, this maybe
-                        null, */ /* else must give a library name*/
+                         null, else must give a library name*/
         "loadtype": "static", /*library load type: static or dynamic*/
         "deploytype": "1",
         "maxfd": "1024",
@@ -42,22 +45,23 @@ We need to setup configuration as given below.
 }
 ```
 
-# 3.2  rd\_config.json for example:
+# 3.2  rd_config.json for example:
 
 ```
 {
 "ip_route": [
     {
         "subnet": "192.165.1.1/16",
-        "type": "nstack-kernel", /*output interface type, nstack-kernel:
-                    indicate that this ip */ /* should go through linux protocol,
-                    nstack-dpdk: go through stackx protocol*/
+        "type": "nstack-kernel",
+                /* output interface type,
+                   nstack-kernel: indicate this ip should go through kernel protocol
+                   nstack-dpdk: go through stackx protocol*/
     },
     {
         "subnet": "172.16.25.125/16",
         "type": "nstack-kernel",
     }
-]
+    ]
 "prot_route": [
         {
             "proto_type": "11",
@@ -80,7 +84,7 @@ After building the DMM, inside the DMM/release directory below perf-test app wil
 *kc_epoll, ks_epoll, vc_epoll, vs_epoll*
 
 
-Examples : 
+Examples:
 
 **With Kernel stack:**
 
@@ -104,7 +108,7 @@ client:
     #./vc_epoll -p 20000 -d 172.16.25.126 -a 10000 -s 172.16.25.125 -l 200 -t 5000000 -i 0 -f 1 -r 20000 -n 1 -w 10 -u 10000 -e 10 -x 1
 ```
 
-- **NGNIX**:
+- **NGNIX with DMM nStack**:
 
 Nginx build process:
 
@@ -118,7 +122,7 @@ Nginx build process:
     #make install
 ```
 Note:
-    
+
     a. ./configure **--with-ld-opt="-L /root/xxx/DMM/release/lib64/ -lnStackAPI"** can be done if you want to use nStack otherwise just give the ./configure.
     b. Make sure before building edit the configurtaion if you want specific server IP.
     For Ex:
@@ -127,7 +131,7 @@ Note:
 
     nginx.conf file modifiecations:
         listen      172.16.25.125:80
-        
+
 *step 2: run the nginx code*
 
 ```
@@ -137,7 +141,7 @@ Note:
     #./nginx
 ```
 Note:
-    
+
     if you want to run ./nginx with nStack then perform following before run
     a. export LD_LIBRARY_PATH=/root/xxx/DMM/release/lib64/
     b. export NSTACK_LOG_ON=DBG ##to display nStack consol logs.
@@ -151,7 +155,7 @@ Note:
 
 At client board, perform below command and check the output:
 ```
-    #curl http://172.16.25.125:80/    
+    #curl http://172.16.25.125:80/
 ```
 Note:
 
