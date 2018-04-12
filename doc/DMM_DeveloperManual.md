@@ -1,265 +1,238 @@
-![logo fd.io](resources/logo_fdio-300x184.png)
+![logo fd.io](../resources/logo_fdio-300x184.png)
 
-**DMM Developer Manual**
+#**DMM Developer Manual**
 
-[**1** **Introduction** 1](#section)
+[**1. Introduction**](#1.-introduction)<br>
+[**2. DMM Overall Architecture**](#2.-dmm-overall-architecture)<br>
+[**3. Core Components**](#3.-Core Components)<br>
+[**3.1 nSocket**](#3.1-nsocket)<br>
+[**3.2 Framework**](#3.2-framework)<br>
+[**3.3 Adapter**](#3.3-adapter)<br>
+[**3.4 nRD**](#3.4-nrd)<br>
+[**3.5 HAL**](#3.5-hal)<br>
+[**4 DMM Plug-in Architectures**](#4-dmm-plug-in-architectures)<br>
+[**4.1 Overview**](#4.1-overview)<br>
+[**4.2 Plug-in interface**](#4.2-plug-in-interface)<br>
+[**4.2.1 Interface of Stackx adapter APIs**](#4.2.1-interface-of-stackx-adapter-apis)<br>
+[**4.2.1.1 nstack\_stack\_register\_fn**](#4.2.1.1-nstack\_stack\_register\_fn)<br>
+[**4.2.2 Interface of DMM-adapter APIs**](#4.2.2-interface-of dmm-adapter-apis)<br>
+[**4.2.2.1 nstack\_adpt\_init**](#4.2.2.1-nstack\_adpt\_init)<br>
+[**4.2.5 Multithreading**](#4.2.5-multithreading)<br>
+[**4.2.6 Resource recovery**](#**4.2.6-resource-recovery)<br>
+[**4.2.6.1 obj\_recycle\_reg**](#4.2.6.1-obj\_recycle\_reg)<br>
+[**4.2.6.2 obj\_recycle\_fun**](#4.2.6.2-obj\_recycle\_fun)<br>
+[**4.2.7 nRD**](#4.2.7-nrd)<br>
+[**5 Release file**](#5-release-file)<br>
+[**5.1 libs**](#5.1-libs)<br>
+[**5.2 Posix API of nSocket**](#5.2-posix-api-of-nsocket)<br>
+ [**6 Log & Debug**](#5.1-libs)<br>
 
-[**2** **DMM Overall Architecture** 2](#dmm-overallarchitecture)
-
-[**3** **Core Components** 3](#core-components)
-
-[**3.1** **nSocket** 3a](#nsocket)
-
-[**3.2** **Framework** 3b](#framework)
-
-[**3.3** **Adaptor** 3c](#adaptor)
-
-[**3.4** **LRD** 3d](#lrd)
-
-[**3.5** **HAL** 3e](#hal)
-
-[**3.6** **OMC** 3f](#omc)
-
-[**4** **Plug-in Architectures** 4](#plug-in-architectures)
-
-[**4.1** **Overview** 4a](#overview)
-
-[**4.2** **Plug-in interface** 4b](#plug-in-interface)
-
-[**4.2.1** **Interface of protocol stack adapter APIs**4ba](#Interface-of-protocol-stack-adapter-APIs)
-
-[**4.2.1.1** **nStack\_module\_info**4baa](#nStack_module_info)
-
-[**4.2.1.2** **ep\_free\_ref**4bab](#ep_free_ref)
-
-[**4.2.1.3** **nstack\_stack\_register\_fn**4bac](#nstack_stack_register_fn)
-
-[**4.2.1.4** **nstack\_proc\_cb**4bad](#nstack_proc_cb)
-
-[**4.2.1.5** **DMM-adapter APIs**4bae](#DMM-adapter-APIs)
-
-[**4.2.1.6** **nstack\_adpt\_init**4baf](#nstack_adpt_init)
-
-[**4.2.2** **epoll architecture** 4bb](#epoll-architecture)
-
-[**4.2.2.1** **ep\_ctl** 4bba](#ep_ctl)
-
-[**4.2.2.2** **ep\_getevt** 4bbb](#ep_getevt)
-
-[**4.2.2.3** **nstack\_event\_callback ** 4bbc](#nstack_event_callback)
-
-[**4.2.2.4** **nsep\_force\_epinfo\_free** 4bbd](#nsep_force_epinfo_free)
-
-[**4.2.3** **select** 4bc](#select)
-
-[**4.2.3.1** **pfselect** 4bca](#pfselect)
-
-[**4.2.4** **fork** 4bd](#fork)
-
-[**4.2.4.1** **fork\_init\_child** 4bda](#fork_init_child)
-
-[**4.2.4.2** **fork\_parent\_fd**4bdb](#fork_parent_fd)
-
-[**4.2.4.3** **fork\_child\_fd** 4bdc](#fork_child_fd)
-
-[**4.2.4.4** **fork\_free\_fd** 4bdd](#fork_free_fd)
-
-[**4.2.5** **Multithreading** 4be](#multithreading)
-
-[**4.2.6** **Resource recovery** 4bf](#resource-recovery)
-
-[**4.2.6.1** **obj\_recycle\_reg** 4bfa](#obj_recycle_reg)
-
-[**4.2.6.2** **obj\_recycle\_fun** 4bfb](#obj_recycle_fun)
-
-[**4.2.7** **LRD**4bg](#LRD)
-
-[**4.2.7.1** **nstack\_rd\_init** 4bga](#nstack_rd_init)
-
-[**4.2.7.2** **nstack\_get\_route\_data** 4bgb](#nstack_get_route_data)
-
-[**4.2.7.3** **nstack\_rd\_get\_stackid** 4bgc](#nstack_rd_get_stackid)
-
-[**5** **Release file** 5](#release-file)
-
-[**5.1** **libs** 5a](#libs)
-
-[**5.2** **Posix API of nSocket** 5b](#posix-api-of-nsocket)
-
-**1. Introduction**
-================
-
-This document is used to guide the user-mode protocol stack developers to use
-the DMM framework. The document defines the interface that need to be registered
-to the DMM when the protocol stack is integrated into the DMM and the interface
-that the DMM provides to the protocol stack. In the document as well as in the
-code, DMM is also called nStack. The two names are interchangeable.
-
-**2. DMM Overall Architecture**
+**1. Introduction**<br>
 ============================
 
-![nstack architecture](resources/nStack_Architecture.png)
+This document is used to guide the user-mode protocol stack developers to use
+the DMM(Dual mode Multi protocol Multi instance) framework. The document defines the
+interface that need to be registered to the DMM when the protocol stack is integrated into the
+DMM and the interface that the DMM provides to the protocol stack. In the document as well
+as in the code, DMM is also referred as nStack(NeuroStack). The two names are interchangeable.
 
-Figure1. The nStack software architecture.HAL: Hardware Abstraction
-Layer, and IO adaptor
+**2. DMM Overall Architecture**<br>
+============================
 
-The DMM framework provides posix socket APIs to the application. A protocol
-stack could be plugged into the DMM. DMM will choose the most suitable stack
-according to the policy of nRD to application.
+![nstack architecture](../resources/nStack_Architecture.png)
 
-nRD is a strategy system which is used to choose a protocol stack for
-application based on certain rules, such as network information, SLA, security
-and so on.
+Figure1. DMM bird's eye view.
 
-**3. Core Components**
-===================
+The DMM framework provides posix socket APIs to the application. A protocol stack could be
+plugged into the DMM. DMM will choose the most suitable stack according to the policy
+of nRD to application. nRD(Neuro Resource Discovery) is a control sub system  which is used
+to choose a protocol stack for application based on certain rules, such
+as  network information,
+SLA, security and so on. The mapping between apps (connections/sockets) and candidate
+networking stack instances is now use static configurations.
 
-Figure1 shows an overview of the architecture design for DMM. DMM can be divided
-into six main components:  nSocket, Framework (FW), adapters, RD, HAL and OMC
-(orchestration\manage\control)..
+**3. Core Components**<br>
+============================
+
+Figure1 shows an overview of the architecture design for DMM. DMM can be divided into
+five main components:  nSocket, Framework (FW), adapters, nRD, and HAL.
 
 **3.1 nSocket**
 -----------
 
-“nSocket” provides user-friendly POSIX Compatible API of nStack, it intercepts
-the socket API calls from the user application via system call hijacking or
-the LD_PRELOAD mechanism.
+“nSocket” provides user-friendly POSIX Compatible API of nStack, it intercepts the socket
+API calls from the user application via system call hijacking or the LD_PRELOAD mechanism.
 
 **3.2 Framework**
 -------------
 
-Framework is a public framework module that includes shared-memory management,
-IPC-management, initialization framework, basic data structures and timer.
+Framework is a public framework module that includes shared-memory management, IPC-management,
+initialization framework, basic data structures and timer.
 
-**3.3 Adaptor**
+**3.3 Adapter**
 -----------
 
-**nStack-adaptor:** Used by protocol stack and implemented by DMM. Provides
-interfaces towards DMM.
+**nStack-adapter:** Used by protocol stack and implemented by DMM. Provides interfaces towards DMM.
 
-**Stack-x-adaptor:** Used by DMM and implemented by protocol stack. Provides
-interfaces towards protocol stack.
+**Stack-x-adapter:** Used by DMM and implemented by protocol stack. Provides interfaces
+towards protocol stack.
 
-**Kernel-adaptor:** Used and implemented by DMM. Help interact with kernel
-stack (if supported).
+**Kernel-adapter:** Used and implemented by DMM. Help interact with kernel stack.
 
-**3.4 RD**
+**3.4 nRD**
 -------
-![RD topology](resources/RD_Topo.PNG)
+![RD topology](../resources/RD_Topo.PNG)
 
-Resource Discovery subsystem is responsible for “routing/rule” discovery,
-negotiation and decision-making (decision to select protocol stack).
+nStack provides dynamic mapping between apps (connections/sockets) and candidate
+networking stack instances. And this flexibility is achieved by the nRD.
 
 **3.5 HAL**
 -------
 
-HAL (Hardware Abstraction Layer) layer provides the following functions for
-upper-layer protocol stack:
+HAL (Hardware Abstraction Layer) layer provides the following functions for upper-layer
+protocol stack:
+- A unified user plane IO interface, shields the lower-level driver implementation differences.
+- Mask the port implementation differences between IO layer and Protocol stack. Initialize
+the network interface card.
 
-A unified user plane IO interface, shields the lower-level driver implementation
-differences. Mask the port implementation differences between IO layer and
-Protocol stack.
 
-Initialize the network interface card.
-
-**3.6 OMC**
--------
-
-OMC (operation, Monitor and Control) is responsible for the whole protocol stack
-configuration management, monitoring and control.
-
-It provides functionalities like query statistics, monitoring process status etc.
-
-**4 Plug-in Architectures**
+**4 DMM Plug-in Architectures**<br>
 =========================
 
 **4.1 Overview**
 ------------
 
-DMM-Plug-in architecture is an attractive solution for developers seeking to
-build protocol stacks that are multi-functional, customizable, and easily
-extensible.
-![integration scheme](resources/Integration.png)
+DMM-Plug-in architecture is an attractive solution for developers seeking to build protocol
+stacks that are multi-functional, app independent, and easily extensible.
+![integration of DMM with protocol stack](../resources/Integration.png)
 
 Figure3. The Integration scheme
 
-Figure 3 shows a typical deployment mode that protocol stack and application
-process are deployed in a pipeline mode (DMM also support the run-to-completion
-mode) across processes.IPC is used for communication between them.
+Figure 3 shows a typical deployment mode that protocol stack and application process are
+deployed in a pipeline mode across processes. IPC is used for communication between them.
 
-1. DMM need to integrate the protocol stack adapter-library. The library
-   should implement the interfaces defined in the list1. The protocol stack
-   adapter is used for communicating with protocol stack process. In addition
-   to the function of the protocol stack, this module must implement the
-   interfaces defined by DMM, including the socket APIs, the epoll APIs, the
-   fork APIs and the resource recycle APIs.
++ DMM need to integrate the protocol stack adapter-library (Figure 3: stack-x adapter). The library
+should be developed by protocol stack, and the library implements the interfaces defined in
+the list1. The protocol stack adapter is used for communicating with protocol stack process.
+In addition to the function of the protocol stack, this module must implement the interfaces
+defined by DMM, including the socket APIs, epoll APIs, fork APIs and the resource recycle APIs.
 
-  Interface | detail
-  --------- | ------
-    ep\_ctl        |   Section 4.2.2.1
-    ep\_getevt     |   Section 4.2.2.2
- fork\_init\_child |   Section 4.2.4.1
- fork\_parent\_fd  |   Section 4.2.4.2
- fork\_child\_fd   |   Section 4.2.4.3
- fork\_free\_fd    |   Section 4.2.4.4
- module\_init      |   Section 4.3.5.5
+|  Interface | detail |
+| --------- | ------ |
+|    ep\_ctl        |   Section 4.2.2.1 |
+|    ep\_getevt     |   Section 4.2.2.2 |
+| fork\_init\_child |   Section 4.2.4.1 |
+| fork\_parent\_fd  |   Section 4.2.4.2 |
+| fork\_child\_fd   |   Section 4.2.4.3 |
+| fork\_free\_fd    |   Section 4.2.4.4 |
+| module\_init      |  Section 4.3.5.5 |
 
 List1. The function provided by protocol adapter.
 
-2. Protocol stack needs to integrate the DMM adapter-library. The library which
-   is used to create and initialize shared-memory. The shared-memory is the
-   highest performance method of IPC between nSocket and protocol stack.
-   The library utilizes the plug-in interface to provide rich features to the
-   protocol stack, such as resource recycle and event management.
++ Protocol stack needs to integrate the DMM adapter-library(Figure 3: nstack adapter). This library
+will be developed by DMM. It creates and initializes shared-memory. The shared-memory
+is used as IPC to achieve high performance communication between nStack and protocol stack.
+The library utilizes the plug-in interface to provide rich features to the protocol stack, such as
+resource recycle and event management.
 
-a.  Protocol stack needs to register the recycle object and functions
-    (See section 4.2.7 for details) to the DMM adapter. When the OMC receive
-    the process exit signal, DMM adapter processes the exit signal, and
-    trigger resource recovery action. Protocol stack does not need to focus
-    on the exit of the application.
++ Protocol stack needs to call the nstack\_adpt\_init (See section 4.2.1.6 for details) defined
+in the DMM adapter library to create and initialize the shared memory object used for IPC.
+DMM adapter library also provide functions to recycle shared memory objects (See section 4.2.6.2
+for details) to the protocol stack. When protocol stack receive the app  exit signal, DMM adapter
+handle the exit signal, and trigger shared resource recovery action. Protocol stack does not
+need to focus on the exit of the application.
 
-b.	Protocol stack needs to call the nstack\_adpt\_init
-    (See section 4.2.1 for details) defined in the DMM adapter to create and
-    initialize the shared memory object used by DMM.The init function
-    returns the nStack\_adpt\_cb (See section 4.2.1.1 for details) object
-    to the protocol stack. The protocol stack calls the callback functions
-    when processing packet.
-    Then DMM adapt-library should implement the interface defined in the list2.
++ In the dual process mode, protocol stack process creates shared memory and initialize
+it with the help of DMM adapter library where as application
+ process looks up and
+ attaches to the shared memory .
 
-  Interface | detail
-  --------- | ------
-  event\_notify      |  Section 4.2.2.3
-  ep\_pdata\_free    |  Section 4.2.2.4
-  obj\_recycle\_reg  |  Section 4.2.6.1
-  obj\_recycle\_fun  |  Section 4.2.6.2
++  nRD module reads the routing information from the configuration file to create a  mapping
+system which used to make a decision as nSocket selects the protocol stack.
 
-List2. The function provided by DMM-adaptor. This will be used by protocol stack
-
-c.	In the pipeline mode, initialization of nSocket does not create shared
-    memory; instead it looks up and attaches the shared memory created by
-    the DMM adapterr.
-
-d.  nRD reads the routing information from the configuration file to make a
-    decision as nSocket selects the protocol stack.
-
-With these modules, DMM provides a unified socket interface, and support epoll,
-select, fork, zero copy, resource recovery features.
+With these modules, DMM provides a unified socket interface, and support epoll, select,
+fork, zero copy, resource recovery features.
 
 **4.2 Plug-in interface**
 ---------------------
 
-### **4.2.1 Interface of Stack adapter APIs**
+###**4.2.1 Interface of Stackx adapter APIs**
 
-The following APIs must be implemented by the protocol stack adapter.
-They are used by nSocket module to do its work.
+The following adapter APIs must be implemented by the protocol stack as part of stackx adapter.
+Hook functions which will be initialize in this function will be used later to communicate with
+stackx later.
 
-**4.2.1.1 nStack\_module\_info**
+**4.2.1.1 nstack\_stack\_register\_fn**
 
-When the protocol stack is integrated into DMM, the first step is adding new
-protocol stack module information.
+Function prototype:
+
+```
+typedef int (*nstack_stack_registe_fn) (nstack_proc_cb *proc_fun, nstack_event_cb *event_ops);
+
+```
+There are two parameters in this function.
+
+nstack\_proc\_cb: Has two parts, socket operations, which is defined in declare\_syscalls.h.tmpl
+file and is same is in Posix, and nstack\_extern\_ops, are some other functionality like module
+initialization etc.
+```
+typedef struct __nstack_proc_cb
+{
+  nstack_socket_ops socket_ops; /*posix socket api */
+  nstack_extern_ops extern_ops; /*other proc callback */
+} nstack_proc_cb;
+
+typedef struct __nstack_extern_ops
+{
+  int (*module_init) (void);    /*stack module init */
+  int (*fork_init_child) (pid_t p, pid_t c);    /*after fork, stack child process init again if needed. */
+  void (*fork_parent_fd) (int s, pid_t p);      /*after fork, stack parent process proc again if needed. */
+  void (*fork_child_fd) (int s, pid_t p, pid_t c);      /*after fork, child record pid for recycle if needed. */
+  void (*fork_free_fd) (int s, pid_t p, pid_t c);       /*for SOCK_CLOEXEC when fork if needed. */
+  unsigned int (*ep_ctl) (int epFD, int proFD, int ctl_ops, struct epoll_event * event, void *pdata);   /*when fd add to epoll fd, triggle stack to proc if need */
+  unsigned int (*ep_getevt) (int epFD, int profd, unsigned int events); /*check whether some events exist really */
+  int (*ep_prewait_proc) (int epfd);
+  int (*stack_fd_check) (int s, int flag);      /*check whether fd belong to stack, if belong, return 1, else return 0 */
+  int (*stack_alloc_fd) ();     /*alloc a fd id for epoll */
+  int (*peak) (int s);          /*used for stack-x , isource maybe no need */
+} nstack_extern_ops;
+
+
+/*
+ *Standard api interface definition.
+ *these interface is provided by Protocol stack to nStack
+ */
+typedef struct __nstack_socket_ops
+{
+#undef NSTACK_MK_DECL
+#define NSTACK_MK_DECL(ret, fn, args)  ret (*pf##fn) args
+#include "declare_syscalls.h"
+} nstack_socket_ops;
+
+```
+nstack\_event\_cb:
+
+```
+typedef struct __nstack_event_cb
+{
+  void *handle;                 /* current so file handler */
+  int type;                         /* nstack is assigned to the protocol stack and needs to be passed to nstack when the event is reported */
+  int (*event_cb) (void *pdata, int events);
+} nstack_event_cb;
+
+```
+
+When the protocol stack(a.k.a stackx) is integrated into DMM, there are some changes required
+to be done in DMM. These are as follows:
+
+The first step is adding new protocol stack module information into DMM. This information can be
+pushed to DMM using command line interface and **g\_nstack\_module\_desc**
+will store these configuration information, e.g. registration function name, lib path, etc.
 
 
 ```
+nstack_module_keys  g_nstack_module_desc[] ={};
+
 typedef struct _ nstack_module_keys {
     const ns_char*  modName;          /*stack name*/
     const ns_char*  registe_fn_name;  /*stack register func name*/
@@ -276,7 +249,6 @@ typedef struct _ nstack_module_keys {
     ns_int32        modInx;           /* This is alloced by nStack ,  not from configuration */
 } nstack_module_keys;
 
-nstack_module_keys  g_nstack_module_desc[] ={};
 
 typedef enum {
     NSTACK_MODEL_TYPE1,   /*nSocket and stack belong to the same process*/
@@ -288,15 +260,58 @@ typedef enum {
 } nstack_model_deploy_type;
 
 ```
+Some important fields are:
 
-DMM uses g\_nstack\_module_desc to manage the stack initialization information,
-e.g. registration function name, lib path, etc.
+**ep\_free\_ref :**
+This field in data structure nstack\_module\_keys is used in pipe-line mode. When the application
+process exits, the socket resources in the application process are released, but the
+resources in the protocol stack are not released. At this time, the protocol stack needs
+to continue accessing the epoll shared resource to send events.  So, you cannot free the resources
+of epoll immediately after the application exits. Only when the resources of the
+protocol stack are completely released, the epoll share resource can be released and it is
+done by the interface provided by the DMM adapter. This field marks whether the stack
+needs to release the epoll resources. If it is 1, DMM will not release resources when close
+is called, and the stack must calls the interface provided by DMM adapter to release
+after releasing its own resources. If it is 0, DMM(nSocket) released the source directly.
 
-When the nSocket calls the nstack\_stack\_registe_fn() (See section 4.2.1.3 for
-details) , the information returned by the  protocol stack adapter is stored in
-nstack\_module\_info.
+**modInx :**
+Then module index unique number to identify the module.
+
+**maxfdid and minfdid:**
+Maximum and minimum FD supported.
+
+**libpath :**
+lib name with path provided by stack.
+
+**deploytype :**
+Indicating single or multi process deployment. Used during shared memory initialization.
+
+**libtype :**
+Indicates dynamic or static library.
+
+**default_stack :**
+During decision making of which stack to use if no stack is available default stack will be used.
+
+**registe_fn_name :**
+This is actual function name for nstack\_stack\_register\_fn and will be called by nstack,
+during protocol stack initialization.
+
+After calling the nstack\_stack\_registe_fn() (See section 4.2.1.1 for details) , the information
+initialized(e.g. hook function etc.) by the protocol stack adapter (stackx) will be stored in
+nstack\_module\_info along with other corresponding key stack information.
 
 ```
+nstack_module_info g_nstack_modules;
+
+typedef struct{
+    ns_int32 modNum;        // Number of modules registered
+    ns_int32 linuxmid;
+    ns_int32 spmid;         /* Stackx module index. */
+    nstack_module *defMod;  // The default module
+    nstack_module modules[NSTACK_MAX_MODULE_NUM];
+} nstack_module_info;
+
+
 typedef struct __NSTACK_MODULE {
     char modulename[NSTACK_PLUGIN_NAME_LEN];
     ns_int32  priority;
@@ -308,158 +323,16 @@ typedef struct __NSTACK_MODULE {
     ns_int32        minfdid;      //the min fd id
 } nstack_module;
 
-typedef struct{
-    ns_int32 modNum;        // Number of modules registed
-    ns_int32 linuxmid;
-    ns_int32 spmid;         /* Stackx module index. */
-    nstack_module *defMod;  // The default module
-    nstack_module modules[NSTACK_MAX_MODULE_NUM];
-} nstack_module_info;
-
-nstack_module_info g_nstack_modules = {
-    .modNum = 0,
-    .linuxmid = -1,
-    .modules = {{{0}}},
-    .defMod = NULL,
-}
-
 ```
 
-CS2. The information of nstack\_module\_info
+So far we discussed about stackx adapter and what change we need in DMM to integrate
+stackx with DMM. Now one thing is worth mentioning here, that how nstack implemented epoll
+mechanism, so that it will be easy to support epoll feature by protocol stack(stackx).
 
- **4.2.1.2 ep\_free\_ref**
-
-This field in data structure nstack\_module\_keys is used in pipe-line mode.
-When the application process exits, the socket resources in the application
-process are released, but the resources in the protocol stack are not released.
-At this time, the protocol stack needs to continue accessing the epoll shared
-resource to send events.
-
-So, you cannot free the resources of epoll immediately after the application
-exits. Only when the resources of the protocol stack are completely released,
-the epoll share resource can be released and it is done by the interface
-provided by the DMM adapter.
-
-This field marks whether the stack needs to release the epoll resources. If it
-is 1, DMM will not release resources when close is called, and the stack must
-calls the interface provided by DMM adapter to release after releasing its own
-resources. If it is 0, DMM(nSocket) released the source directly.
-
-**4.2.1.3 nstack\_stack\_register\_fn**
-
-Function prototypes:
-
-  `typedef int (*nstack_stack_register_fn) (nstack_proc_cb *proc_fun, nstack_event_cb *event_ops);`
-
-
-CS3. The declaration of nstack\_stack\_register\_fn
-
-There are three parameters in this function.
-
-nstack\_socket\_ops: defined in declare\_syscalls.h.tmpl file and is
-same is in Posix.
-
-nstack\_event\_ops:
-
-```
-typedef struct __nstack_event_cb
-{
-  void *handle;			/*current so file handler */
-  int type;			/*nstack is assigned to the protocol stack and needs to be passed to nstack when the event is reported */
-  int (*event_cb) (void *pdata, int events);
-} nstack_event_cb;
-
-```
-
-Detail in the Section 4.2.3
-
-**4.2.1.4 nstack\_proc\_cb**
-
-```
-typedef struct __nstack_proc_ops{
-    nstack_socket_ops socket_ops; /*posix socket api*/
-    nstack_extern_ops extern_ops; /*other proc callback*/
-} nstack_proc_cb;
-
-typedef struct __nstack_extern_ops {
-  int (*module_init) (void);    /*stack module init */
-  int (*fork_init_child) (pid_t p, pid_t c);    /*after fork, stack child process init again if needed. */
-  void (*fork_parent_fd) (int s, pid_t p);      /*after fork, stack parent process proc again if needed. */
-  void (*fork_child_fd) (int s, pid_t p, pid_t c);      /*after fork, child record pid for recycle if needed. */
-  void (*fork_free_fd) (int s, pid_t p, pid_t c);       /*for SOCK_CLOEXEC when fork if needed. */
-  unsigned int (*ep_ctl) (int epFD, int proFD, int ctl_ops, struct epoll_event * event, void *pdata);   /*when fd add to epoll fd, triggle stack to proc if need */
-  unsigned int (*ep_getevt) (int epFD, int profd, unsigned int events); /*check whether some events exist really */
-  int (*ep_prewait_proc) (int epfd);               /* The pretreatment before epwait by stack-x */
-  int (*stack_fd_check) (int s, int flag);      /*check whether fd belong to stack, if belong, return 1, else return 0 */
-  int (*stack_alloc_fd) ();     /*alloc a fd id for epoll */
-  int (*peak) (int s);          /*used for stack-x , isource maybe no need */
-} nstack_extern_ops;
-
-```
-
-### **4.2.1.5 DMM-adapter APIs**
-
-For the multi-process model, DMM provide a library with resource initialization,
-resource recycling, event notification and other functions to the protocol stack.
-
-nstack_adpt_fun is the core object between protocol stack and DMM.
-It defines some pointers which can be used by protocol stacks.
-
-```
-typedef struct nsfw_com_attr
-{
-  int policy;
-  int pri;
-} nsfw_com_attr;
-
-typedef struct __nstack_dmm_para
-{
-  nstack_model_deploy_type deploy_type;
-  int proc_type;
-  nsfw_com_attr attr;
-  int argc;
-  char **argv;
-} nstack_dmm_para;
-
-int nstack_adpt_init (nstack_dmm_para * para)
-
-```
-
-### **4.2.1.5 nstack\_adpt\_init**
-
-  `int nstack_adpt_init (nstack_dmm_para * para)`
-
-
-**Description**:
-
-The protocol stack calls this function to initialize the DMM framework and get
-the callback function from DMM.
-
-**Parameters:**
-
-*deploy\_type*: decides whether protocol stack is deployed in same process along
-with DMM or in a separate process.
-*flag*: reserved
-*out\_ops*: DMM provides the interfaces to protocol Stack, defined in
-nstack\_adpt\_fun(details in 4.2.1)
-*in\_ops*: protocol stack callback function registered to DMM.
-
-### **4.2.2 epoll Architecture**
-
-The function of these data structures is similar to the one in linux.
-```
-struct eventpoll {
-    sys_sem_st lock;        /*eventpoll lock*/
-    sys_sem_st sem;         /* rdlist lock */
-    sem_t waitSem;          /*sem for epoll_wait */
-    struct ep_hlist rdlist; /*ready epitem list*/
-    struct ep_hlist txlist; /*pad*/
-    struct ep_rb_root rbr;  /* rbtree*/
-    int epfd;               /*epoll  fd*/
-    u32 pid;              /* Pid of the process who creat the structure,  the resources used to release */
-    nsfw_res res_chk;       /* Verify whether resources are repeatedly released */
-};
-```
+###**epoll Architecture**
+When the application calls epoll\_create() or socket(), nstack first creates epoll info
+object of the data type of nsep\_epollInfo\_t. This structure stored the FD information of socket
+fd or epoll fd. fdtype denotes if this structure referring to an epoll or a socket.
 
 ```
 typedef struct{
@@ -484,6 +357,27 @@ typedef struct{
 
 ```
 
+For epoll then it creates an eventpoll (struct eventpoll) object.
+
+```
+struct eventpoll {
+    sys_sem_st lock;        /*eventpoll lock*/
+    sys_sem_st sem;         /* rdlist lock */
+    sem_t waitSem;          /*sem for epoll_wait */
+    struct ep_hlist rdlist; /*ready epitem list*/
+    struct ep_hlist txlist; /*pad*/
+    struct ep_rb_root rbr;  /* rbtree*/
+    int epfd;               /*epoll  fd*/
+    u32 pid;                /* Pid of the process who creat the structure,  the resources used to release */
+    nsfw_res res_chk;       /* Verify whether resources are repeatedly released */
+};
+```
+
+For the created nsep\_epollInfo\_t object, when the file descriptor is an epoll socket,
+ep(nsep_epollInfo_t) points to eventpoll. When the application calls epoll\_ctl() to add a
+socket to the epoll, nSocket allocates an epitem object. The fd is socket fd which need to add
+to epoll object.
+
 ```
 struct epitem {
     struct ep_rb_node rbn;
@@ -503,72 +397,60 @@ struct epitem {
 };
 
 ```
+The epitem object is added to two places, rbr (a redblack tree of struct eventpoll) and
+also epList (nsep\_epollInfo\_t), which is created during epoll_create(basically this is
+of fdtype epoll) in the previous step. In the epitem object just allocated, nstack uses ep to
+point back to eventpoll, revents to store event that is produced by the protocol stack, epinfo
+to point to the epoll object in the data type of nsep\_epollInfo\_t. This is how DMM connects
+the epoll, event, and socket together.
 
-When the application calls epoll\_create(), nSocket first creates socket or
-epoll object in the data type of nsep\_epollInfo\_t, then creates an eventpoll
-object. For the created nsep_epollInfo_t object, when the file descriptor is an
-epoll socket, ep points to eventpoll and the eplist is not used. When the file
-descriptor is a normal socket, the epiList restores the fd and the ep is not
-used.
-
-When the application calls epoll\_ctl() to add a socket to the epoll, nSocket
-allocates an epitem object. The epitem object is added to a rbtree pointed by
-epList in nsep\_epollInfo\_t, which is the epoll created in the previous step.
-In the epitem object just allocated, nSocket uses ep to point to eventpoll,
-revents to store event that is produced by the protocol stack,  epinfo to point+
-to the epoll object in the data type of nsep\_epollInfo\_t. This is how DMM
-connects the epoll, event, and socket together.
-
-When the application calls epoll\_wait(), nSocket scans the rdlist in eventpoll
-to get events and return them to the application.
+When the application calls epoll\_wait(), nSocket scans the rdlist in eventpoll to get
+events and return them to the application.
 
 Figure 3 is Runtime Graphs of nSocket in epoll function:
 
-![ePoll flow chart](resources/Epoll_flwChart.png)
+![ePoll flow chart](../resources/Epoll_flwChart.png)
 
 Figure 4: flow chart of various epoll functions function:
 
-![event and ep_pData free flow](resources/EvntNotify_StackX.png)
 
-Figure5: flow chart of nstack_event_callback and nsep_force_epinfo_free in protocol Stack
+Below are the details of hook functions provided by protocol stack.
 
-### **4.2.2.1 ep\_ctl**
-
- `int (*ep_ctl)(int proFD,  int ctl_ops,  struct epoll_event *event,  void *pdata);`
-
+###**ep\_ctl**
+```
+int (*ep_ctl)(int proFD,  int ctl_ops,  struct epoll_event *event,  void *pdata);`
+```
 
 **Description:**
-
-1\. Used by the application to inform protocol stack to add/modify/delete file
-descriptor (FD) to/from epoll and monitor events.
-
-2\. When the application adds new events or modifies existing events, it gets
-prompt notification。
-
-3\. pdata stores the nsep_epollInfo_t corresponding to the FD. It is used to
-pass the value to the protocol stack event notification API when an event occurs.
+1\. Called by the nstack to inform protocol stack to add/modify/delete file descriptor (FD)
+to/from epoll and monitor events.
+2\. When the application adds new events or modifies existing events, it gets prompt notification.
+3\. pdata stores the nsep_epollInfo_t corresponding to the FD. It is used to pass the
+value to the protocol stack event notification API when an event occurs.
 
 **Parameters:**
 
 *proFD*: sock file descriptor created by the protocol stack.
-*ctl\_ops*: 0 add, 1 modify, 2 delete。
-*event*: similar to Linux “struct epoll\_event”。
-*pdata*: Private data that DMM passes to the protocol stack.
+*ctl\_ops*: 0 add, 1 modify, 2 delete.
+*event*: similar to Linux “struct epoll\_event”.
+*pdata*: Private data (nsep_epollInfo_t ) that nstack passes to the protocol stack.
 
 **Interface implemented by:** Protocol stack.
 
-### **4.2.2.2 ep\_getevt**
+###**ep\_getevt**
 
 **Interface Definition:**
 
-`void (*ep_getevt)(int epFD,  int profd,  unsigned int events);`
+```
+void (*ep_getevt)(int epFD,  int profd,  unsigned int events);
+```
 
 **Description:**
 
-To check if an event in protocol stack exist. Due to multi-threading or other
-reasons, it’s possible that protocol stack is busy and causes delay in event
-notification. Or event may be cleared by some application operation. Application
-may use the API to check whether the event still exists.
+To check if an event in protocol stack exist. Due to multi-threading or other reasons, it’s
+possible that protocol stack is busy and causes delay in event notification. Or event
+may be cleared by some application operation. Application may use the API to check whether
+the event still exists.
 
 **Parameters:**
 
@@ -578,56 +460,22 @@ may use the API to check whether the event still exists.
 
 **Interface implemented by:** Protocol stack.
 
-### **4.2.2.3 nstack\_event\_callback **
+Similar to epoll, select functionality is also implemented by nstack.
+###**select**
 
-`int (*nstack_event_callback)(void *pdata, int events)`
+Select requires the protocol stack adapter module to provide a select API in order to query
+for existing events. When the application calls select(), nStack starts a separate thread to
+fetch the select event for each stack and sends it back to the application.
 
-**Description:**
-
-Called by the protocol stack when there is an event occurs.
-
-**Parameters:**
-
-*pdata*: pdata is the private data passed in ep\_ctl()..
-*events*: Whatever event occurred
-
-**Interface implemented by:** DMM
-
-### **4.2.2.4 nsep\_force\_epinfo\_free**
-
-`int (*nsep_force_epinfo_free)(void *pdata)`
-
-**Description:**
-
-When closes fd, the protocol stack frees the resources related to fd. This API
-is called by the protocol stack to release private data.
-
-**Precautions for use:**
-
-This API should only be called when ep\_free\_ref is configured 1 in
-nstack\_module\_keys.
-
-**Parameters:**
-
-*pdata*: pdata is the private data in ep\_ctl().
-
-**Interface implemented by:** DMM
-
-### **4.2.3 select**
-
-Select requires the protocol stack adapter module to provide a select API in
-order to query for existing events. When the application calls select(),
-DMM starts a separate thread to fetch the select event for each stack and
-sends it back to the application.
-
-![select flowchart](resources/SelectFunc.png)
+![select flowchart](../resources/SelectFunc.png)
 
 Figure 6: flow chart of select function
 
-### **4.2.3.1 pfselect**
+**pfselect**
 
-`int *pfselect(int s, fd_set* readfds, fd_set* writefds, fd_set* exceptfds, struct timeval* timeout)`
-
+```
+int *pfselect(int s, fd_set* readfds, fd_set* writefds, fd_set* exceptfds, struct timeval* timeout)
+```
 
 **Description:**
 
@@ -642,71 +490,62 @@ Query whether there is a corresponding protocol stack event.
 
 **Interface implemented by:** Protocol Stack
 
-### **4.2.4 fork**
+nStack also provide fork support. stackx adapter need to implement fork hook functions.
+###**fork**
 
-fork() creates a child process by making an exact duplicate of the calling
-process in a separate address spaces. Each process, parent and child, has its
-own process address space where memory segments, such as code segment, data
-segment, stack segment, etc., are placed.
+fork() creates a child process by making an exact duplicate of the calling process in a
+separate address spaces. Each process, parent and child, has its
+own process address
+space where memory segments, such as code segment, data segment, stack segment, etc.,
+are placed.
 
 There are few exceptions to this.
 
-1.  The fork system call duplicates all the file descriptors of the parent into
-    the child, so that the file descriptors in the parent and child point to the
-    same files.
+1\. The fork system call duplicates all the file descriptors of the parent into the child,
+so that the file descriptors in the parent and child point to the same files.
+2\. The shared memory is still shared between parent and child process after fork ().
+3\. Child process clones only thread, which executed it.
 
-2. 	The shared memory is still shared between parent and child process after
-    fork ().
-
-3.  Child process clones only thread, which executed it.
-
-When parent process or child process releases the shared resources on process
-quit or kill, it affects the other process.
-
-Also if the child process wants to inherit other threads in the parent process,
-the child process needs to pull or create those threads after the fork.
-
-Both parent and child process can access the shared memory, it create conflicts.
-
-Because of these issues, DMM provides the fork APIs to take care of processing
-before and after calling the Linux fork interface. It includes interface lock
-and shared resource lock, reference count incrimination, saving the PID of the
-subprocesses, reinitialization and SOCK\_CLOEXEC option in socket special
-handlings.
-
-Each shared memory data structure in DMM contains a reference count and a list
-of process pids, so that the shared memory can be managed between parent and
-child processes. On each fork, the reference count is increased by 1 and the
-child process id is added to the pid array.
+When parent process or child process releases the shared resources on process quit or
+kill, it affects the other process. Also if the child process wants to inherit other threads
+in the parent process, the child process needs to pull or create those threads after the
+fork. Both parent and child process can access the shared memory, it create conflicts.
+Because of these issues, DMM provides the fork APIs to take care of processing before
+and after calling the Linux fork interface. It includes interface lock and shared resource lock,
+reference count incrimination, saving the PID of the sub processes, reinitialization
+and SOCK\_CLOEXEC option in socket special handlings. Each shared memory data structure
+in nstack contains a reference count and a list of process pids, so that the shared memory
+can be managed between parent and child processes. On each fork, the reference count is
+increased by 1 and the child process id is added to the pid array.
 
 ```
-struct  xxx{
-    xxx，
-    int ref； / * Reference count * /
-    pid_t  pid_array[];
-        / * for father and son after the process list * /
-};
+typedef struct
+{
+  u32 pid_used_size;
+  u32 pid_array[NSTACK_FORK_NUM];
+} nsep_pidinfo;
 
 ```
 
-DMM needs assistance from protocol stack to release or hold the shared
-resources. Protocol stack is to provide stack specific implementation on
-these DMM APIs.
+DMM needs assistance from protocol stack to release or hold the shared resources. Protocol
+stack is to provide stack specific implementation on these DMM APIs.
 
 The following flow chart shows how fork process is handled:
 
-![fork process handling](resources/ForkChild.png)
+![fork process handling](../resources/ForkChild.png)
 
-#### **4.2.4.1 fork\_init\_child**
+###**fork\_init\_child**
 
-`int (* fork_init_child) (pid_t p, pid_t c)`
+
+```
+int (* fork_init_child) (pid_t p, pid_t c)
+```
 
 **Description:**
 
-After fork, the API is used to add child process pid into the pid list in the
-share socket data structure. When the child process exits, only the resources
-in the child process are released unless the shared resource reference count
-reaches 0.
+After fork, the API is used to add child process pid into the pid list in the share socket data
+structure. When the child process exits, only the resources in the child process are released
+unless the shared resource reference count reaches 0.
 
 **Parameters:**
 
@@ -717,15 +556,16 @@ reaches 0.
 
 **Interface Implemented by:** Protocol stack.
 
-#### **4.2.4.2 fork\_parent\_fd**
+###**fork\_parent\_fd**
 
-`void (* fork_parent_fd)(int s, pid_t p)`
+```
+void (* fork_parent_fd)(int s, pid_t p)
+```
 
 **Description:**
 
-For the socket with the SOCK_CLOEXEC flag on, when it is closed after fork,
-only the file descriptor is recycled, no other resource is released.
-It is a special treatment for SOCK_CLOEXEC.
+For the socket with the SOCK_CLOEXEC flag on, when it is closed after fork, only the file
+descriptor is recycled, no other resource is released. It is a special treatment for SOCK_CLOEXEC.
 
 **Parameters:**
 
@@ -735,16 +575,17 @@ It is a special treatment for SOCK_CLOEXEC.
 
 **Interface Implemented by:** Protocol stack.
 
-#### **4.2.4.3 fork\_child\_fd**
+###**fork\_child\_fd**
 
-`void (* fork_child_fd) (int s, pid_t p, pid_t c);`
+```
+void (* fork_child_fd) (int s, pid_t p, pid_t c);
+```
 
 **Description:**
 
-After fork, the API is used to add child process pid into the pid list in the
-share socket data structure. When the child process exits, only the resources
-in the child process are released unless the shared resource reference count
-reaches 0.
+After fork, the API is used to add child process pid into the pid list in the share socket data
+structure. When the child process exits, only the resources in the child process are released
+unless the shared resource reference count reaches 0.
 
 **Parameter Description:**
 
@@ -756,15 +597,16 @@ reaches 0.
 
 **Interface Implemented by:** Protocol stack.
 
-####  **4.2.4.4 fork\_free\_fd**
+###**fork\_free\_fd**
 
-`void (* fork_free_fd) (int s, pid_t p, pid_t c);`
+```
+void (* fork_free_fd) (int s, pid_t p, pid_t c);
+```
 
 **Description:**
 
-For the socket with the SOCK\_CLOEXEC flag on, when it is closed after fork,
-only the file descriptor is recycled, no other resource is released.
-It is a special treatment for SOCK\_CLOEXEC.
+For the socket with the SOCK\_CLOEXEC flag on, when it is closed after fork, only the file
+descriptor is recycled, no other resource is released. It is a special treatment for SOCK\_CLOEXEC.
 
 **Parameters:**
 
@@ -776,57 +618,190 @@ It is a special treatment for SOCK\_CLOEXEC.
 
 **Interface Implemented by:** Protocol stack
 
+###**4.2.2 Interface of DMM-adapter APIs**
+
+For the multi-process model, DMM provide a library with resource initialization, resource
+recycling, event notification and other functions to the
+protocol stack.
+nstack\_adpt\_init will initialize those functions which can be used by protocol stack(stakx).
+
+**4.2.2.1 nstack\_adpt\_init**
+
+Function prototype:
+
+```
+int nstack_adpt_init (nstack_dmm_para * para);
+
+```
+
+```
+typedef struct nsfw_com_attr
+{
+  int policy;
+  int pri;
+} nsfw_com_attr;
+
+typedef struct __nstack_dmm_para
+{
+  nstack_model_deploy_type deploy_type;
+  int proc_type;
+  nsfw_com_attr attr;
+  int argc;
+  char **argv;
+} nstack_dmm_para;
+
+```
+
+Some important fields are:
+
+
+** deploy\_type : **
+Decides whether protocol stack is deployed in same process along with DMM or in a separate process.
+
+** proc_type: **
+In multi process environment, the process type will identify the process in framework.
+Framework may take different action for resource allocation/initialization based on process type.
+```
+
+ typedef enum _fw_poc_type
+{
+  NSFW_PROC_NULL = 0,
+  NSFW_PROC_MAIN,
+  NSFW_PROC_APP,
+  NSFW_PROC_CTRL,
+  NSFW_PROC_TOOLS,
+  NSFW_PROC_ALARM,
+  NSFW_PROC_MAX = 16
+} fw_poc_type;
+
+```
+DMM adapter also provides utility function to free shared epoll resource, in case APP process exit.
+
+**nsep\_force\_epinfo\_free**
+
+```
+int (*nsep_force_epinfo_free)(void *pdata)
+```
+
+**Description:**
+
+When closes fd, the protocol stack frees the resources related to fd. This API is called by
+the protocol stack to release private data of type nsep_epollInfo_t.
+
+**Precautions for use:**
+
+This API should only be called when ep\_free\_ref is configured 1 in
+nstack\_module\_keys.
+
+**Parameters:**
+
+*pdata*: pdata is the private data in ep\_ctl(), type nsep_epollInfo_t.
+
+**Interface implemented by:** DMM
+
+**nsep\_force\_epitem_free**
+
+```
+int (*nsep_force_epitem_free)(void *pdata)
+```
+
+**Description:**
+
+When closes fd, the protocol stack frees the resources related to fd. This API is called by the protocol stack to release private data of type struct epitem.
+
+**Precautions for use:**
+
+This API should only be called when ep\_free\_ref is configured 1 in
+nstack\_module\_keys.
+
+**Parameters:**
+
+*pdata*: pdata is the private data in ep\_ctl(), type epitem.
+
+**Interface implemented by:** DMM
+
+**nsep\_force\_epevent\_free**
+
+```
+int (*nsep_force_epitem_free)(void *pdata)
+```
+
+**Description:**
+
+When closes fd, the protocol stack frees the resources related to fd. This API is called by the
+protocol stack to release private data of type struct eventpoll.
+
+**Precautions for use:**
+
+This API should only be called when ep\_free\_ref is configured 1 in
+nstack\_module\_keys.
+
+**Parameters:**
+
+*pdata*: pdata is the private data in ep\_ctl(), type struct eventpoll.
+
+**Interface implemented by:** DMM
+
+
 ### **4.2.5 Multithreading**
 
-nSocket supports multi-thread. nSocket uses a ref and state to support
-the feature.
+nSocket supports multi-thread. nSocket uses a ref and state to support the feature.
 
 ### **4.2.6 Resource recovery**
 
-Protocol stack must implement resource recovery. When the application crashes
-or exits, the resources allocated by protocol stack must be released,
-otherwise it causes resources leaking and can crash the system.
+Protocol stack must implement resource recovery. When the application crashes or exits,
+the resources allocated by protocol stack must be released, otherwise it causes resource leaking
+and can crash the system. DMM provides the following mechanism to support the feature.
+There is certain relationship between resource recovery and fork. Each fork increases
+the reference count by 1 and saves the child process PID to the corresponding shared resource.
+On exiting of the process, decreases the reference count by 1 if the exiting process PID
+equals to one of the saved PIDs and releases the shared resource if the reference count is 0,
+do not release the shared resource if the reference count in not zero.
 
-DMM provides the following mechanism to support the feature.
+1. There are two kinds of resource recovery, normal exit and abnormal process exit. Resources
+are freed on normal exit operation. But on the abnormal process exits, there is no one to
+clean up the shared resources   or decrease the reference count, so we rely on the separate
+process to monitor the processes and notify the stack process to release the resources.
 
-There is certain relationship between resource recovery and fork. Each fork
-increases the reference count by 1 and saves the child process PID to the
-corresponding shared resource. On exiting of the process, decreases the
-reference count by 1 if the exiting process PID equals to one of the saved
-PIDs and releases the shared resource if the reference count is 0, do not
-release the shared resource if the reference count in not zero.
+2. To support resource recovery, the protocol stack needs to define a resource  object type
+in responding to DMM request and registers the recycle function at initialization time.
 
-1.  There are two kinds of resource recovery, normal exit and abnormal
-    process exit. Resources are freed on normal exit operation. But on the
-    abnormal process exits, there is no one to clean up the shared resources
-    or decrease the reference count, so we rely on the separate process to
-    monitor the processes and notify the stack process to release the resources.
+**4.2.6.1 nsfw\_recycle\_reg\_obj**
+During initilization of stackx process, when calling nstack\_adpt\_init
+nsfw\_recycle\_reg\_obj will be called to register the object type that need to be recycled if the APP process exit.
 
-2.  To support resource recovery, the protocol stack needs to define a resource
-    object type in responding to DMM request and registers the recycle function
-    at initialization time.
+```
+typedef enum _nsfw_recycle_item_type
+{
+  NSFW_REC_TYPE_NULL = 0,
+  ...
+  NSFW_REC_NSOCKET_START,
+  NSFW_REC_NSOCKET_EPOLL,
+  NSFW_REC_NSOCKET_END = NSFW_REC_NSOCKET_START + 63,
+  NSFW_REC_TYPE_MAX = 512
+} nsfw_recycle_item_type;
 
-#### **4.2.6.1 obj\_recycle\_reg**
+```
+For each item type a register function need to provide.
+**4.2.6.2 nsfw\_recycle\_reg_fun**
+Register recycle function for a record type.
 
-TO Do
+```
+u8 nsfw_recycle_reg_fun (u16 rec_type, nsfw_recycle_fun fun);
 
-#### **4.2.6.2 obj\_recycle\_fun**
+typedef nsfw_rcc_stat (*nsfw_recycle_fun) (u32 exit_pid, void *pdata,
+                                           u16 rec_type);
+``` 
+This function will be called when APP process exit notification will be send to StackX process.
+###**4.2.7 nRD**
 
-TO DO
-
-### **4.2.7 LRD**
-
-LRD function is mainly the protocol stack routing function, the internal storage
-of a protocol stack selection policy table. When multiple protocol stacks are
-integrated, according to the incoming IP address, protocol stack type and other
-information, you can select a suitable protocol stack from the protocol Stack
-selection policy table. During nSocket module initialization, it invokes the
-LRD module initialization API to register the protocol stack information and
-the protocol stack selection policy gets the interface.
-
-The initialization function for the LRD module is defined as follows.
-
-
+LRD function is mainly the protocol stack routing function, the internal storage of a protocol
+stack selection policy table. When multiple protocol stacks are integrated, according
+to the incoming IP address, protocol stack type and other information, you can select a suitable
+protocol stack from the protocol Stack selection policy table. During nSocket module
+initialization, it invokes the LRD module initialization API to register the protocol stack information
+and the protocol stack selection policy gets the interface. The initialization function
+for the LRD module is defined as follows.
 
 ```
 int nstack_rd_init (nstack_stack_info *pstack, int num, nstack_get_route_data *pfun, int fun_num)
@@ -857,11 +832,12 @@ int (*nstack_get_route_data)(rd_route_data **data, int *num);
 
 ```
 
-When a new protocol stack is integrated into DMM, the protocol stack selection
-configuration file will not directly match with the protocol stack name, but
-with the plane name, which is more descriptive about stack and other interface
-technology, therefore the RD has a map between the protocols stack and plane
-name.
+When a new protocol stack is integrated into DMM, the protocol stack selection configuration
+file will not directly match with the protocol stack name, but
+with the plane name,
+which is more descriptive about stack and other interface
+technology, therefore
+the RD has a map between the protocols stack and plane name.
 
 ```
 typedef struct __rd_stack_plane_map{
@@ -876,25 +852,21 @@ rd_stack_plane_map g_nstack_plane_info[] = {
 };
 
 ```
+When application calls the DMM socket, connect, sendto, sendmsg APIS, it triggers the nSocket
+module to invoke the nstack\_rd\_get\_stackid() API to get the route information. The protocol
+stack is then selected based on the returned protocol stack ID.
 
-When application calls the DMM socket, connect, sendto, sendmsg APIS, it
-triggers the nSocket module to invoke the nstack\_rd\_get\_stackid() API to get
-the route information. The protocol stack is then selected based on the
-returned protocol stack ID.
+**nstack\_rd\_init**
 
-#### **4.2.7.1 nstack\_rd\_init**
-
-`int nstack_rd_init (nstack_stack_info * pstack, int num, nstack_get_route_data *pfun, int fun_num)`
+```
+int nstack_rd_init (nstack_stack_info * pstack, int num, nstack_get_route_data *pfun, int fun_num)
+```
 
 **Description:**
 
-Initializes the RD module g\_rd\_local\_data to receive and save the protocol
-stack information provided by nSocket. Also provides the API to get protocol
-stack selection information.
-
-When initialized, nSocket passes all the integrated protocol stacks information
-to the RD module. The information includes the protocol stack name, nSocket
-assigned stack id after integration and selects priority
+This function Initializes the RD module. When initialized, nStack passes all the integrated protocol
+stacks information to the RD module. The information includes the protocol stack name, stack id etc.
+The stack informations stored in g\_rd\_local\_data.
 
 **Parameters:**
 
@@ -903,22 +875,23 @@ assigned stack id after integration and selects priority
 *pfun*: function to get the protocol stack selection information.
 *fun_num*: the number of pfun passed in
 
-**Interface implemented by:**DMM
+**Interface implemented by:** DMM
 
-#### **4.2.7.2 nstack\_get\_route\_data**
+**nstack\_get\_route\_data**
 
-`typedef int (*nstack_get_route_data) (rd_route_data ** data, int *num);`
+```
+typedef int (*nstack_get_route_data) (rd_route_data ** data, int *num);
+```
 
 **Description:**
 
-Obtain the protocol stack selection information according to the protocol
-stack plane name..
+Obtain the protocol stack selection information according to the protocol stack plane name.
 
 **Parameters:**
 
-*planename*: description on stack and other interface technology. nSocket
-provides the protocol stack name. The configuration file saves an
-outbound interface type, which is corresponding to a protocol stack.
+*planename*: description on stack and other interface technology. nSocket provides
+the protocol stack name. The configuration file saves an outbound interface type, which
+is corresponding to a protocol stack.
 *data*: protocol stack selection information.
 
 ```
@@ -943,14 +916,16 @@ typedef struct __rd_route_data{
 
 **Interface implemented by:**DMM
 
-#### **4.2.7.3 nstack\_rd\_get\_stackid**
+**nstack\_rd\_get\_stackid**
 
-`int nstack_rd_get_stackid(nstack_rd_key* pkey, int *stackid) ;`
+```
+int nstack_rd_get_stackid(nstack_rd_key* pkey, int *stackid) ;
+```
 
 **Description:**
 
-Select parameters according to the protocol stack to obtain the protocol stack
-id corresponding to the parameter.
+Select parameters according to the protocol stack to obtain the protocol stack id corresponding to
+the parameter.
 
 **Parameter:**
 
@@ -969,32 +944,26 @@ typedef struct __nstack_rd_key{
 
 ```
 
-*stackid*: output parameter; nSocket internal number of the protocol stack id.
+*stackid*: output parameter; nStack internal number of the protocol stack id.
 
 **Interface implemented by:** DMM
 
-**5 Release file**
+**5 Release file**<br>
 ================
 
 **5.1 libs**
---------
-
-**libnStackAPI.so:** The API library that DMM provides to the application.
---------------------------------------------------------------------------------
-
-**libnStackAdapt.so:** DMM provides an adapter library for cross process
-protocol stack connections.
+-------------------------
+**libnStackAPI.so:** The API library that DMM provides to the application. <br>
+**libnStackAdapt.so:** The adapter library that DMM provides to the stack developer
+connects the DMM and the protocal stack implementation.
 
 **5.2 Posix API of nSocket**
-------------------------
-
-DMM provides socket APIs and integrates various protocol stacks. DMM selects
-and invokes a specific protocol stack based on the information, such as IP and
-protocol type, from the application. The protocol stacks do not interact with
-the application. After the selection, what features an API supports are
-determined by the implementation provided by the protocol stack itself.
-
-The standard socket APIs defined by DMM are as follows:
+-------------------------
+DMM provides socket APIs and integrates various protocol stacks. DMM selects and invokes
+a specific protocol stack based on the information, such as IP and protocol type, from the
+application. The protocol stacks do not interact with the application. After the selection,
+what features an API supports are determined by the implementation provided by the protocol
+stack itself. The standard socket APIs defined by DMM are as follows:
 
   Interface definition                                                      |            Interface Description
   --------------------                                                      |            ---------------------
@@ -1027,3 +996,56 @@ The standard socket APIs defined by DMM are as follows:
   int epoll\_ctl(int, int, int, struct epoll\_event \*)                             |        same as corresponding POSIX apis
   int epoll\_wait(int, struct epoll\_event \*, int, int)                            |        same as corresponding POSIX apis
   pid\_t fork(void)                                                                 |        Before/after calling base fork() need to handle other processing like ref\_count etc.
+  
+  **6. Log & Debug**<br>
+============================
+nStack uses GLOG framework to provide multi level logs. Supported log levels are debug, info, 
+warning, error and emergency. Logs will be stored at /product/gpaas/log/nStack. To enable log, 
+need to set the environment variables NSTACK\_LOG\_ON
+```
+export NSTACK_LOG_ON=DBG
+```
+Log configuration will be stored in g\_nstack\_logs.
+```
+struct nstack_logs
+{
+  uint32_t level;    /**< Log level. */
+  int pad64;
+  int inited;
+  int file_type;
+};
+
+struct nstack_logs g_nstack_logs[MAX_LOG_MODULE] = { {0, 0, 0, 0}, {0xFFFF, 0, 0, 0} }; /* Clear compile warning */
+
+Module types: 
+typedef enum _LOG_MODULE
+{
+  NSOCKET = 1,
+  STACKX,
+  OPERATION,
+  ...
+  LOGHAL,
+  ...
+  LOGFW,
+  MAX_LOG_MODULE
+} LOG_MODULE;
+
+/* Log levels*/
+#define NSLOG_DBG     0x10
+#define NSLOG_INF     0x08
+#define NSLOG_WAR     0x04
+#define NSLOG_ERR     0x02
+#define NSLOG_EMG     0x01
+#define NSLOG_OFF     0x00
+
+```
+App logs stored in nStack_nSocket.log. Stackx logs will be stored in running.log. Other operational
+logs will be stored in operation.log. App logs will be stored in file if following is set to 1.
+```
+export NSTACK_LOG_FILE_FLAG=1
+
+```
+Also we can memntioned the file name for App log.
+```
+export NSTACK_APP_LOG_PATH=/path_to_log
+```
