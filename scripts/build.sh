@@ -112,6 +112,4 @@ rm -rf *
 cmake -D DMM_DPDK_INSTALL_DIR=$DPDK_INSTALL_PATH ..
 make -j 8
 
-#DPDK install path need to be updated below if it is changed
-sed -i 's!export DPDK_INSTALL_PATH.*!export DPDK_INSTALL_PATH="/root/dpdk_install/tmp/"!1' ../thirdparty/stackpool/release/script/nstack_var.sh
 echo "DMM build finished....."
