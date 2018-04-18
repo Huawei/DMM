@@ -61,7 +61,7 @@ We need to setup configuration as given below.
         "subnet": "172.16.25.125/16",
         "type": "nstack-kernel",
     }
-    ]
+    ],
 "prot_route": [
         {
             "proto_type": "11",
