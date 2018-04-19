@@ -1,6 +1,10 @@
 # 1. Introduction:
   This document purpose is to build the DMM and run applications on it.
 
+Note:
+
+  Users can easily build the DMM by running DMM/scripts/build.sh, which contains following steps.
+
 # 2. Build DPDK:
   DPDK need to be built first for DMM RTE memory dependency.
 
@@ -10,7 +14,7 @@
 ```
     #wget http://static.dpdk.org/rel/dpdk-16.04.tar.xz
     #tar xvf dpdk-16.04.tar.xz
-    #vi dpdk-16.04/config/common_base //make CONFIG_RTE_BUILD_SHARED_LIB=y
+    #vi dpdk-16.04/config/common_base //make CONFIG_RTE_BUILD_SHARED_LIB=y CONFIG_RTE_EXEC_ENV=y CONFIG_RTE_LIBRTE_EAL=y
     #cd dpdk-16.04
     #make install  T=x86_64-native-linuxapp-gcc DESTDIR=/root/dpdk_build/tmp2
     #cd x86_64-native-linuxapp-gcc

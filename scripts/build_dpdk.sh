@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #########################################################################
-#!/bin/sh
+#!/bin/bash -x
 
 echo "check whether dpdk installed"
 cur_directory=${PWD}
@@ -30,7 +30,10 @@ cd ~
 mkdir -p rpmbuild/SOURCES
 
 cd ~/rpmbuild/SOURCES
+
+if [ ! -s dpdk-16.04.tar.gz ]; then
 wget http://dpdk.org/browse/dpdk/snapshot/dpdk-16.04.tar.gz
+fi
 
 tar xzvf dpdk-16.04.tar.gz
 cp dpdk-16.04/pkg/dpdk.spec ~/rpmbuild/SOURCES/
@@ -61,10 +64,19 @@ sed -i '77a sed -i 's!CONFIG_RTE_BUILD_SHARED_LIB=.*!CONFIG_RTE_BUILD_SHARED_LIB
 sed -i '78a sed -i 's!CONFIG_RTE_LIBRTE_EAL=.*!CONFIG_RTE_LIBRTE_EAL=y!1' config/common_base' dpdk.spec
 
 echo "build the dependence"
-sudo yum-builddep -y dpdk.spec
+#sudo yum-builddep -y dpdk.spec
+
+sudo yum install -y  libpcap-devel python-sphinx inkscape
+
 
 echo "generate the rpm package"
 rpmbuild -ba dpdk.spec --define "_sourcedir ${PWD}"
+if [ $? -eq 0 ]; then
+	echo "rpm build success"
+else
+	echo "rpm build error"
+	exit
+fi
 
 echo "install the rpm"
 cd ../RPMS/x86_64/

@@ -12,11 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #########################################################################
-#!/bin/bash
+#!/bin/bash -x
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-BUILD_DIR=${DIR}/../build
-LIB_PATH=${DIR}/../release/lib64
+log_file="/dmm/scripts/build_log.txt-`date +'%Y-%m-%d_%H-%M-%S'`"
+exec 1> >(tee -a "$log_file")  2>&1
+
+# Get Command Line arguements if present
+DMM_DIR=$1
+if [ "x$1" != "x" ]; then
+    DMM_DIR=$1
+else
+    DMM_DIR=`dirname $0`/../
+fi
+
+echo 0:$0
+echo 1:$1
+echo 2:$2
+echo DMM_DIR: $DMM_DIR
+
+#DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+BUILD_DIR=${DMM_DIR}/build
+LIB_PATH=${DMM_DIR}/release/lib64
 
 OS_ID=$(grep '^ID=' /etc/os-release | cut -f2- -d= | sed -e 's/\"//g')
 OS_VERSION_ID=$(grep '^VERSION_ID=' /etc/os-release | cut -f2- -d= | sed -e 's/\"//g')
@@ -41,39 +57,44 @@ DPDK_INSTALL_PATH=/usr
 #set and check the environment for Linux
 #set env
 if [ "$OS_ID" == "ubuntu" ]; then
-    apt-get install git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump
+    export DEBIAN_FRONTEND=noninteractive
+    export DEBCONF_NONINTERACTIVE_SEEN=true
+
+    APT_OPTS="--assume-yes --no-install-suggests --no-install-recommends -o Dpkg::Options::=\"--force-confdef\" -o Dpkg::Options::=\"--force-confold\""
+    sudo apt-get update ${APT_OPTS}
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump libpcre3 libpcre3-dev zlibc zlib1g zlib1g-dev vim
 elif [ "$OS_ID" == "debian" ]; then
-    apt-get install git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump
+    export DEBIAN_FRONTEND=noninteractive
+    export DEBCONF_NONINTERACTIVE_SEEN=true
+
+    APT_OPTS="--assume-yes --no-install-suggests --no-install-recommends -o Dpkg::Options::=\"--force-confdef\" -o Dpkg::Options::=\"--force-confold\""
+    sudo apt-get update ${APT_OPTS}
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump libpcre3 libpcre3-dev zlibc zlib1g zlib1g-dev vim
 elif [ "$OS_ID" == "centos" ]; then
-    yum install git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump
+    sudo yum install -y git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump vim sudo yum-utils pcre-devel zlib-devel
 elif [ "$OS_ID" == "opensuse" ]; then
-    yum install git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump
+    sudo yum install -y git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump vim sudo yum-utils pcre-devel zlib-devel
 fi
 
 #check env
-isInFile=$(cat /etc/default/grub | grep -c "default_hugepagesz=1G hugepagesz=1G hugepages=8")
-if [ $isInFile -eq 0 ]; then
-  echo "hugepage need to be set, set it by doing"
-  echo "1. vi /etc/default/grub "
-  echo "2. add the line GRUB_CMDLINE_LINUX_DEFAULT="default_hugepagesz=1G hugepagesz=1G hugepages=8" "
-  echo "3. perform " update-grub " in ubuntu " grub2-mkconfig -o /boot/grub2/grub.cfg " in centos "
-  echo "4. reboot"
-  exit
-else
-    echo "hugepage has been set already....."
+sudo sysctl -w vm.nr_hugepages=1024
+HUGEPAGES=`sysctl -n  vm.nr_hugepages`
+if [ $HUGEPAGES != 1024 ]; then
+    echo "ERROR: Unable to get 1024 hugepages, only got $HUGEPAGES.  Cannot finish."
+    exit
 fi
 
 #DPDK will be having dependancy on linux headers
 if [ "$OS_ID" == "ubuntu" ]; then
-    apt-get install git build-essential linux-headers-`uname -r`
+    apt-get -y install git build-essential linux-headers-`uname -r`
 elif [ "$OS_ID" == "debian" ]; then
-    apt-get install git build-essential linux-headers-`uname -r`
+    apt-get -y install git build-essential linux-headers-`uname -r`
 elif [ "$OS_ID" == "centos" ]; then
-    yum groupinstall "Development Tools"
-    yum install kernel-headers
+    sudo yum groupinstall -y "Development Tools"
+    sudo yum install -y kernel-headers
 elif [ "$OS_ID" == "opensuse" ]; then
-    yum groupinstall "Development Tools"
-    yum install kernel-headers
+    sudo yum groupinstall -y "Development Tools"
+    sudo yum install -y kernel-headers
 fi
 
 hugepageTotal=$(cat /proc/meminfo | grep -c "HugePages_Total:       0")
@@ -94,37 +115,35 @@ if [ $hugepageSize -ne 0 ]; then
   exit
 fi
 
-pdpe1gbFlag=$(cat /proc/cpuinfo | grep -c "pdpe1gb")
-if [ $pdpe1gbFlag -eq 0 ]; then
-  echo "/proc/cpuinfo doesn't include pdpe1gb to make hugepage work"
-  exit
-fi
 
 mkdir /mnt/nstackhuge -p
-sudo mount -t hugetlbfs -o pagesize=1G none /mnt/nstackhuge/
-
+sudo mount -t hugetlbfs -o pagesize=2M none /mnt/nstackhuge/
 sudo mkdir -p /var/run/ip_module/
 
 #===========build DPDK================
 
 if [ "$OS_ID" == "centos" ]; then
-    ./build_dpdk.sh
+    bash -x $DMM_DIR/scripts/build_dpdk.sh
 else
-    mkdir -p $DPDK_DOWNLOAD_PATH
 
-    cd $DPDK_DOWNLOAD_PATH
-    rm -rf dpdk-16.04/
-    wget https://fast.dpdk.org/rel/dpdk-16.04.tar.xz
-    tar xvf dpdk-16.04.tar.xz
-    cd dpdk-16.04/
+    if [ ! -d  $DPDK_DOWNLOAD_PATH ]; then
+	    mkdir -p $DPDK_DOWNLOAD_PATH
 
-    sed -i 's!CONFIG_RTE_EXEC_ENV=.*!CONFIG_RTE_EXEC_ENV=y!1' config/common_base
-    sed -i 's!CONFIG_RTE_BUILD_SHARED_LIB=.*!CONFIG_RTE_BUILD_SHARED_LIB=y!1' config/common_base
-    sed -i 's!CONFIG_RTE_LIBRTE_EAL=.*!CONFIG_RTE_LIBRTE_EAL=y!1' config/common_base
+	    cd $DPDK_DOWNLOAD_PATH
+	    rm -rf dpdk-16.04/
+	    wget https://fast.dpdk.org/rel/dpdk-16.04.tar.xz --no-check-certificate
+	    tar xvf dpdk-16.04.tar.xz
+	    cd dpdk-16.04/
 
-    make install  T=x86_64-native-linuxapp-gcc DESTDIR=${DPDK_INSTALL_PATH}
-    cd x86_64-native-linuxapp-gcc
-    make
+	    sed -i 's!CONFIG_RTE_EXEC_ENV=.*!CONFIG_RTE_EXEC_ENV=y!1' config/common_base
+	    sed -i 's!CONFIG_RTE_BUILD_SHARED_LIB=.*!CONFIG_RTE_BUILD_SHARED_LIB=y!1' config/common_base
+	    sed -i 's!CONFIG_RTE_LIBRTE_EAL=.*!CONFIG_RTE_LIBRTE_EAL=y!1' config/common_base
+
+	    make install  T=x86_64-native-linuxapp-gcc DESTDIR=${DPDK_INSTALL_PATH} -j 4
+	    cd x86_64-native-linuxapp-gcc
+	    make
+
+    fi
 fi
 
 export LD_LIBRARY_PATH=$LIB_PATH
@@ -132,15 +151,72 @@ export NSTACK_LOG_ON=DBG
 #===========build DMM=================
 echo "DMM build started....."
 
-cd $LIB_PATH
-sudo rm -rf *
+#cd $LIB_PATH && rm -rf *
 
-cd ../../thirdparty/glog/glog-0.3.4/
-sudo autoreconf -ivf
+cd $DMM_DIR/thirdparty/glog/glog-0.3.4/ && sudo autoreconf -ivf
 
 cd $BUILD_DIR
-sudo rm -rf *
-sudo cmake ..
-sudo make -j 8
+rm -rf *
+cmake ..
+make -j 8
+
+############### Preapre APP test directory
+echo -e "\e[41m Preapring APP test directory.....\e[0m"
+
+
+sudo mkdir -p $DMM_DIR/config/app_test
+cd $DMM_DIR/config/app_test
+
+if [ "$OS_ID" == "ubuntu" ]; then
+	ifaddress1=$(ifconfig eth1 | grep 'inet addr' | cut -d: -f2 | awk '{print $1}')
+	echo $ifaddress1
+	ifaddress2=$(ifconfig eth2 | grep 'inet addr' | cut -d: -f2 | awk '{print $1}')
+	echo $ifaddress2
+elif [ "$OS_ID" == "centos" ]; then
+	ifaddress1=$(ifconfig enp0s8 | grep 'inet' | cut -d: -f2 | awk '{print $2}')
+	echo $ifaddress1
+	ifaddress2=$(ifconfig enp0s9 | grep 'inet' | cut -d: -f2 | awk '{print $2}')
+	echo $ifaddress2
+fi
+
+echo '{
+        "default_stack_name": "kernel",
+        "module_list": [
+        {
+                "stack_name": "kernel",
+                "function_name": "kernel_stack_register",
+                "libname": "./",
+                "loadtype": "static",
+                "deploytype": "1",
+                "maxfd": "1024",
+                "minfd": "0",
+                "priorty": "1",
+                "stackid": "0",
+    },
+  ]
+}' | sudo tee module_config.json
+
+echo '{
+        "ip_route": [
+        {
+                "subnet": "'$ifaddress1'/24",
+                "type": "nstack-kernel",
+        },
+        {
+                "subnet": "'$ifaddress2'/24",
+                "type": "nstack-kernel",
+        },
+        ],
+        "prot_route": [
+        {
+                "proto_type": "1",
+                "type": "nstack-kernel",
+        },
+        {
+                "proto_type": "2",
+                "type": "nstack-kernel",
+        }
+        ],
+}' | sudo tee rd_config.json
 
 echo "DMM build finished....."

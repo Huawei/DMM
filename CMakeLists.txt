@@ -98,9 +98,9 @@ SET(JSON_C_SRC ${CMAKE_CURRENT_LIST_DIR}/thirdparty/json/json-c-0.12.1)
 if(EXISTS "${JSON_C_DOWNLOAD_DIR}/json-c-0.12.1.tar.gz")
     SET(JSON_DOWNLOAD_CMD tar -xvf ${JSON_C_DOWNLOAD_DIR}/json-c-0.12.1.tar.gz  -C ${JSON_C_DOWNLOAD_DIR}/json-c-0.12.1 --strip-components 1)
 else()
-    SET(JSON_DOWNLOAD_CMD wget --no-check-certificate -O json-c-0.12.1.tar.gz ${JSON_C_URL} && tar -xvf ${JSON_C_DOWNLOAD_DIR}/json-c-0.12.1.tar.gz  -C ${JSON_C_DOWNLOAD_DIR}/json-c-0.12.1 --strip-components 1)
+    SET(JSON_DOWNLOAD_CMD wget --no-check-certificate -O json-c-0.12.1.tar.gz ${JSON_C_URL} || rm -f json-c-0.12.1.tar.gz && tar -xvf ${JSON_C_DOWNLOAD_DIR}/json-c-0.12.1.tar.gz  -C ${JSON_C_DOWNLOAD_DIR}/json-c-0.12.1 --strip-components 1)
 endif()
-INCLUDE(ExternalProject) 
+INCLUDE(ExternalProject)
 ExternalProject_Add(
 		JSON
 		DOWNLOAD_DIR ${JSON_C_DOWNLOAD_DIR}
@@ -116,19 +116,19 @@ SET(SECUREC_SRC ${CMAKE_CURRENT_LIST_DIR}/thirdparty/SecureC/src)
 SET(SECUREC_SRC_H ${CMAKE_CURRENT_LIST_DIR}/thirdparty/SecureC/include)
 
 if(WITH_SECUREC_LIB)
-INCLUDE(ExternalProject) 
+INCLUDE(ExternalProject)
 ExternalProject_Add(
 		SECUREC
 		SOURCE_DIR ${SECUREC_SRC}
 		BUILD_IN_SOURCE 1
-		CONFIGURE_COMMAND "" 
+		CONFIGURE_COMMAND ""
         BUILD_COMMAND COMMAND make -j 8
 		INSTALL_COMMAND cp -f ${SECUREC_SRC}/../lib/libsecurec.so ${LIB_PATH_SHARED}/
 )
 endif()
 
 SET(GLOG_SRC ${CMAKE_CURRENT_LIST_DIR}/thirdparty/glog/glog-0.3.4)
-INCLUDE(ExternalProject) 
+INCLUDE(ExternalProject)
 ExternalProject_Add(
 		GLOG
 		SOURCE_DIR ${GLOG_SRC}
