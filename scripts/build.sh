@@ -33,10 +33,10 @@ echo OS_ID: $OS_ID
 echo OS_VERSION_ID: $OS_ID
 
 #DPDK download path
-DPDK_DOWNLOAD_PATH=/root/dpdk
+DPDK_DOWNLOAD_PATH=/tmp/dpdk
 
 #dpdk installation path
-DPDK_INSTALL_PATH=/root/dpdk_install/tmp
+DPDK_INSTALL_PATH=/usr
 
 #set and check the environment for Linux
 #set env
@@ -101,46 +101,46 @@ if [ $pdpe1gbFlag -eq 0 ]; then
 fi
 
 mkdir /mnt/nstackhuge -p
-mount -t hugetlbfs -o pagesize=1G none /mnt/nstackhuge/
+sudo mount -t hugetlbfs -o pagesize=1G none /mnt/nstackhuge/
 
-mkdir -p /var/run/ip_module/
+sudo mkdir -p /var/run/ip_module/
 
 #===========build DPDK================
-if [ -d $DPDK_INSTALL_PATH ]; then
-  rm -rf $DPDK_INSTALL_PATH
+
+if [ "$OS_ID" == "centos" ]; then
+    ./build_dpdk.sh
+else
+    mkdir -p $DPDK_DOWNLOAD_PATH
+
+    cd $DPDK_DOWNLOAD_PATH
+    rm -rf dpdk-16.04/
+    wget https://fast.dpdk.org/rel/dpdk-16.04.tar.xz
+    tar xvf dpdk-16.04.tar.xz
+    cd dpdk-16.04/
+
+    sed -i 's!CONFIG_RTE_EXEC_ENV=.*!CONFIG_RTE_EXEC_ENV=y!1' config/common_base
+    sed -i 's!CONFIG_RTE_BUILD_SHARED_LIB=.*!CONFIG_RTE_BUILD_SHARED_LIB=y!1' config/common_base
+    sed -i 's!CONFIG_RTE_LIBRTE_EAL=.*!CONFIG_RTE_LIBRTE_EAL=y!1' config/common_base
+
+    make install  T=x86_64-native-linuxapp-gcc DESTDIR=${DPDK_INSTALL_PATH}
+    cd x86_64-native-linuxapp-gcc
+    make
 fi
-
-mkdir -p $DPDK_DOWNLOAD_PATH
-
-cd $DPDK_DOWNLOAD_PATH
-rm -rf dpdk-16.04/
-wget https://fast.dpdk.org/rel/dpdk-16.04.tar.xz
-tar xvf dpdk-16.04.tar.xz
-cd dpdk-16.04/
-
-sed -i 's!CONFIG_RTE_EXEC_ENV=.*!CONFIG_RTE_EXEC_ENV=y!1' config/common_base
-sed -i 's!CONFIG_RTE_BUILD_SHARED_LIB=.*!CONFIG_RTE_BUILD_SHARED_LIB=y!1' config/common_base
-sed -i 's!CONFIG_RTE_LIBRTE_EAL=.*!CONFIG_RTE_LIBRTE_EAL=y!1' config/common_base
-
-make install  T=x86_64-native-linuxapp-gcc DESTDIR=${DPDK_INSTALL_PATH}
-cd x86_64-native-linuxapp-gcc
-make
 
 export LD_LIBRARY_PATH=$LIB_PATH
 export NSTACK_LOG_ON=DBG
-
 #===========build DMM=================
 echo "DMM build started....."
 
 cd $LIB_PATH
-rm -rf *
+sudo rm -rf *
 
 cd ../../thirdparty/glog/glog-0.3.4/
 sudo autoreconf -ivf
 
 cd $BUILD_DIR
-rm -rf *
-cmake -D DMM_DPDK_INSTALL_DIR=$DPDK_INSTALL_PATH ..
-make -j 8
+sudo rm -rf *
+sudo cmake ..
+sudo make -j 8
 
 echo "DMM build finished....."

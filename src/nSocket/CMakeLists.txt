@@ -17,35 +17,33 @@
 
 if(WITH_HAL_LIB)
 else()
-    SET(PAL_H_DIRECTORIES "${DMM_DPDK_INSTALL_DIR}/include/dpdk/")
-    SET(DPDK_LIB_DIRECTORIES "${DMM_DPDK_INSTALL_DIR}/lib")
-    SET(DPDK_LIBS "${DPDK_LIB_DIRECTORIES}/librte_eal.so")
-    list(APPEND DPDK_LIBS "${DPDK_LIB_DIRECTORIES}/librte_mempool.so")
-    list(APPEND DPDK_LIBS "${DPDK_LIB_DIRECTORIES}/librte_mbuf.so")
-    list(APPEND DPDK_LIBS "${DPDK_LIB_DIRECTORIES}/librte_ring.so")
+    SET(PAL_H_DIRECTORIES "/usr/include/dpdk/")
 endif()
 
 INCLUDE_DIRECTORIES(
-	include/
-	kernel/
-	nstack/
-	nstack/event/
-	nstack/event/epoll
-	nstack/event/select
-	${SECUREC_SRC_H}
-        ${PAL_H_DIRECTORIES}
-	${CMAKE_CURRENT_LIST_DIR}/../adapt
-	${CMAKE_CURRENT_LIST_DIR}/../../thirdparty/json/json-c-0.12.1
+    include/
+    kernel/
+    nstack/
+    nstack/event/
+    nstack/event/epoll
+    nstack/event/select
+    ${SECUREC_SRC_H}
+    ${PAL_H_DIRECTORIES}
+    ${CMAKE_CURRENT_LIST_DIR}/../adapt
+    ${CMAKE_CURRENT_LIST_DIR}/../../thirdparty/json/json-c-0.12.1
 )
 
 FILE(GLOB_RECURSE nSocket *.c)
 ADD_LIBRARY(nStackAPI SHARED ${nSocket})
 TARGET_LINK_LIBRARIES(
-	nStackAPI
-	-Wl,--whole-archive
-	${LIB_PATH_STATIC}/libjson-c.a
-	${LIB_PATH_STATIC}/libglog.a
-	dmm_api
-	-Wl,--no-whole-archive,-lstdc++
-        ${DPDK_LIBS})
+    nStackAPI
+    -Wl,--whole-archive
+    ${LIB_PATH_STATIC}/libjson-c.a
+    ${LIB_PATH_STATIC}/libglog.a
+    dmm_api
+    -Wl,--no-whole-archive,-lstdc++
+    rte_eal
+    rte_mempool
+    rte_mbuf
+    rte_ring)
 ADD_DEPENDENCIES(nStackAPI dmm_api)
