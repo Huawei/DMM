@@ -1,5 +1,4 @@
 #########################################################################
-#
 # Copyright (c) 2018 Huawei Technologies Co.,Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,15 +18,37 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BUILD_DIR=${DIR}/../build
 LIB_PATH=${DIR}/../release/lib64
 
+OS_ID=$(grep '^ID=' /etc/os-release | cut -f2- -d= | sed -e 's/\"//g')
+OS_VERSION_ID=$(grep '^VERSION_ID=' /etc/os-release | cut -f2- -d= | sed -e 's/\"//g')
+KERNEL_OS=`uname -o`
+KERNEL_MACHINE=`uname -m`
+KERNEL_RELEASE=`uname -r`
+KERNEL_VERSION=`uname -v`
+
+echo KERNEL_OS: $KERNEL_OS
+echo KERNEL_MACHINE: $KERNEL_MACHINE
+echo KERNEL_RELEASE: $KERNEL_RELEASE
+echo KERNEL_VERSION: $KERNEL_VERSION
+echo OS_ID: $OS_ID
+echo OS_VERSION_ID: $OS_ID
+
 #DPDK download path
 DPDK_DOWNLOAD_PATH=/root/dpdk
 
 #dpdk installation path
 DPDK_INSTALL_PATH=/root/dpdk_install/tmp
 
-#set and check the environment for Ubuntu
+#set and check the environment for Linux
 #set env
-apt-get install git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump
+if [ "$OS_ID" == "ubuntu" ]; then
+    apt-get install git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump
+elif [ "$OS_ID" == "debian" ]; then
+    apt-get install git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump
+elif [ "$OS_ID" == "centos" ]; then
+    yum install git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump
+elif [ "$OS_ID" == "opensuse" ]; then
+    yum install git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump
+fi
 
 #check env
 isInFile=$(cat /etc/default/grub | grep -c "default_hugepagesz=1G hugepagesz=1G hugepages=8")
@@ -35,7 +56,7 @@ if [ $isInFile -eq 0 ]; then
   echo "hugepage need to be set, set it by doing"
   echo "1. vi /etc/default/grub "
   echo "2. add the line GRUB_CMDLINE_LINUX_DEFAULT="default_hugepagesz=1G hugepagesz=1G hugepages=8" "
-  echo "3. perform " update-grub " "
+  echo "3. perform " update-grub " in ubuntu " grub2-mkconfig -o /boot/grub2/grub.cfg " in centos "
   echo "4. reboot"
   exit
 else
@@ -43,7 +64,17 @@ else
 fi
 
 #DPDK will be having dependancy on linux headers
-apt-get install git build-essential linux-headers-`uname -r`
+if [ "$OS_ID" == "ubuntu" ]; then
+    apt-get install git build-essential linux-headers-`uname -r`
+elif [ "$OS_ID" == "debian" ]; then
+    apt-get install git build-essential linux-headers-`uname -r`
+elif [ "$OS_ID" == "centos" ]; then
+    yum groupinstall "Development Tools"
+    yum install kernel-headers
+elif [ "$OS_ID" == "opensuse" ]; then
+    yum groupinstall "Development Tools"
+    yum install kernel-headers
+fi
 
 hugepageTotal=$(cat /proc/meminfo | grep -c "HugePages_Total:       0")
 if [ $hugepageTotal -ne 0 ]; then
