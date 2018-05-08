@@ -16,7 +16,7 @@
 
 if(WITH_HAL_LIB)
 else()
-    SET(PAL_H_DIRECTORIES "${DMM_DPDK_INSTALL_DIR}/include/dpdk/")
+    SET(PAL_H_DIRECTORIES "/usr/include/dpdk/")
     FILE(GLOB_RECURSE LIBCOMM lib_common_mem/*.c)
 endif()
 
