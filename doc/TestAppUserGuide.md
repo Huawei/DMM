@@ -81,8 +81,9 @@ Usage:
 
 After building the DMM, inside the DMM/release directory below perf-test app will be generated.
 
-*kc_epoll, ks_epoll, vc_epoll, vs_epoll*
+*kc_common, ks_epoll, ks_select, vc_common, vs_epoll, vs_select*
 
+The use of ks_epoll,ks_select,vs_epoll and vs_select are the same.
 
 Examples:
 
@@ -94,7 +95,7 @@ server:
 ```
 client:
 ```
-    #./kc_epoll -p 20000 -d 172.16.25.126 -a 10000 -s 172.16.25.125 -l 200 -t 5000000 -i 0 -f 1 -r 20000 -n 1 -w 10 -u 10000 -e 10 -x 1
+    #./kc_common -p 20000 -d 172.16.25.126 -a 10000 -s 172.16.25.125 -l 200 -t 5000000 -i 0 -f 1 -r 20000 -n 1 -w 10 -u 10000 -e 10 -x 1
 ```
 
 **With DMM nStack:**
@@ -105,7 +106,7 @@ server:
 ```
 client:
 ```
-    #./vc_epoll -p 20000 -d 172.16.25.126 -a 10000 -s 172.16.25.125 -l 200 -t 5000000 -i 0 -f 1 -r 20000 -n 1 -w 10 -u 10000 -e 10 -x 1
+    #./vc_common -p 20000 -d 172.16.25.126 -a 10000 -s 172.16.25.125 -l 200 -t 5000000 -i 0 -f 1 -r 20000 -n 1 -w 10 -u 10000 -e 10 -x 1
 ```
 
 - **NGNIX with DMM nStack**:
