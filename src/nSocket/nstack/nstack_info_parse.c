@@ -18,13 +18,13 @@
 #define _GNU_SOURCE
 #endif
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#include <sys/types.h>          /* sys/types.h */
+#include <sys/stat.h>           /* sys/stat.h  */
+#include <fcntl.h>              /* fcntl.h     */
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <errno.h>
+#include <errno.h>              /* errno.h     */
 #include "json.h"
 #include "nsfw_base_linux_api.h"
 #include "nstack_info_parse.h"

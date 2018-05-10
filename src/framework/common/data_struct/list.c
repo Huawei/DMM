@@ -17,13 +17,14 @@
 #include "list.h"
 
 /**
- * list_empty - tests whether a list is empty
- * @head: the list to test.
+ * function-name   : list_empty
+ * description     : tests whether a list is empty
+ * parameter @head : the list to test.
  */
 inline int
-list_empty (const struct list_head *head)
+list_empty (const struct list_head *head_of_list)
 {
-  return head->next == head;
+  return head_of_list->next == head_of_list;
 }
 
 inline void
@@ -77,22 +78,22 @@ list_add_tail (struct list_head *newp, struct list_head *head)
 inline void
 hlist_del_init (struct hlist_node *n)
 {
-  struct hlist_node *next = n->next;
+  struct hlist_node *next_node = n->next;
   struct hlist_node **pprev = n->pprev;
 
-  if (pprev == NULL && next == NULL)
+  if (pprev == NULL && next_node == NULL)
     {
       return;
     }
 
   if (pprev)
     {
-      *pprev = next;
+      *pprev = next_node;
     }
 
-  if (next)
+  if (next_node)
     {
-      next->pprev = pprev;
+      next_node->pprev = pprev;
     }
 
   n->next = NULL;
@@ -107,12 +108,12 @@ hlist_del_init (struct hlist_node *n)
  * @next: node in the hlist
  */
 inline void
-hlist_add_before (struct hlist_node *n, struct hlist_node *next)
+hlist_add_before (struct hlist_node *node, struct hlist_node *next)
 {
-  n->pprev = next->pprev;
-  n->next = next;
-  next->pprev = &n->next;
-  *(n->pprev) = n;
+  node->pprev = next->pprev;
+  node->next = next;
+  next->pprev = &node->next;
+  *(node->pprev) = node;
 }
 
 /**
@@ -123,11 +124,11 @@ hlist_add_before (struct hlist_node *n, struct hlist_node *next)
  * @next: new node
  */
 inline void
-hlist_add_after (struct hlist_node *n, struct hlist_node *next)
+hlist_add_after (struct hlist_node *node, struct hlist_node *next)
 {
-  next->next = n->next;
-  n->next = next;
-  next->pprev = &n->next;
+  next->next = node->next;
+  node->next = next;
+  next->pprev = &node->next;
   if (next->next)
     {
       next->next->pprev = &next->next;
@@ -136,28 +137,28 @@ hlist_add_after (struct hlist_node *n, struct hlist_node *next)
 
 /* add after the head */
 inline void
-hlist_add_head (struct hlist_node *n, struct hlist_head *h)
+hlist_add_head (struct hlist_node *node, struct hlist_head *h)
 {
   struct hlist_node *first = h->first;
 
-  n->next = first;
+  node->next = first;
   if (first)
     {
-      first->pprev = &n->next;
+      first->pprev = &node->next;
     }
 
-  h->first = n;
-  n->pprev = &h->first;
+  h->first = node;
+  node->pprev = &h->first;
 }
 
 inline int
-hlist_unhashed (const struct hlist_node *h)
+hlist_unhashed (const struct hlist_node *node)
 {
-  return !h->pprev;
+  return !node->pprev;
 }
 
 inline int
-hlist_empty (const struct hlist_head *h)
+hlist_empty (const struct hlist_head *node)
 {
-  return !h->first;
+  return !node->first;
 }

@@ -59,19 +59,19 @@ check_gnu_extension (const char *optstring)
 {
   if (optstring[0] == '+' || getenv ("POSIXLY_CORRECT") != NULL)
     {
-      posixly_correct = 1;
+      posixly_correct = 1;      /* assign 1 to posixly_correct   */
     }
   else
     {
-      posixly_correct = 0;
+      posixly_correct = 0;      /* assign 0 to posixly_correct   */
     }
   if (optstring[0] == '-')
     {
-      handle_nonopt_argv = 1;
+      handle_nonopt_argv = 1;   /* assign 1 to handle_nonopt_argv */
     }
   else
     {
-      handle_nonopt_argv = 0;
+      handle_nonopt_argv = 0;   /* assign 0 to handle_nonopt_argv */
     }
 }
 
@@ -83,11 +83,11 @@ nsfw_getopt_long (int argc, char *const argv[], const char *optstring,
 }
 
 NSTACK_STATIC inline int
-nsfw_getopt_internal_check_opts (const char *optstring)
+nsfw_getopt_internal_check_opts (const char *optstr)
 {
-  if (NULL == optstring)
+  if (NULL == optstr)
     {
-      return -1;
+      return -1;                /* return -1 */
     }
 
   if (nsfw_optopt == '?')
@@ -97,21 +97,21 @@ nsfw_getopt_internal_check_opts (const char *optstring)
 
   if (posixly_correct == -1)
     {
-      check_gnu_extension (optstring);
+      check_gnu_extension (optstr);
     }
 
   if (nsfw_optind == 0)
     {
-      check_gnu_extension (optstring);
+      check_gnu_extension (optstr);
       nsfw_optind = 1;
       nsfw_optnext = NULL;
     }
 
-  switch (optstring[0])
+  switch (optstr[0])
     {
-    case '+':
     case '-':
-      optstring++;
+    case '+':
+      optstr++;
       break;
     default:
       break;
@@ -132,25 +132,25 @@ nsfw_getopt_internal_init (char *const argv[])
 {
   if (nsfw_optnext == NULL && start != 0)
     {
-      int last_pos = nsfw_optind - 1;
+      int last_loc = nsfw_optind - 1;
 
       nsfw_optind -= end - start;
       (void) nsfw_getopt_check_optind ();
 
       while (start < end--)
         {
-          int i;
+          int j;
           char *arg = argv[end];
 
-          for (i = end; i < last_pos; i++)
+          for (j = end; j < last_loc; j++)
             {
-              int j = i + 1;
-              ((char **) argv)[i] = argv[j];
+              int k = j + 1;
+              ((char **) argv)[j] = argv[k];
             }
-          ((char const **) argv)[i] = arg;
-          last_pos--;
+          ((char const **) argv)[j] = arg;
+          last_loc--;
         }
-      start = 0;
+      start = 0;                /*make start as zero */
     }
   return 0;
 }
@@ -168,7 +168,7 @@ nsfw_getopt_internal (int argc, char *const argv[], const char *optstring,
   if (nsfw_optind >= argc)
     {
       nsfw_optarg = NULL;
-      return -1;
+      return -1;                /* return -1 */
     }
   if (nsfw_optnext == NULL)
     {
@@ -188,23 +188,23 @@ nsfw_getopt_internal (int argc, char *const argv[], const char *optstring,
             }
           else
             {
-              int i;
+              int k;
 
               start = nsfw_optind;
-              for (i = nsfw_optind + 1; i < argc; i++)
+              for (k = nsfw_optind + 1; k < argc; k++)
                 {
-                  if (argv[i][0] == '-')
+                  if (argv[k][0] == '-')
                     {
-                      end = i;
+                      end = k;
                       break;
                     }
                 }
-              if (i == argc)
+              if (k == argc)
                 {
                   nsfw_optarg = NULL;
                   return -1;
                 }
-              nsfw_optind = i;
+              nsfw_optind = k;
               arg = argv[nsfw_optind];
             }
         }
@@ -360,27 +360,27 @@ nsfw_getopt_longopts (int argc, char *const argv[], char *arg,
                       const char *optstring, const struct option *longopts,
                       int *longindex, int *long_only_flag)
 {
-  char *val = NULL;
-  const struct option *opt;
-  size_t namelen;
-  int idx;
+  char *value = NULL;
+  const struct option *option;
+  size_t namelength;
+  int index;
 
   if ((longopts == NULL) || (arg == NULL))
     {
       return -1;
     }
 
-  for (idx = 0; longopts[idx].name != NULL; idx++)
+  for (index = 0; longopts[index].name != NULL; index++)
     {
-      opt = &longopts[idx];
-      namelen = strlen (opt->name);
+      option = &longopts[index];
+      namelength = strlen (option->name);
 
-      if (strncmp (arg, opt->name, namelen) == 0)
+      if (strncmp (arg, option->name, namelength) == 0)
         {
-          switch (arg[namelen])
+          switch (arg[namelength])
             {
             case '\0':
-              switch (opt->has_arg)
+              switch (option->has_arg)
                 {
                 case nsfw_required_argument:
                   nsfw_optind++;
@@ -388,17 +388,17 @@ nsfw_getopt_longopts (int argc, char *const argv[], char *arg,
                   if (nsfw_optind == argc)
                     {
                       nsfw_optarg = NULL;
-                      nsfw_optopt = opt->val;
+                      nsfw_optopt = option->val;
                       if (':' != optstring[0])
                         {
                           NSFW_LOGERR
                             ("requires an argument] argv_0=%s, opt name=%s",
-                             argv[0], opt->name);
+                             argv[0], option->name);
                         }
                       return optstring[0] == ':' ? ':' : '?';
                     }
 
-                  val = argv[nsfw_optind];
+                  value = argv[nsfw_optind];
                   break;
 
                 default:
@@ -408,23 +408,23 @@ nsfw_getopt_longopts (int argc, char *const argv[], char *arg,
               goto found;
 
             case '=':
-              if (opt->has_arg == nsfw_no_argument)
+              if (option->has_arg == nsfw_no_argument)
                 {
                   const char *hyphens =
                     (argv[nsfw_optind][1] == '-') ? "--" : "-";
                   nsfw_optind++;
                   nsfw_optarg = NULL;
-                  nsfw_optopt = opt->val;
+                  nsfw_optopt = option->val;
                   if (':' != optstring[0])
                     {
                       NSFW_LOGERR
                         ("doesn't allow an argument] argv_0=%s, hyphens=%s, opt name=%s",
-                         argv[0], hyphens, opt->name);
+                         argv[0], hyphens, option->name);
                     }
                   return '?';
                 }
 
-              val = arg + namelen + 1;
+              value = arg + namelength + 1;
               goto found;
 
             default:
@@ -438,18 +438,18 @@ nsfw_getopt_longopts (int argc, char *const argv[], char *arg,
   return '?';
 
 found:
-  nsfw_optarg = val;
+  nsfw_optarg = value;
   nsfw_optind++;
 
-  if (opt->flag)
+  if (option->flag)
     {
-      *opt->flag = opt->val;
+      *option->flag = option->val;
     }
 
   if (longindex)
     {
-      *longindex = idx;
+      *longindex = index;
     }
 
-  return opt->flag ? 0 : opt->val;
+  return option->flag ? 0 : option->val;
 }

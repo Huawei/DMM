@@ -274,7 +274,6 @@ extern __thread unsigned int nstack_log_nonreentry;
 /* hanging up version check log need restrain */
 extern int ctrl_log_switch;
 
-
 #define NS_LOGPID(_module,_prestr,_level,fmt, ...) \
 {\
     if (log_shooting(_module, _level) && (0 == nstack_log_nonreentry) && (0 == ctrl_log_switch))\
@@ -299,7 +298,6 @@ extern int ctrl_log_switch;
         nstack_log_nonreentry = 0;\
     }\
 }
-
 
 #define NS_LOG_CTRL_STACKX(_id, dbug,_module,_prestr,_level,fmt, ...) \
 {\
