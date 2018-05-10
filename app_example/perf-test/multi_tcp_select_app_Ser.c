@@ -180,7 +180,6 @@ process_arg (int argc, char *argv[])
   return 1;
 }
 
-
 /*
    using this thread to do recv msg;
 */
@@ -210,62 +209,61 @@ process_server_msg_thread (void *pArgv)
   clock_gettime (CLOCK_MONOTONIC, &recvStart);
   while (1)
     {
-      FD_ZERO(&rfds);
-      FD_SET(msgFd, &rfds);
+      FD_ZERO (&rfds);
+      FD_SET (msgFd, &rfds);
       maxfd = msgFd + 1;
       timeout.tv_sec = 10;
       timeout.tv_usec = 0;
-      ret = select(maxfd, &rfds, NULL, NULL, &timeout);
+      ret = select (maxfd, &rfds, NULL, NULL, &timeout);
 
       if (ret <= 0)
         {
           continue;
         }
 
-      if (FD_ISSET(msgFd, &rfds) == 0)
-      {
+      if (FD_ISSET (msgFd, &rfds) == 0)
+        {
           continue;
-      }
+        }
 
+      recvLen = 0;
+      recvLen2 = 0;
+
+      do
+        {
+          recvLen2 =
+            recv (msgFd, recv_buf + recvLen, msg_length - recvLen, 0);
+          if (recvLen2 <= 0)
+            {
+              break;
+            }
+          else if (recvLen2 == msg_length - recvLen)
+            {
               recvLen = 0;
-              recvLen2 = 0;
-
-              do
+              recv_count++;
+              if (msg_length != send (msgFd, send_buf, msg_length, 0))
                 {
-                  recvLen2 =
-                    recv (msgFd, recv_buf + recvLen, msg_length - recvLen, 0);
-                  if (recvLen2 <= 0)
-                    {
-                      break;
-                    }
-                  else if (recvLen2 == msg_length - recvLen)
-                    {
-                      recvLen = 0;
-                      recv_count++;
-                      if (msg_length != send (msgFd, send_buf, msg_length, 0))
-                        {
-                          printf ("send failed!====, need exit\n");
-                        }
-                    }
-                  else if (recvLen2 < msg_length - recvLen)
-                    {
-                      recvLen += recvLen2;
-                    }
-                  if ((flagPrint != 0) && ((recv_count % unitPrint) == 0))
-                    {
-                      clock_gettime (CLOCK_MONOTONIC, &recvEnd);
-                      recv_ppstime =
-                        (recvEnd.tv_sec - recvStart.tv_sec) * 1000000000 +
-                        recvEnd.tv_nsec - recvStart.tv_nsec;
-                      recv_pps =
-                        ((float) 1000000000 / recv_ppstime) * unitPrint;
-                      printf ("receive count:%d, receive time: %ld ns\n",
-                              recv_count, recv_ppstime);
-                      printf ("receive pps = %d\n", recv_pps);
-                      clock_gettime (CLOCK_MONOTONIC, &recvStart);
-                    }
+                  printf ("send failed!====, need exit\n");
                 }
-              while (1);
+            }
+          else if (recvLen2 < msg_length - recvLen)
+            {
+              recvLen += recvLen2;
+            }
+          if ((flagPrint != 0) && ((recv_count % unitPrint) == 0))
+            {
+              clock_gettime (CLOCK_MONOTONIC, &recvEnd);
+              recv_ppstime =
+                (recvEnd.tv_sec - recvStart.tv_sec) * 1000000000 +
+                recvEnd.tv_nsec - recvStart.tv_nsec;
+              recv_pps = ((float) 1000000000 / recv_ppstime) * unitPrint;
+              printf ("receive count:%d, receive time: %ld ns\n",
+                      recv_count, recv_ppstime);
+              printf ("receive pps = %d\n", recv_pps);
+              clock_gettime (CLOCK_MONOTONIC, &recvStart);
+            }
+        }
+      while (1);
 
       if (recv_count == times)
         {
@@ -323,7 +321,7 @@ process_server_accept_thread (void *pArgv)
       printf ("ERROR:bind failed. fd[%d] errno [%d]\n", listenFd, errno);
       close (listenFd);
       //return NULL;
-      exit(-1);
+      exit (-1);
     }
   else
     {
@@ -339,52 +337,52 @@ process_server_accept_thread (void *pArgv)
     }
   printf ("Listen Success\n");
 
+  int accpedNum = 0;
   while (accpedNum < connectNum)
     {
-      FD_ZERO(&rfds);
-      FD_SET(listenFd, &rfds);
+      FD_ZERO (&rfds);
+      FD_SET (listenFd, &rfds);
       maxfd = listenFd + 1;
       timeout.tv_sec = 10;
       timeout.tv_usec = 0;
-      ret = select(maxfd, &rfds, NULL, NULL, &timeout);
+      ret = select (maxfd, &rfds, NULL, NULL, &timeout);
 
       if (ret <= 0)
         {
           continue;
         }
 
-      if (FD_ISSET(lisendFd, &rfds) == 0)
-      {
+      if (FD_ISSET (listenFd, &rfds) == 0)
+        {
           continue;
-      }
+        }
 
-
-          while (1)
+      while (1)
+        {
+          acpt_socketfd[accpedNum] =
+            accept4 (listenFd, NULL, NULL, SOCK_NONBLOCK);
+          if (acpt_socketfd[accpedNum] < 0)
             {
-              acpt_socketfd[accpedNum] =
-                accept4 (listenFd, NULL, NULL, SOCK_NONBLOCK);
-              if (acpt_socketfd[accpedNum] < 0)
-                {
-                  perror ("select connect error\n");
-                  break;
-                }
-              /*add new accptFd to MsgEpFD */
-              pthread_t ser_rcv_thread_id;
-              if (pthread_create
-                  (&ser_rcv_thread_id, NULL, process_server_msg_thread,
-                   (void *) &acpt_socketfd[accpedNum]) == -1)
-                {
-                  printf ("create process_server_msg_thread fail\n");
-                  break;
-                }
-
-              printf ("accept cnt [%d], cur accept fd [%d]\n", accpedNum,
-                      acpt_socketfd[accpedNum]);
-              accpedNum++;
+              perror ("select connect error\n");
+              break;
             }
+          /*add new accptFd to MsgEpFD */
+          pthread_t ser_rcv_thread_id;
+          if (pthread_create
+              (&ser_rcv_thread_id, NULL, process_server_msg_thread,
+               (void *) &acpt_socketfd[accpedNum]) == -1)
+            {
+              printf ("create process_server_msg_thread fail\n");
+              break;
+            }
+
+          printf ("accept cnt [%d], cur accept fd [%d]\n", accpedNum,
+                  acpt_socketfd[accpedNum]);
+          accpedNum++;
+        }
     }
 
-    close (listenFd);
+  close (listenFd);
 
   while (1)
     {
