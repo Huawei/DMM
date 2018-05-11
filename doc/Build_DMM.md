@@ -44,6 +44,8 @@ Note:
 ```
   Then we can get libnStackAPI.so
 
+  For centos we can use the command 'make pkg-rpm' to generate the rpm package in release/rpm.
+
 # 4. Env Setting:
 
 - Hugepage setting:

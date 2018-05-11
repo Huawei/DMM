@@ -26,6 +26,9 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_PATH})
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_PATH_SHARED})
 SET(DMM_DPDK_INSTALL_DIR "" CACHE STRING "to get the dpdk install path by cmd")
 
+SET(GENERATE_RPM_PATH ${CMAKE_CURRENT_LIST_DIR}/release/rpm)
+file(MAKE_DIRECTORY ${GENERATE_RPM_PATH})
+
 MESSAGE(STATUS "Top dir is: " ${CMAKE_CURRENT_LIST_DIR})
 MESSAGE(STATUS "Static library dir: " ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
 MESSAGE(STATUS "Executable binary dir: " ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -51,7 +54,7 @@ SET(post_compile "${PROJECT_BINARY_DIR}/post_compile.sh")
 FILE(WRITE ${post_compile} "#!/bin/bash\n")
 if(WITH_HAL_LIB)
 else()
-FILE(APPEND ${post_compile} 
+FILE(APPEND ${post_compile}
 "
 
 cp -f ${CMAKE_CURRENT_LIST_DIR}/src/nSocket/include/nstack_dmm_api.h ${CMAKE_CURRENT_LIST_DIR}/release/include/
@@ -74,7 +77,7 @@ endif()
 
 SET(clean_compile "${PROJECT_BINARY_DIR}/clean_compile.sh")
 FILE(WRITE ${clean_compile} "#!/bin/bash\n")
-FILE(APPEND ${clean_compile} 
+FILE(APPEND ${clean_compile}
 "
 
 rm -rf ${CMAKE_CURRENT_LIST_DIR}/release/include/*.h
@@ -87,6 +90,8 @@ echo post clean process success.
 
 ADD_CUSTOM_TARGET(DPDK ALL COMMAND sh post_compile.sh)
 ADD_DEPENDENCIES(DPDK dmm_api)
+
+ADD_CUSTOM_TARGET(pkg-rpm COMMAND sh ../scripts/generate_dmm_rpm.sh)
 
 ADD_CUSTOM_TARGET(clean-all
  COMMAND ${CMAKE_BUILD_TOOL} clean

@@ -34,14 +34,14 @@ INCLUDE_DIRECTORIES(
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -g -fPIC -m64 -mssse3 -std=gnu89")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wshadow -Wfloat-equal -Wformat=2")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstack-protector -fstack-protector-all")
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-z,relro,-z,now -Wl,--disable-new-dtags,--rpath,../lib64")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-z,relro,-z,now -Wl,--disable-new-dtags")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-z,noexecstack -mcmodel=medium")
 
 SET(COMPLE_CONFIG ${PROJECT_SOURCE_DIR}/src/framework/common/include/compile_config.h)
 ADD_DEFINITIONS(-include ${COMM_CONFIG})
 ADD_DEFINITIONS(-include ${COMPLE_CONFIG})
 ADD_DEFINITIONS(-D_GNU_SOURCE -D_FORTIFY_SOURCE=2)
-LINK_DIRECTORIES(${LIB_PATH_SHARED} ${LIB_PATH_STATIC})
+#LINK_DIRECTORIES(${LIB_PATH_SHARED} ${LIB_PATH_STATIC})
 
 if(WITH_SECUREC_LIB)
 LINK_LIBRARIES(pthread dl securec)
