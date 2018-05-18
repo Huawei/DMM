@@ -131,8 +131,8 @@ this is a  multi thread/process enqueue function, please pay attention to the be
 int
 nsfw_nshmem_ring_mp_enqueue (struct nsfw_mem_ring *mem_ring, void *obj_table)
 {
-  uint32_t prod_head, prod_next;
-  uint32_t cons_tail, free_entries;
+  uint32_t producer_head, producer_next;
+  uint32_t consumer_tail, free_entries;
   int success;
   unsigned rep = 0;
   uint32_t mask = mem_ring->mask;
@@ -143,13 +143,13 @@ nsfw_nshmem_ring_mp_enqueue (struct nsfw_mem_ring *mem_ring, void *obj_table)
   do
     {
 
-      prod_head = mem_ring->prod.head;
-      cons_tail = mem_ring->cons.tail;
+      producer_head = mem_ring->prod.head;
+      consumer_tail = mem_ring->cons.tail;
       /* The subtraction is done between two unsigned 32bits value
        * (the result is always modulo 32 bits even if we have
-       * prod_head > cons_tail). So 'free_entries' is always between 0
+       * producer_head > consumer_tail). So 'free_entries' is always between 0
        * and size(ring)-1. */
-      free_entries = (size + cons_tail - prod_head);
+      free_entries = (size + consumer_tail - producer_head);
 
       /* check that we have enough room in ring */
       if (unlikely (n > free_entries))
@@ -168,20 +168,20 @@ nsfw_nshmem_ring_mp_enqueue (struct nsfw_mem_ring *mem_ring, void *obj_table)
           common_mem_pause ();
         }
 
-      prod_next = prod_head + n;
+      producer_next = producer_head + n;
       success =
-        common_mem_atomic32_cmpset (&mem_ring->prod.head, prod_head,
-                                    prod_next);
+        common_mem_atomic32_cmpset (&mem_ring->prod.head, producer_head,
+                                    producer_next);
     }
   while (unlikely (success == 0));
 
-  mem_ring->ring[prod_head & mask].data_l = (u64) obj_table;
+  mem_ring->ring[producer_head & mask].data_l = (u64) obj_table;
 
   /*
    * If there are other enqueues in progress that preceded us,
    * we need to wait for them to complete
    */
-  while (unlikely (mem_ring->prod.tail != prod_head))
+  while (unlikely (mem_ring->prod.tail != producer_head))
     {
       common_mem_pause ();
 
@@ -196,7 +196,7 @@ nsfw_nshmem_ring_mp_enqueue (struct nsfw_mem_ring *mem_ring, void *obj_table)
         }
     }
 
-  mem_ring->prod.tail = prod_next;
+  mem_ring->prod.tail = producer_next;
   return (int) n;
 }
 
@@ -206,19 +206,19 @@ nsfw_nshmem_ring_mp_enqueue (struct nsfw_mem_ring *mem_ring, void *obj_table)
 int
 nsfw_nshmem_ring_sp_enqueue (struct nsfw_mem_ring *r, void *obj_table)
 {
-  uint32_t prod_head, cons_tail;
-  uint32_t prod_next, free_entries;
+  uint32_t producer_head, consumer_tail;
+  uint32_t producer_next, free_entries;
   uint32_t mask = r->mask;
   uint32_t n = 1;
   uint32_t size = r->size;
 
-  prod_head = r->prod.head;
-  cons_tail = r->cons.tail;
+  producer_head = r->prod.head;
+  consumer_tail = r->cons.tail;
   /* The subtraction is done between two unsigned 32bits value
    * (the result is always modulo 32 bits even if we have
-   * prod_head > cons_tail). So 'free_entries' is always between 0
+   * producer_head > consumer_tail). So 'free_entries' is always between 0
    * and size(ring)-1. */
-  free_entries = size + cons_tail - prod_head;
+  free_entries = size + consumer_tail - producer_head;
 
   /* check that we have enough room in ring */
   if (unlikely (n > free_entries))
@@ -228,12 +228,12 @@ nsfw_nshmem_ring_sp_enqueue (struct nsfw_mem_ring *r, void *obj_table)
 
   nsfw_nshmem_enqueue_fork_recov (r);
 
-  prod_next = prod_head + n;
-  r->prod.head = prod_next;
+  producer_next = producer_head + n;
+  r->prod.head = producer_next;
 
-  r->ring[prod_head & mask].data_l = (u64) obj_table;
+  r->ring[producer_head & mask].data_l = (u64) obj_table;
 
-  r->prod.tail = prod_next;
+  r->prod.tail = producer_next;
   return (int) n;
 }
 
@@ -244,8 +244,8 @@ int
 nsfw_nshmem_ring_mc_dequeuev (struct nsfw_mem_ring *r, void **obj_table,
                               unsigned int n)
 {
-  uint32_t cons_head, prod_tail;
-  uint32_t cons_next, entries;
+  uint32_t consumer_head, producer_tail;
+  uint32_t consumer_next, entries;
   int success;
   unsigned rep = 0;
   uint32_t num = n;
@@ -263,13 +263,13 @@ nsfw_nshmem_ring_mc_dequeuev (struct nsfw_mem_ring *r, void **obj_table,
   do
     {
       num = n;
-      cons_head = r->cons.head;
-      prod_tail = r->prod.tail;
+      consumer_head = r->cons.head;
+      producer_tail = r->prod.tail;
       /* The subtraction is done between two unsigned 32bits value
        * (the result is always modulo 32 bits even if we have
        * cons_head > prod_tail). So 'entries' is always between 0
        * and size(ring)-1. */
-      entries = (prod_tail - cons_head);
+      entries = (producer_tail - consumer_head);
 
       /* Set the actual entries for dequeue */
       if (unlikely (num > entries))
@@ -292,20 +292,21 @@ nsfw_nshmem_ring_mc_dequeuev (struct nsfw_mem_ring *r, void **obj_table,
           common_mem_pause ();
         }
 
-      cons_next = cons_head + num;
+      consumer_next = consumer_head + num;
 
       success =
-        common_mem_atomic32_cmpset (&r->cons.head, cons_head, cons_next);
+        common_mem_atomic32_cmpset (&r->cons.head, consumer_head,
+                                    consumer_next);
     }
   while (unlikely (success == 0));
 
-  nsfw_nshmem_ring_obj_copy (r, cons_head, obj_table, num);
+  nsfw_nshmem_ring_obj_copy (r, consumer_head, obj_table, num);
 
   /*
    * If there are other dequeues in progress that preceded us,
    * we need to wait for them to complete
    */
-  while (unlikely (r->cons.tail != cons_head))
+  while (unlikely (r->cons.tail != consumer_head))
     {
       common_mem_pause ();
 
@@ -320,7 +321,7 @@ nsfw_nshmem_ring_mc_dequeuev (struct nsfw_mem_ring *r, void **obj_table,
         }
     }
 
-  r->cons.tail = cons_next;
+  r->cons.tail = consumer_next;
 
   return (int) num;
 }
@@ -341,16 +342,16 @@ int
 nsfw_nshmem_ring_sc_dequeuev (struct nsfw_mem_ring *r, void **obj_table,
                               unsigned int n)
 {
-  uint32_t cons_head, prod_tail;
-  uint32_t cons_next, entries;
+  uint32_t consumer_head, producer_tail;
+  uint32_t consumer_next, entries;
   uint32_t inum = n;
-  cons_head = r->cons.head;
-  prod_tail = r->prod.tail;
+  consumer_head = r->cons.head;
+  producer_tail = r->prod.tail;
   /* The subtraction is done between two unsigned 32bits value
    * (the result is always modulo 32 bits even if we have
    * cons_head > prod_tail). So 'entries' is always between 0
    * and size(ring)-1. */
-  entries = prod_tail - cons_head;
+  entries = producer_tail - consumer_head;
 
   if (unlikely (inum > entries))
     {
@@ -366,12 +367,12 @@ nsfw_nshmem_ring_sc_dequeuev (struct nsfw_mem_ring *r, void **obj_table,
 
   nsfw_nshmem_dequeue_fork_recov (r);
 
-  cons_next = cons_head + inum;
-  r->cons.head = cons_next;
+  consumer_next = consumer_head + inum;
+  r->cons.head = consumer_next;
 
-  nsfw_nshmem_ring_obj_copy (r, cons_head, obj_table, inum);
+  nsfw_nshmem_ring_obj_copy (r, consumer_head, obj_table, inum);
 
-  r->cons.tail = cons_next;
+  r->cons.tail = consumer_next;
   return (int) inum;
 }
 

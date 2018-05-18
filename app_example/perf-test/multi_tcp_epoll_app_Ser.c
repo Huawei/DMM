@@ -495,7 +495,7 @@ process_server_accept_thread (void *pArgv)
       printf ("ERROR:bind failed. fd[%d] errno [%d]\n", listenFd, errno);
       close (listenFd);
       //return NULL;
-      exit(-1);
+      exit (-1);
     }
   else
     {

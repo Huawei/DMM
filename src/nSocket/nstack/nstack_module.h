@@ -38,16 +38,6 @@ extern "C"{
 #define NSTACK_MAX_MODULE_NUM  8
 #define NSTACK_PRO_MODULE      1
 
-#define MOD_INDEX_FOR_KERNEL 0
-#define MOD_NAME_FOR_KERNEL "kernel"
-#define LIB_NAME_FOR_KERNEL "liblinuxkernel.so"
-#define MAX_SOCK_FOR_KERNEL (MAX_SOCKET_NUM-1)
-
-#define MIN_SOCK_FOR_KERNEL 0
-
-#define LIB_NAME_FOR_STACKX "libnstack.so"
-#define MAX_SOCK_FOR_STACKX MAX_SOCKET_NUM
-
 #define MIN_SOCK_FOR_STACKX 0
 
 #define MOD_PRI_FOR_STACKX 1

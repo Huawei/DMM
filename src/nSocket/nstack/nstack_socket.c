@@ -149,7 +149,6 @@ nstack_socket (int domain, int itype, int protocol)
   nstack_rd_key rdkey = { 0 };
   int selectmod = -1;
 
-
   /*check whether module init finish or not */
   NSTACK_INIT_CHECK_RET (socket);
 
@@ -287,7 +286,6 @@ nstack_bind (int fd, const struct sockaddr *addr, socklen_t addrlen)
   int selectmod = -1;
   struct sockaddr_in *iaddr = NULL;
   nstack_rd_key rdkey = { 0 };
-
 
   NSSOC_LOGINF ("(sockfd=%d, addr=%p, addrlen=%u) [Caller]", fd, addr,
                 addrlen);
@@ -1140,7 +1138,7 @@ nstack_send (int fd, const void *buf, size_t len, int flags)
       return -1;
     }
 
-  NSTACK_CAL_FUN(fdInf->ops, send, (fdInf->rlfd, buf, len, flags), size);
+  NSTACK_CAL_FUN (fdInf->ops, send, (fdInf->rlfd, buf, len, flags), size);
 
   NSSOC_LOGDBG ("fd=%d,ret=%d [Return]", fd, size);
 
@@ -1173,7 +1171,7 @@ nstack_recv (int fd, void *buf, size_t len, int flags)
       return -1;
     }
 
-  NSTACK_CAL_FUN(fdInf->ops, recv, (fdInf->rlfd, buf, len, flags), size);
+  NSTACK_CAL_FUN (fdInf->ops, recv, (fdInf->rlfd, buf, len, flags), size);
 
   NSSOC_LOGDBG ("fd=%d,ret=%d [Return]", fd, size);
 
@@ -1205,7 +1203,7 @@ nstack_write (int fd, const void *buf, size_t count)
       return -1;
     }
 
-  NSTACK_CAL_FUN(fdInf->ops, write, (fdInf->rlfd, buf, count), size);
+  NSTACK_CAL_FUN (fdInf->ops, write, (fdInf->rlfd, buf, count), size);
 
   NSSOC_LOGDBG ("fd=%d,ret=%d [Return]", fd, size);
 
@@ -1236,7 +1234,7 @@ nstack_read (int fd, void *buf, size_t count)
       return -1;
     }
 
-  NSTACK_CAL_FUN(fdInf->ops, read, (fdInf->rlfd, buf, count), size);
+  NSTACK_CAL_FUN (fdInf->ops, read, (fdInf->rlfd, buf, count), size);
 
   NSSOC_LOGDBG ("fd=%d,ret=%d [Return]", fd, size);
 
@@ -1268,8 +1266,7 @@ nstack_writev (int fd, const struct iovec * iov, int iovcnt)
       return -1;
     }
 
-
-  NSTACK_CAL_FUN(fdInf->ops, writev, (fdInf->rlfd, iov, iovcnt), size);
+  NSTACK_CAL_FUN (fdInf->ops, writev, (fdInf->rlfd, iov, iovcnt), size);
 
   NSSOC_LOGDBG ("fd=%d,ret=%d [Return]", fd, size);
 
@@ -1301,7 +1298,7 @@ nstack_readv (int fd, const struct iovec * iov, int iovcnt)
       return -1;
     }
 
-  NSTACK_CAL_FUN(fdInf->ops, readv, (fdInf->rlfd, iov, iovcnt), size);
+  NSTACK_CAL_FUN (fdInf->ops, readv, (fdInf->rlfd, iov, iovcnt), size);
 
   NSSOC_LOGDBG ("fd=%d,ret=%d [Return]", fd, size);
 
@@ -1335,7 +1332,9 @@ nstack_sendto (int fd, const void *buf, size_t len, int flags,
 
   if (fdInf->ops)
     {
-      NSTACK_CAL_FUN(fdInf->ops, sendto, (fdInf->rlfd, buf, len, flags, dest_addr, addrlen), size);
+      NSTACK_CAL_FUN (fdInf->ops, sendto,
+                      (fdInf->rlfd, buf, len, flags, dest_addr, addrlen),
+                      size);
 
       NSSOC_LOGDBG
         ("fdInf->ops:fd=%d buf=%p,len=%zu,size=%d,addr=%p [Return]", fd, buf,
@@ -1421,7 +1420,7 @@ nstack_sendmsg (int fd, const struct msghdr * msg, int flags)
   /*if some module select, just connect */
   if (fdInf->ops)
     {
-      NSTACK_CAL_FUN(fdInf->ops, sendmsg, (fdInf->rlfd, msg, flags), size);
+      NSTACK_CAL_FUN (fdInf->ops, sendmsg, (fdInf->rlfd, msg, flags), size);
       NSSOC_LOGDBG ("]fd=%d,size=%d msg=%p [Return]", fd, size, msg);
       UNLOCK_SEND (fd, local_lock);
       return size;
@@ -1510,7 +1509,8 @@ nstack_recvfrom (int fd, void *buf, size_t len, int flags,
       return -1;
     }
 
-  NSTACK_CAL_FUN(fdInf->ops, recvfrom, (fdInf->rlfd, buf, len, flags, src_addr, addrlen), size);
+  NSTACK_CAL_FUN (fdInf->ops, recvfrom,
+                  (fdInf->rlfd, buf, len, flags, src_addr, addrlen), size);
 
   NSSOC_LOGDBG ("fd=%d,retVal=%d [Return]", fd, size);
 
@@ -1542,7 +1542,7 @@ nstack_recvmsg (int fd, struct msghdr * msg, int flags)
       return -1;
     }
 
-  NSTACK_CAL_FUN(fdInf->ops, recvmsg, (fdInf->rlfd, msg, flags), size);
+  NSTACK_CAL_FUN (fdInf->ops, recvmsg, (fdInf->rlfd, msg, flags), size);
 
   NSSOC_LOGDBG ("fd=%d,ret=%d [Return]", fd, size);
 
@@ -2449,7 +2449,6 @@ nstack_epoll_create (int size)
   int tfd = 0;
   nstack_socket_ops *ops;
   int ret = 0;
-
 
   NSTACK_INIT_CHECK_RET (epoll_create);
 
