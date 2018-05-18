@@ -18,6 +18,10 @@ Copy the two json files to release/bin and configure in next step.
 
 <!-- -->
 
+Note:
+
+    If users have run scripts/build.sh, configuration files were generated in /dmm/config/app_test.
+
 # 3.  JSON files configuration.
 
 We need to setup configuration as given below.
@@ -26,23 +30,38 @@ We need to setup configuration as given below.
 
 ```
 {
-    "default_stack_name": "kernel", /*when rd can't be find maybe
-                                    choose the defualt one*/
+    "default_stack_name": "kernel",                /*when rd can't be find maybe choose the defualt one*/
     "module_list": [
     {
-        "stack_name": "kernel",
-        "function_name": "kernel_stack_register",
-        "libname": "", /*library name, if loadtype is static, this maybe
-                         null, else must give a library name*/
-        "loadtype": "static", /*library load type: static or dynamic*/
-        "deploytype": "1",
+        "stack_name": "kernel",                    /*stack name*/
+        "function_name": "kernel_stack_register",  /*function name*/
+        "libname": "./",                           /*library name, if loadtype is static, this maybe
+                                                     null, else must give a library name*/
+        "loadtype": "static",                      /*library load type: static or dynamic*/
+        "deploytype": "1",                         /*deploy model type:model type1, model type2,
+                                                     model type3. Indicating single or multi process
+                                                     deployment. Used during shared memory initialization.*/
+        "maxfd": "1024",                           /*the max fd supported*/
+        "minfd": "0",                              /*the min fd supported*/
+        "priorty": "1",                            /*priorty when executing, reserv*/
+        "stackid": "0",                            /*stack id, this must be ordered and not be repeated*/
+        },
+/***********************************
+    {
+        "stack_name": "stackx",                    /*this is not a real stack, just an example for multiple
+                                                     stack configurations*/
+        "function_name": "stackx_register",
+        "libname": "libstackx.so",
+        "loadtype": "dynmic",
+        "deploytype": "3",
         "maxfd": "1024",
         "minfd": "0",
         "priorty": "1",
-        "stackid": "0", /*must be ordered and not be repeated*/
-        }
+        "stackid": "1",
+        },
     ]
 }
+***********************************/
 ```
 
 # 3.2  rd_config.json for example:
@@ -87,7 +106,7 @@ The use of ks_epoll,ks_select,vs_epoll and vs_select are the same.
 
 Examples:
 
-**With Kernel stack:**
+**With Kernel stack(With direct kernel stack):**
 
 server:
 ```
@@ -98,7 +117,10 @@ client:
     #./kc_common -p 20000 -d 172.16.25.126 -a 10000 -s 172.16.25.125 -l 200 -t 5000000 -i 0 -f 1 -r 20000 -n 1 -w 10 -u 10000 -e 10 -x 1
 ```
 
-**With DMM nStack:**
+**With DMM nStack(Stack is choosed by congfigure file):**
+Note:
+
+   Currently DMM nstack only support kernel mode. please check the config file.
 
 server:
 ```

@@ -22,7 +22,7 @@ DMM_DIR=$1
 if [ "x$1" != "x" ]; then
     DMM_DIR=$1
 else
-    DMM_DIR=`dirname $0`/../
+    DMM_DIR=`dirname $(readlink -f $0)`/../
 fi
 
 echo 0:$0
@@ -30,7 +30,6 @@ echo 1:$1
 echo 2:$2
 echo DMM_DIR: $DMM_DIR
 
-#DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BUILD_DIR=${DMM_DIR}/build
 LIB_PATH=${DMM_DIR}/release/lib64
 
@@ -55,7 +54,6 @@ DPDK_DOWNLOAD_PATH=/tmp/dpdk
 DPDK_INSTALL_PATH=/usr
 
 #set and check the environment for Linux
-#set env
 if [ "$OS_ID" == "ubuntu" ]; then
     export DEBIAN_FRONTEND=noninteractive
     export DEBCONF_NONINTERACTIVE_SEEN=true
@@ -76,7 +74,7 @@ elif [ "$OS_ID" == "opensuse" ]; then
     sudo yum install -y git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump vim sudo yum-utils pcre-devel zlib-devel
 fi
 
-#check env
+#set and check env
 sudo sysctl -w vm.nr_hugepages=1024
 HUGEPAGES=`sysctl -n  vm.nr_hugepages`
 if [ $HUGEPAGES != 1024 ]; then
@@ -86,9 +84,9 @@ fi
 
 #DPDK will be having dependancy on linux headers
 if [ "$OS_ID" == "ubuntu" ]; then
-    apt-get -y install git build-essential linux-headers-`uname -r`
+    sudo apt-get -y install git build-essential linux-headers-`uname -r`
 elif [ "$OS_ID" == "debian" ]; then
-    apt-get -y install git build-essential linux-headers-`uname -r`
+    sudo apt-get -y install git build-essential linux-headers-`uname -r`
 elif [ "$OS_ID" == "centos" ]; then
     sudo yum groupinstall -y "Development Tools"
     sudo yum install -y kernel-headers
@@ -116,7 +114,7 @@ if [ $hugepageSize -ne 0 ]; then
 fi
 
 
-mkdir /mnt/nstackhuge -p
+sudo mkdir /mnt/nstackhuge -p
 sudo mount -t hugetlbfs -o pagesize=2M none /mnt/nstackhuge/
 sudo mkdir -p /var/run/ip_module/
 
@@ -151,10 +149,7 @@ export NSTACK_LOG_ON=DBG
 #===========build DMM=================
 echo "DMM build started....."
 
-#cd $LIB_PATH && rm -rf *
-
 cd $DMM_DIR/thirdparty/glog/glog-0.3.4/ && sudo autoreconf -ivf
-
 cd $BUILD_DIR
 rm -rf *
 cmake ..
@@ -163,8 +158,7 @@ make -j 8
 ############### Preapre APP test directory
 echo -e "\e[41m Preapring APP test directory.....\e[0m"
 
-
-sudo mkdir -p $DMM_DIR/config/app_test
+mkdir -p $DMM_DIR/config/app_test
 cd $DMM_DIR/config/app_test
 
 if [ "$OS_ID" == "ubuntu" ]; then
@@ -194,7 +188,7 @@ echo '{
                 "stackid": "0",
     },
   ]
-}' | sudo tee module_config.json
+}' | tee module_config.json
 
 echo '{
         "ip_route": [
@@ -217,6 +211,6 @@ echo '{
                 "type": "nstack-kernel",
         }
         ],
-}' | sudo tee rd_config.json
+}' | tee rd_config.json
 
 echo "DMM build finished....."
