@@ -18,15 +18,15 @@ LINK_DIRECTORIES(${LIB_PATH_SHARED} ${LIB_PATH_STATIC})
 
 ADD_EXECUTABLE(vc_common multi_tcp_common_app_Cli.c)
 ADD_DEPENDENCIES(vc_common nStackAPI)
-TARGET_LINK_LIBRARIES(vc_common libnStackAPI.so -Wl,-rpath=. -lpthread -lrt)
+TARGET_LINK_LIBRARIES(vc_common libnStackAPI.so -lpthread -lrt)
 
 ADD_EXECUTABLE(vs_epoll multi_tcp_epoll_app_Ser.c)
 ADD_DEPENDENCIES(vs_epoll nStackAPI)
-TARGET_LINK_LIBRARIES(vs_epoll libnStackAPI.so -Wl,-rpath=. -lpthread -lrt)
+TARGET_LINK_LIBRARIES(vs_epoll libnStackAPI.so -lpthread -lrt)
 
 ADD_EXECUTABLE(vs_select multi_tcp_select_app_Ser.c)
 ADD_DEPENDENCIES(vs_select nStackAPI)
-TARGET_LINK_LIBRARIES(vs_select libnStackAPI.so -Wl,-rpath=. -lpthread -lrt)
+TARGET_LINK_LIBRARIES(vs_select libnStackAPI.so -lpthread -lrt)
 
 ADD_EXECUTABLE(kc_common multi_tcp_common_app_Cli.c)
 TARGET_LINK_LIBRARIES(kc_common pthread)

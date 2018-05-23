@@ -154,6 +154,9 @@ cd $BUILD_DIR
 rm -rf *
 cmake ..
 make -j 8
+if [ "$OS_ID" == "centos" ]; then
+    make pkg-rpm
+fi
 
 ############### Preapre APP test directory
 echo -e "\e[41m Preapring APP test directory.....\e[0m"
