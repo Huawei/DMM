@@ -363,7 +363,7 @@ process_server_accept_thread (void *pArgv)
             accept4 (listenFd, NULL, NULL, SOCK_NONBLOCK);
           if (acpt_socketfd[accpedNum] < 0)
             {
-              perror ("select connect error\n");
+              printf ("no more connect\n");
               break;
             }
           /*add new accptFd to MsgEpFD */

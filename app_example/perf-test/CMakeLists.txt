@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #########################################################################
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -g -fPIC -m64 -mssse3 -std=gnu89")
 
 LINK_DIRECTORIES(${LIB_PATH_SHARED} ${LIB_PATH_STATIC})
 
@@ -36,11 +37,3 @@ TARGET_LINK_LIBRARIES(ks_epoll pthread)
 
 ADD_EXECUTABLE(ks_select multi_tcp_select_app_Ser.c)
 TARGET_LINK_LIBRARIES(ks_select pthread)
-
-#ADD_EXECUTABLE(vs_no_epoll multi_tcp_no_epoll_Ser.c)
-#ADD_DEPENDENCIES(vs_no_epoll nStackAPI)
-#TARGET_LINK_LIBRARIES(vs_no_epoll libnStackAPI.so -Wl,-rpath=. -lpthread -lrt)
-
-#ADD_EXECUTABLE(ks_no_epoll multi_tcp_no_epoll_Ser.c)
-#TARGET_LINK_LIBRARIES(ks_no_epoll pthread)
-

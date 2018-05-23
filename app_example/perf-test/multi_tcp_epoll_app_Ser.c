@@ -457,7 +457,7 @@ void *
 process_server_accept_thread (void *pArgv)
 {
   int listenFd = 0;
-  int x, optval, ret, m = 0;
+  int x, optval, ret = 0;
   int acpt_socketfd[1000] = { 0 };
 
   listenFd = socket (PF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -557,7 +557,7 @@ process_server_accept_thread (void *pArgv)
                 accept4 (listenFd, NULL, NULL, SOCK_NONBLOCK);
               if (acpt_socketfd[accpedNum] < 0)
                 {
-                  perror ("epoll connect error\n");
+                  printf ("no more connect\n");
                   break;
                 }
               /*add new accptFd to MsgEpFD */
