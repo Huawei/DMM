@@ -74,13 +74,6 @@ elif [ "$OS_ID" == "opensuse" ]; then
     sudo yum install -y git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump vim sudo yum-utils pcre-devel zlib-devel
 fi
 
-#set and check env
-sudo sysctl -w vm.nr_hugepages=1024
-HUGEPAGES=`sysctl -n  vm.nr_hugepages`
-if [ $HUGEPAGES != 1024 ]; then
-    echo "ERROR: Unable to get 1024 hugepages, only got $HUGEPAGES.  Cannot finish."
-    exit
-fi
 
 #DPDK will be having dependancy on linux headers
 if [ "$OS_ID" == "ubuntu" ]; then
@@ -95,28 +88,6 @@ elif [ "$OS_ID" == "opensuse" ]; then
     sudo yum install -y kernel-headers
 fi
 
-hugepageTotal=$(cat /proc/meminfo | grep -c "HugePages_Total:       0")
-if [ $hugepageTotal -ne 0 ]; then
-  echo "HugePages_Total is zero"
-  exit
-fi
-
-hugepageFree=$(cat /proc/meminfo | grep -c "HugePages_Free:        0")
-if [ $hugepageFree -ne 0 ]; then
-  echo "HugePages_Free is zero"
-  exit
-fi
-
-hugepageSize=$(cat /proc/meminfo | grep -c "Hugepagesize:          0 kB")
-if [ $hugepageSize -ne 0 ]; then
-  echo "Hugepagesize is zero"
-  exit
-fi
-
-
-sudo mkdir /mnt/nstackhuge -p
-sudo mount -t hugetlbfs -o pagesize=2M none /mnt/nstackhuge/
-sudo mkdir -p /var/run/ip_module/
 
 #===========build DPDK================
 
@@ -144,8 +115,6 @@ else
     fi
 fi
 
-export LD_LIBRARY_PATH=$LIB_PATH
-export NSTACK_LOG_ON=DBG
 #===========build DMM=================
 echo "DMM build started....."
 
@@ -157,6 +126,39 @@ make -j 8
 if [ "$OS_ID" == "centos" ]; then
     make pkg-rpm
 fi
+
+#===========check running env =================
+sudo sysctl -w vm.nr_hugepages=1024
+HUGEPAGES=`sysctl -n  vm.nr_hugepages`
+if [ $HUGEPAGES != 1024 ]; then
+    echo "ERROR: Unable to get 1024 hugepages, only got $HUGEPAGES.  Cannot finish."
+    exit
+fi
+hugepageTotal=$(cat /proc/meminfo | grep -c "HugePages_Total:       0")
+if [ $hugepageTotal -ne 0 ]; then
+  echo "HugePages_Total is zero"
+  exit
+fi
+
+hugepageFree=$(cat /proc/meminfo | grep -c "HugePages_Free:        0")
+if [ $hugepageFree -ne 0 ]; then
+  echo "HugePages_Free is zero"
+  exit
+fi
+
+hugepageSize=$(cat /proc/meminfo | grep -c "Hugepagesize:          0 kB")
+if [ $hugepageSize -ne 0 ]; then
+  echo "Hugepagesize is zero"
+  exit
+fi
+
+
+sudo mkdir /mnt/nstackhuge -p
+sudo mount -t hugetlbfs -o pagesize=2M none /mnt/nstackhuge/
+sudo mkdir -p /var/run/ip_module/
+
+export LD_LIBRARY_PATH=$LIB_PATH
+export NSTACK_LOG_ON=DBG
 
 ############### Preapre APP test directory
 echo -e "\e[41m Preapring APP test directory.....\e[0m"

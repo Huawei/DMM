@@ -39,7 +39,11 @@
 #include "glog/nstack_glog_in.h"
 
 #define NSTACK_GETVER_MODULE    "nStack"
-#define NSTACK_GETVER_VERSION   "VPP2.0 V100R002C10B053"
+
+#ifndef NSTACK_GETVER_VERSION
+  #error "need define version first"
+#endif
+
 #define NSTACK_GETVER_BUILDTIME "[" __DATE__ "]" "[" __TIME__ "]"
 #define NSTACK_VERSION          NSTACK_GETVER_VERSION " (" NSTACK_GETVER_MODULE ") " NSTACK_GETVER_BUILDTIME
 
