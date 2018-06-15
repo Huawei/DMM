@@ -25,3 +25,4 @@ ExternalProject_Add(
 		DEPENDS nStackAPI
 )
 
+set_target_properties(NGINX PROPERTIES EXCLUDE_FROM_ALL TRUE)
