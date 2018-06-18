@@ -226,8 +226,8 @@ When the protocol stack(a.k.a stackx) is integrated into DMM, there are some cha
 to be done in DMM. These are as follows:
 
 The first step is adding new protocol stack module information into DMM. This information can be
-pushed to DMM using command line interface and **g\_nstack\_module\_desc**
-will store these configuration information, e.g. registration function name, lib path, etc.
+registed to DMM and **g\_nstack\_module\_desc** will store these configuration information,
+e.g. registration function name, lib path, etc.
 
 
 ```
@@ -418,7 +418,7 @@ Below are the details of hook functions provided by protocol stack.
 
 ###**ep\_ctl**
 ```
-int (*ep_ctl)(int proFD,  int ctl_ops,  struct epoll_event *event,  void *pdata);`
+unsigned int (*ep_ctl) (int epFD, int proFD, int ctl_ops, struct epoll_event * event, void *pdata);
 ```
 
 **Description:**
@@ -442,7 +442,7 @@ value to the protocol stack event notification API when an event occurs.
 **Interface Definition:**
 
 ```
-void (*ep_getevt)(int epFD,  int profd,  unsigned int events);
+unsigned int (*ep_getevt) (int epFD, int profd, unsigned int events);
 ```
 
 **Description:**
@@ -791,7 +791,7 @@ u8 nsfw_recycle_reg_fun (u16 rec_type, nsfw_recycle_fun fun);
 
 typedef nsfw_rcc_stat (*nsfw_recycle_fun) (u32 exit_pid, void *pdata,
                                            u16 rec_type);
-``` 
+```
 This function will be called when APP process exit notification will be send to StackX process.
 ###**4.2.7 nRD**
 
@@ -814,7 +814,7 @@ typedef struct __nstack_rd_stack_info
     int stack_id;
     /*when route info not found, high priority stack was chose, same priority chose fist input one */
     int priority;                 /*0: highest: route info not found choose first */
-} nstack_rd_stack_info; 
+} nstack_rd_stack_info;
 
 /*rd local data*/
 typedef struct __rd_local_data {
@@ -996,11 +996,11 @@ stack itself. The standard socket APIs defined by DMM are as follows:
   int epoll\_ctl(int, int, int, struct epoll\_event \*)                             |        same as corresponding POSIX apis
   int epoll\_wait(int, struct epoll\_event \*, int, int)                            |        same as corresponding POSIX apis
   pid\_t fork(void)                                                                 |        Before/after calling base fork() need to handle other processing like ref\_count etc.
-  
+
   **6. Log & Debug**<br>
 ============================
-nStack uses GLOG framework to provide multi level logs. Supported log levels are debug, info, 
-warning, error and emergency. Logs will be stored at /product/gpaas/log/nStack. To enable log, 
+nStack uses GLOG framework to provide multi level logs. Supported log levels are debug, info,
+warning, error and emergency. Logs will be stored at /product/gpaas/log/nStack. To enable log,
 need to set the environment variables NSTACK\_LOG\_ON
 ```
 export NSTACK_LOG_ON=DBG
@@ -1017,7 +1017,7 @@ struct nstack_logs
 
 struct nstack_logs g_nstack_logs[MAX_LOG_MODULE] = { {0, 0, 0, 0}, {0xFFFF, 0, 0, 0} }; /* Clear compile warning */
 
-Module types: 
+Module types:
 typedef enum _LOG_MODULE
 {
   NSOCKET = 1,
