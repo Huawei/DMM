@@ -14,7 +14,10 @@
 #########################################################################
 #!/bin/bash -x
 
-log_file="/dmm/scripts/build_log.txt-`date +'%Y-%m-%d_%H-%M-%S'`"
+set -x
+
+TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)
+log_file="/dmm/scripts/build_log.txt-$TIMESTAMP"
 exec 1> >(tee -a "$log_file")  2>&1
 
 # Get Command Line arguements if present
@@ -124,22 +127,21 @@ if [ "$OS_ID" == "centos" ]; then
     bash -x $DMM_DIR/scripts/build_dpdk.sh
 else
 
-    if [ ! -d  $DPDK_DOWNLOAD_PATH ]; then
+    if [ ! -d  /usr/include/dpdk ] || [ ! -d  /usr/share/dpdk ] || [ ! -d  /usr/lib/modules/4.4.0-31-generic/extra/dpdk ]; then
 	    mkdir -p $DPDK_DOWNLOAD_PATH
 
+	    DPDK_FOLDER=$DPDK_DOWNLOAD_PATH/dpdk-16.04-$TIMESTAMP
 	    cd $DPDK_DOWNLOAD_PATH
-	    rm -rf dpdk-16.04/
-	    wget https://fast.dpdk.org/rel/dpdk-16.04.tar.xz --no-check-certificate
-	    tar xvf dpdk-16.04.tar.xz
-	    cd dpdk-16.04/
+	    mkdir $DPDK_FOLDER
+	    wget -N https://fast.dpdk.org/rel/dpdk-16.04.tar.xz --no-check-certificate
+	    tar xvf dpdk-16.04.tar.xz -C $DPDK_FOLDER
+	    cd $DPDK_FOLDER/dpdk-16.04
 
 	    sed -i 's!CONFIG_RTE_EXEC_ENV=.*!CONFIG_RTE_EXEC_ENV=y!1' config/common_base
 	    sed -i 's!CONFIG_RTE_BUILD_SHARED_LIB=.*!CONFIG_RTE_BUILD_SHARED_LIB=y!1' config/common_base
 	    sed -i 's!CONFIG_RTE_LIBRTE_EAL=.*!CONFIG_RTE_LIBRTE_EAL=y!1' config/common_base
 
-	    make install  T=x86_64-native-linuxapp-gcc DESTDIR=${DPDK_INSTALL_PATH} -j 4
-	    cd x86_64-native-linuxapp-gcc
-	    make
+	    sudo make install  T=x86_64-native-linuxapp-gcc DESTDIR=${DPDK_INSTALL_PATH} -j 4
 
     fi
 fi
@@ -149,11 +151,20 @@ export NSTACK_LOG_ON=DBG
 #===========build DMM=================
 echo "DMM build started....."
 
-cd $DMM_DIR/thirdparty/glog/glog-0.3.4/ && sudo autoreconf -ivf
+cd $DMM_DIR/thirdparty/glog/glog-0.3.4/ && autoreconf -ivf
 cd $BUILD_DIR
 rm -rf *
 cmake ..
 make -j 8
+
+if [ $? -eq 0 ]
+then
+  echo "DMM build is SUCCESS"
+else
+  echo "DMM build has FAILED"
+  exit 1
+fi
+
 if [ "$OS_ID" == "centos" ]; then
     make pkg-rpm
 fi
