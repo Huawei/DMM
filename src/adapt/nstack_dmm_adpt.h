@@ -29,7 +29,7 @@ typedef enum
   NSTACK_MODEL_TYPE2 = 2,       /*nSocket and stack belong to different processes,
                                  *and nStack don't take care the communication between stack and stack adpt
                                  */
-  NSTACK_MODEL_TYPE3 = 3,       /*nSocket and stack belong to different processes, and sbr was spplied to communicate whit stack */
+  NSTACK_MODEL_TYPE3 = 3,       /*nSocket and stack belong to different processes, and sbr was supplied to communicate whit stack */
   NSTACK_MODEL_INVALID,
 } nstack_model_deploy_type;
 

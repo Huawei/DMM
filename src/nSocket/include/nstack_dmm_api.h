@@ -40,7 +40,7 @@ typedef struct __nstack_socket_ops
 typedef enum
 {
   STACK_FD_INVALID_CHECK,       /*check wether fd is created by this stack */
-  STACK_FD_FUNCALL_CHECK,       /*check this stack surpport default call */
+  STACK_FD_FUNCALL_CHECK,       /*check this stack support default call */
 } nstack_fd_check;
 
 typedef enum
@@ -86,7 +86,7 @@ typedef struct __nstack_proc_cb
   nstack_extern_ops extern_ops; /*other proc callback */
 } nstack_proc_cb;
 
-typedef int (*nstack_stack_registe_fn) (nstack_proc_cb * proc_fun,
+typedef int (*nstack_stack_register_fn) (nstack_proc_cb * proc_fun,
                                         nstack_event_cb * event_ops);
 
 #endif

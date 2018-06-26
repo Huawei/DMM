@@ -25,9 +25,9 @@
 
 typedef struct
 {
-  i8 aname[NSFW_MEM_NAME_LENTH];
+  i8 aname[NSFW_MEM_NAME_LENGTH];
   void *addr;
-  int lenth;
+  int length;
 } nsfw_nshmem_mzone;
 
 typedef struct
@@ -42,7 +42,7 @@ typedef struct
 i32 nsfw_nshmem_init (nsfw_mem_para * para);
 
 /*
- * no share memory moudle destory
+ * no share memory module destory
  */
 void nsfw_nshmem_destory (void);
 
@@ -65,6 +65,6 @@ mring_handle nsfw_nshmem_ringcreate (nsfw_mem_mring * pringinfo);
 
 i32 nsfw_nshmem_ringrelease (nsfw_mem_name * pname);
 
-ssize_t nsfw_nshmem_stactic (void *handle, nsfw_mem_struct_type type);
+ssize_t nsfw_nshmem_static (void *handle, nsfw_mem_struct_type type);
 
 #endif

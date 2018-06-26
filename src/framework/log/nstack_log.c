@@ -321,11 +321,11 @@ int nstack_log_init()
     }
    if (log_level <= NSLOG_WAR)
     {
-    /*MONITR log level must set to larger than warning */
+    /*MONITOR log level must set to larger than warning */
     nstack_setlog_level (MASTER, NSLOG_WAR);
     }
 
-    /* monitr and nstack write the same file, it will cause synchronize problem */
+    /* monitor and nstack write the same file, it will cause synchronize problem */
     switch (g_my_pro_type)
     {
     case LOG_PRO_NSTACK:
@@ -517,13 +517,13 @@ get_app_env_log_path (char *app_file_path, unsigned int app_file_size)
    pst_app_log_path_flag = getenv ("NSTACK_LOG_FILE_FLAG");
    if (pst_app_log_path_flag && strcmp (pst_app_log_path_flag, "1") == 0)
     {
-        /* if set enviroment variable to 1,then output to file*/
+        /* if set environment variable to 1,then output to file*/
         log_to_file = 1;
     }
   else
     {
-        /*  if enviroment variable is not equal 1 or
-         don't set this enviroment variable ,output to STDOUT */
+        /*  if environment variable is not equal 1 or
+         don't set this environment variable ,output to STDOUT */
         return 0;
     }
 
@@ -593,7 +593,7 @@ nstack_log_init_app ()
   int file_flag = 0;
   char app_log_path[FILE_NAME_LEN] = { 0 };
 
-  /* log alread initialized, just return */
+  /* log already initialized, just return */
   if (LOG_PRO_INVALID != g_my_pro_type)
     {
       return;

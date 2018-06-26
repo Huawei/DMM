@@ -71,7 +71,7 @@
        return -1; \
     }
 
-#define NSTACK_DOMAIN_CHEKRET(domainVal, fn, para) { \
+#define NSTACK_DOMAIN_CHECK_RET(domainVal, fn, para) { \
     if ((domainVal != AF_INET)  \
         && (domainVal != PF_INET))  \
     { \
@@ -156,7 +156,7 @@ nstack_socket (int domain, int itype, int protocol)
                 protocol);
 
   /*if domain don't equal AF_INET , just call linux */
-  NSTACK_DOMAIN_CHEKRET (domain, socket, (domain, itype, protocol));
+  NSTACK_DOMAIN_CHECK_RET (domain, socket, (domain, itype, protocol));
 
   nstack_each_modInx (modInx)
   {
@@ -329,7 +329,7 @@ nstack_bind (int fd, const struct sockaddr *addr, socklen_t addrlen)
   if (fdInf->isBound)
     {
       nstack_set_errno (EINVAL);
-      NSPOL_LOGERR ("error, alread bind]fd=%d", fd);
+      NSPOL_LOGERR ("error, already bind]fd=%d", fd);
       UNLOCK_COMMON (fd, local_lock);
       return -1;
     }
@@ -482,7 +482,7 @@ nstack_listen (int fd, int backlog)
     NSTACK_CAL_FUN (nstack_module_ops (modIdx), listen, (tfd, backlog), tem);
     if (ns_success == tem)
       {
-        nstack_set_listen_state (fdInf, modIdx, NSTACK_LISENING);
+        nstack_set_listen_state (fdInf, modIdx, NSTACK_LISTENING);
         NSTACK_SET_FD_LISTEN_SOCKET (fdInf);
         retval = ns_success;
         nstack_set_listen_ret (fdInf, modIdx, NSTACK_LISTEN_SUCCESS);
@@ -492,7 +492,7 @@ nstack_listen (int fd, int backlog)
         NSSOC_LOGWAR ("listen fail]fd=%d,module=%s,tfd=%d", fd,
                       nstack_get_module_name_by_idx (modIdx), tfd);
         nstack_set_listen_ret (fdInf, modIdx, NSTACK_LISTEN_FAIL);
-        nstack_set_listen_state (fdInf, modIdx, NSTACK_NO_LISENING);
+        nstack_set_listen_state (fdInf, modIdx, NSTACK_NO_LISTENING);
       }
   }
 
@@ -539,7 +539,7 @@ nstack_accept (int fd, struct sockaddr *addr, socklen_t * addr_len)
       if ((!addr_len) || (*addr_len == NSTACK_MAX_U32_NUM))
         {
           nstack_set_errno (EINVAL);
-          NSSOC_LOGERR ("addr_len inpurt error [return]");
+          NSSOC_LOGERR ("addr_len input error [return]");
           UNLOCK_ACCEPT (fd, local_lock);
           return -1;
         }
@@ -554,7 +554,7 @@ nstack_accept (int fd, struct sockaddr *addr, socklen_t * addr_len)
     {
       nstack_set_errno (EINVAL);
       NSSOC_LOGERR
-        ("nstack accept fd=%d no mudle select, or bind/listen fail [return]",
+        ("nstack accept fd=%d no module select, or bind/listen fail [return]",
          fd);
       UNLOCK_ACCEPT (fd, local_lock);
       return -1;
@@ -639,7 +639,7 @@ nstack_accept (int fd, struct sockaddr *addr, socklen_t * addr_len)
 
   nstack_set_routed_fd (accInf, accfd);
   accInf->ops = nstack_module_ops (apstfdInf->rmidx);
-  /*donot include SOCK_CLOEXEC SOCK_NONBLOCK */
+  /*do not include SOCK_CLOEXEC SOCK_NONBLOCK */
   accInf->type =
     apstfdInf->type & (~((ns_int32) SOCK_CLOEXEC | (ns_int32) SOCK_NONBLOCK));
   nstack_set_router_protocol (accInf, apstfdInf->rmidx);
@@ -692,7 +692,7 @@ nstack_accept4 (int fd, struct sockaddr *addr,
       if ((!addr_len) || (*addr_len == NSTACK_MAX_U32_NUM))
         {
           nstack_set_errno (EINVAL);
-          NSSOC_LOGERR ("nstack accept4 addr_len inpurt error [return]");
+          NSSOC_LOGERR ("nstack accept4 addr_len input error [return]");
           UNLOCK_ACCEPT (fd, local_lock);
           return -1;
         }
@@ -707,7 +707,7 @@ nstack_accept4 (int fd, struct sockaddr *addr,
     {
       nstack_set_errno (EINVAL);
       NSSOC_LOGERR
-        ("nstack accept4 fd:%d no mudle select, or bind/listen fail [return]",
+        ("nstack accept4 fd:%d no module select, or bind/listen fail [return]",
          fd);
       UNLOCK_ACCEPT (fd, local_lock);
       return -1;
@@ -810,7 +810,7 @@ Parameters    :  fd
                  addr
                  len
 Return        :
-Description   :  use the rd select rlfd or default rlfd to Estblsh connection. the unused fd should closed
+Description   :  use the rd select rlfd or default rlfd to Establish connection. the unused fd should closed
 *****************************************************************/
 int
 nstack_connect (int fd, const struct sockaddr *addr, socklen_t addrlen)
@@ -897,7 +897,7 @@ nstack_connect (int fd, const struct sockaddr *addr, socklen_t addrlen)
           NSSOC_LOGINF ("fd=%d addr=%s Select module=%s",
                         fd, inet_ntoa (iaddr->sin_addr),
                         nstack_get_module_name_by_idx (selectmod));
-          /*in case of that multi-thread connect. if route was chosed by one thread, the other just use the first one */
+          /*in case of that multi-thread connect. if route was chosen by one thread, the other just use the first one */
           fdInf->rmidx = selectmod;
           fdInf->ops = nstack_module_ops (selectmod);
           nstack_set_routed_fd (fdInf, nstack_get_protoFd (fdInf, selectmod));
@@ -1072,7 +1072,7 @@ nstack_close (int fd)
       if (nstack_fix_fd_check ()
           && nstack_fix_fd_check ()(fd, STACK_FD_FUNCALL_CHECK))
         {
-          /*free epoll resouce */
+          /*free epoll resoure */
           nsep_epoll_close (fd);
           nssct_close (fd, nstack_get_fix_mid ());
 
@@ -1605,7 +1605,7 @@ nstack_getsockname (int fd, struct sockaddr *addr, socklen_t * addrlen)
                         nstack_defmod_name (), tfd);
           if (-1 == ret)
             {
-              NSSOC_LOGERR ("return fail]mudle=%d,fd=%d  [return]",
+              NSSOC_LOGERR ("return fail]module=%d,fd=%d  [return]",
                             nstack_defMod_inx (), tfd);
             }
           UNLOCK_COMMON (fd, local_lock);
@@ -1625,7 +1625,7 @@ Parameters    :  fd
                  addr
                  len
 Return        :
-Description   : getpeername only used by the fd who already Estblsh connection, so use first rlfd.
+Description   : getpeername only used by the fd who already Establish connection, so use first rlfd.
 *****************************************************************/
 int
 nstack_getpeername (int fd, struct sockaddr *addr, socklen_t * addrlen)
@@ -1659,7 +1659,7 @@ nstack_getpeername (int fd, struct sockaddr *addr, socklen_t * addrlen)
                     fdInf->rlfd, ret);
       if (-1 == ret)
         {
-          NSSOC_LOGERR ("return fail]mudle=%d,fd=%d [return]", fdInf->rmidx,
+          NSSOC_LOGERR ("return fail]module=%d,fd=%d [return]", fdInf->rmidx,
                         tfd);
         }
       UNLOCK_COMMON (fd, local_lock);
@@ -1677,7 +1677,7 @@ nstack_getpeername (int fd, struct sockaddr *addr, socklen_t * addrlen)
                         nstack_defmod_name (), tfd);
           if (-1 == ret)
             {
-              NSSOC_LOGERR ("return fail] mudle=%d,fd=%d [return]",
+              NSSOC_LOGERR ("return fail] module=%d,fd=%d [return]",
                             nstack_defMod_inx (), tfd);
             }
           UNLOCK_COMMON (fd, local_lock);
@@ -1801,7 +1801,7 @@ nstack_getsockopt (int fd, int level, int optname, void *optval,
          ret);
       if (-1 == ret)
         {
-          NSSOC_LOGERR ("return fail]mudle=%d,fd=%d [return]", fdInf->rmidx,
+          NSSOC_LOGERR ("return fail]module=%d,fd=%d [return]", fdInf->rmidx,
                         tfd);
         }
       UNLOCK_COMMON (fd, local_lock);
@@ -1821,7 +1821,7 @@ nstack_getsockopt (int fd, int level, int optname, void *optval,
              nstack_defmod_name (), tfd, level, optname, ret);
           if (-1 == ret)
             {
-              NSSOC_LOGERR ("return fail]mudle=%d,fd=%d [return]",
+              NSSOC_LOGERR ("return fail]module=%d,fd=%d [return]",
                             nstack_defMod_inx (), tfd);
             }
           UNLOCK_COMMON (fd, local_lock);
@@ -1835,7 +1835,7 @@ nstack_getsockopt (int fd, int level, int optname, void *optval,
   return ret;
 }
 
-/* all rlfd need setsockopt, set opt failed still can Estblsh connection. so we not care suc/fail */
+/* all rlfd need setsockopt, set opt failed still can Establish connection. so we not care suc/fail */
 /* Currently, if setsockopt is successfull either in kernel or stack-x, the below API returns SUCCESS */
 int
 nstack_setsockopt (int fd, int level, int optname, const void *optval,
@@ -1885,7 +1885,7 @@ nstack_setsockopt (int fd, int level, int optname, const void *optval,
          ret);
       if (-1 == ret)
         {
-          NSSOC_LOGERR ("return fail]mudle=%d,fd=%d [return]", fdInf->rmidx,
+          NSSOC_LOGERR ("return fail]module=%d,fd=%d [return]", fdInf->rmidx,
                         itfd);
         }
       UNLOCK_COMMON (fd, local_lock);
@@ -1962,7 +1962,7 @@ nstack_ioctl (int fd, unsigned long request, unsigned long argp)
                     fdInf->rlfd, argp, ret);
       if (-1 == ret)
         {
-          NSSOC_LOGERR ("return fail]mudle=%d,fd=%d [return]", fdInf->rmidx,
+          NSSOC_LOGERR ("return fail]module=%d,fd=%d [return]", fdInf->rmidx,
                         tfd);
         }
 
@@ -2042,7 +2042,7 @@ nstack_fcntl (int fd, int cmd, unsigned long argp)
                     tfd, argp, ret);
       if (-1 == ret)
         {
-          NSSOC_LOGERR ("return fail]mudle=%d,fd=%d", fdInf->rmidx, tfd);
+          NSSOC_LOGERR ("return fail]module=%d,fd=%d", fdInf->rmidx, tfd);
         }
     }
   else
@@ -2091,7 +2091,7 @@ nstack_fcntl (int fd, int cmd, unsigned long argp)
                             argp, ret);
               if (-1 == ret)
                 {
-                  NSSOC_LOGERR ("return fail]mudle=%d,fd=%d",
+                  NSSOC_LOGERR ("return fail]module=%d,fd=%d",
                                 g_nstack_modules.defMod->modInx, tfd);
                 }
             }
@@ -2174,7 +2174,7 @@ nstack_select (int nfds, fd_set * readfds, fd_set * writefds,
       return nsfw_base_select (nfds, readfds, writefds, exceptfds, timeout);
     }
 
-  /*nstack select not support timer function and not check nfds so calling dufault select */
+  /*nstack select not support timer function and not check nfds so calling default select */
   if ((nfds <= 0)
       || ((NULL == readfds) && (NULL == writefds) && (NULL == exceptfds)))
     {
@@ -2198,7 +2198,7 @@ nstack_select (int nfds, fd_set * readfds, fd_set * writefds,
       goto err_return;
     }
 
-  /* fix dead-code type Codedex issue */
+  /* fix dead-code type Codex issue */
   /*split select fd to each modules fd and save to entry */
   (void) select_cb_split_by_mod (nfds, readfds, writefds, exceptfds, entry);
 
@@ -2226,7 +2226,7 @@ nstack_select (int nfds, fd_set * readfds, fd_set * writefds,
         }
     }
 
-  /*cheching if event ready or not */
+  /*checking if event ready or not */
   if (FALSE == select_scan (entry))
     {
       NSSOC_LOGERR ("select scan failed");
@@ -2406,7 +2406,7 @@ nstack_epoll_ctl (int epfd, int op, int fd, struct epoll_event *event)
         }
       else
         {
-          NSSOC_LOGWAR ("fd not registed before");
+          NSSOC_LOGWAR ("fd not registered before");
           errno = ENOENT;
           ret = -1;
         }
@@ -2419,7 +2419,7 @@ nstack_epoll_ctl (int epfd, int op, int fd, struct epoll_event *event)
         }
       else
         {
-          NSSOC_LOGWAR ("fd not registed before");
+          NSSOC_LOGWAR ("fd not registered before");
           errno = ENOENT;
           ret = -1;
         }

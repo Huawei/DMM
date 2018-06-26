@@ -270,7 +270,7 @@ SHA_fin1 (u8 hval[], SHA256_CTX ctx[1], const unsigned int hlen)
 {
   u32 i = (u32) (ctx->count[0] & SHA256_MASK);
 
-  /* Not unusal shift operation. Checked with purify. */
+  /* Not unusual shift operation. Checked with purify. */
 
   /*put bytes in the buffer in an order in which references to */
   /*32-bit words will put bytes with lower addresses into the */

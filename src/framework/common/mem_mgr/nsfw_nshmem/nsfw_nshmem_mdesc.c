@@ -40,7 +40,7 @@ nsfw_mem_ops g_nshmem_ops = {
   nsfw_nshmem_ringcreate,
   NULL,
   nsfw_nshmem_ringrelease,
-  nsfw_nshmem_stactic,
+  nsfw_nshmem_static,
   NULL,
   NULL,                         /*mem_ops_sp_iterator */
   NULL,                         /*mem_ops_mbuf_iterator */

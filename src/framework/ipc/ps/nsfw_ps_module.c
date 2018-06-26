@@ -260,7 +260,7 @@ nsfw_ps_info_alloc (u32 pid, u8 proc_type)
   nsfw_ps_info *pps_info = NULL;
   if (0 == nsfw_mem_ring_dequeue (g_ps_cfg.ps_info_pool, (void *) &pps_info))
     {
-      NSFW_LOGERR ("alloc ps_info falied]pid=%u,type=%u", pid, proc_type);
+      NSFW_LOGERR ("alloc ps_info failed]pid=%u,type=%u", pid, proc_type);
       return NULL;
     }
 
@@ -967,7 +967,7 @@ nsfw_ps_check_dst_init (u8 dst_proc_type)
 
 /*****************************************************************************
 *   Prototype    : nsfw_ps_send_hbt
-*   Description  : seng heart beat message to peer
+*   Description  : send heart beat message to peer
 *   Input        : nsfw_ps_info* pps_info
 *   Output       : None
 *   Return Value : u8
@@ -1475,7 +1475,7 @@ nsfw_ps_chk_timeout (u32 timer_type, void *data)
 
 /*****************************************************************************
 *   Prototype    : nsfw_ps_rechk_pid_exit
-*   Description  : rechck pid exit
+*   Description  : recheck pid exit
 *   Input        : nsfw_ps_proc_fun fun
 *                  void* argv
 *   Output       : None
@@ -1578,9 +1578,9 @@ nsfw_ps_module_init (void *param)
   nsfw_mem_zone pzoneinfo;
   pzoneinfo.isocket_id = NSFW_SOCKET_ANY;
   pzoneinfo.stname.entype = NSFW_SHMEM;
-  pzoneinfo.lenth = sizeof (nsfw_pid_item) * NSFW_MAX_PID;
+  pzoneinfo.length = sizeof (nsfw_pid_item) * NSFW_MAX_PID;
   if (-1 ==
-      SPRINTF_S (pzoneinfo.stname.aname, NSFW_MEM_NAME_LENTH, "%s",
+      SPRINTF_S (pzoneinfo.stname.aname, NSFW_MEM_NAME_LENGTH, "%s",
                  "MAS_PS_INFO"))
     {
       NSFW_LOGERR ("SPRINTF_S failed]");
@@ -1621,7 +1621,7 @@ nsfw_ps_module_init (void *param)
           }
 
         MEM_STAT (NSFW_PS_MODULE, pzoneinfo.stname.aname, NSFW_SHMEM,
-                  pzoneinfo.lenth);
+                  pzoneinfo.length);
         g_ps_info = pid_info;
         break;
       }
@@ -1674,7 +1674,7 @@ nsfw_ps_module_init (void *param)
   pmpinfo.isocket_id = NSFW_SOCKET_ANY;
   pmpinfo.stname.entype = NSFW_NSHMEM;
   if (-1 ==
-      SPRINTF_S (pmpinfo.stname.aname, NSFW_MEM_NAME_LENTH, "%s",
+      SPRINTF_S (pmpinfo.stname.aname, NSFW_MEM_NAME_LENGTH, "%s",
                  "MAS_PS_INFOPOOL"))
     {
       NSFW_LOGERR ("SPRINTF_S failed]");

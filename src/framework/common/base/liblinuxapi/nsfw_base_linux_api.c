@@ -50,7 +50,7 @@ typedef struct __base_linux_api
 #include "base_linux_api_declare.h"
 } base_linux_api;
 
-nsfw_base_state g_nsfw_mudule_state = BASE_STATE_INIT;
+nsfw_base_state g_nsfw_module_state = BASE_STATE_INIT;
 pthread_mutex_t g_nsfw_init_mutex = PTHREAD_MUTEX_INITIALIZER;
 base_linux_api g_nsfw_posix_api = { 0 };
 
@@ -84,30 +84,30 @@ nsfw_posix_api_init ()
   int iret = NSFW_BASE_OK;
 
   /*if init already, just return success, if init fail before, just return err */
-  if (BASE_STATE_INIT != g_nsfw_mudule_state)
+  if (BASE_STATE_INIT != g_nsfw_module_state)
     {
       return (BASE_STATE_SUCCESS ==
-              g_nsfw_mudule_state ? NSFW_BASE_OK : NSFW_BASE_FAIL);
+              g_nsfw_module_state ? NSFW_BASE_OK : NSFW_BASE_FAIL);
     }
 
   (void) pthread_mutex_lock (&g_nsfw_init_mutex);
 
   /*if init already, just return success, if init fail before, just return err */
-  if (BASE_STATE_INIT != g_nsfw_mudule_state)
+  if (BASE_STATE_INIT != g_nsfw_module_state)
     {
       (void) pthread_mutex_unlock (&g_nsfw_init_mutex);
       return (BASE_STATE_SUCCESS ==
-              g_nsfw_mudule_state ? NSFW_BASE_OK : NSFW_BASE_FAIL);
+              g_nsfw_module_state ? NSFW_BASE_OK : NSFW_BASE_FAIL);
     }
 
   iret = nsfw_posix_symbol_load ();
   if (NSFW_BASE_OK == iret)
     {
-      g_nsfw_mudule_state = BASE_STATE_SUCCESS;
+      g_nsfw_module_state = BASE_STATE_SUCCESS;
     }
   else
     {
-      g_nsfw_mudule_state = BASE_STATE_FAIL;
+      g_nsfw_module_state = BASE_STATE_FAIL;
     }
 
   (void) pthread_mutex_unlock (&g_nsfw_init_mutex);

@@ -46,7 +46,7 @@ typedef struct
 #define atomic_add(v, i) atomic_add_and_fetch(v, i)
 #define atomic_sub(v, i) atomic_sub_and_fetch(v,i)
 
-#define cas(ptr, oldValue, exchage) __sync_bool_compare_and_swap(ptr, oldValue, exchage)
+#define cas(ptr, oldValue, exchange) __sync_bool_compare_and_swap(ptr, oldValue, exchange)
 
 #ifdef __cplusplus
 /* *INDENT-OFF* */

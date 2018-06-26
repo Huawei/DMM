@@ -97,7 +97,7 @@ typedef struct __rd_data_proc
   int (*rd_item_age) (nstack_rd_list * hlist);
   int (*rd_item_find) (nstack_rd_list * hlist, void *rdkey, void *outitem);
   int (*rd_item_spec) (void *rdkey);
-  int (*rd_item_defualt) (void *rdkey);
+  int (*rd_item_default) (void *rdkey);
 } rd_data_proc;
 
 extern rd_local_data *g_rd_local_data;

@@ -43,11 +43,11 @@ nstack_create_share_fork_lock ()
   int ret;
 
   param.isocket_id = -1;
-  param.lenth = sizeof (common_mem_spinlock_t);
+  param.length = sizeof (common_mem_spinlock_t);
   param.stname.entype = NSFW_SHMEM;
 
   ret =
-    STRCPY_S (param.stname.aname, NSFW_MEM_NAME_LENTH,
+    STRCPY_S (param.stname.aname, NSFW_MEM_NAME_LENGTH,
               NSTACK_SHARE_FORK_LOCK);
   if (EOK != ret)
     {
@@ -79,7 +79,7 @@ nstack_lookup_share_fork_lock ()
 
   param.entype = NSFW_SHMEM;
   param.enowner = NSFW_PROC_MAIN;
-  if (STRCPY_S (param.aname, NSFW_MEM_NAME_LENTH, NSTACK_SHARE_FORK_LOCK) !=
+  if (STRCPY_S (param.aname, NSFW_MEM_NAME_LENGTH, NSTACK_SHARE_FORK_LOCK) !=
       0)
     {
       NSSOC_LOGERR ("STRCPY_S failed]name=%s", NSTACK_SHARE_FORK_LOCK);
@@ -107,7 +107,7 @@ nstack_lookup_share_global_tick ()
   int ret;
   nsfw_mem_name name = {.entype = NSFW_SHMEM,.enowner = NSFW_PROC_MAIN };
 
-  ret = STRCPY_S (name.aname, NSFW_MEM_NAME_LENTH, NSTACK_GLOBAL_TICK_SHM);
+  ret = STRCPY_S (name.aname, NSFW_MEM_NAME_LENGTH, NSTACK_GLOBAL_TICK_SHM);
   if (EOK != ret)
     {
       NSSOC_LOGERR ("STRCPY_S failed]name=%s,ret=%d", NSTACK_GLOBAL_TICK_SHM,

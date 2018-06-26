@@ -123,14 +123,14 @@ u8 nsfw_mgr_stop ();
 #define LOCK_MGR_FD(_fd){\
     if ((i32)NSFW_MGR_FD_MAX > _fd)\
     {\
-        common_mem_spinlock_lock(&g_mgr_sockt_map.sock[_fd].opr_lock);\
+        common_mem_spinlock_lock(&g_mgr_socket_map.sock[_fd].opr_lock);\
     }\
 }
 
 #define UNLOCK_MGR_FD(_fd){\
     if ((i32)NSFW_MGR_FD_MAX > _fd)\
     {\
-        common_mem_spinlock_unlock(&g_mgr_sockt_map.sock[_fd].opr_lock);\
+        common_mem_spinlock_unlock(&g_mgr_socket_map.sock[_fd].opr_lock);\
     }\
 }
 

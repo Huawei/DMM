@@ -27,8 +27,8 @@ extern "C"{
 /* *INDENT-ON* */
 #endif /* __cplusplus */
 
-COMPAT_PROTECT (NSFW_MOUDLE_INSTANCE_POOL_SIZE, 64);
-COMPAT_PROTECT (NSFW_MOUDLE_DEPENDS_POOL_SIZE, 128);
+COMPAT_PROTECT (NSFW_MODULE_INSTANCE_POOL_SIZE, 64);
+COMPAT_PROTECT (NSFW_MODULE_DEPENDS_POOL_SIZE, 128);
 
 nsfw_module_instance_pool_t g_nsfw_module_inst_pool;
 nsfw_module_depends_pool_t g_nsfw_module_deps_pool;
@@ -40,7 +40,7 @@ nsfw_module_depends_pool_t g_nsfw_module_deps_pool;
 NSTACK_STATIC nsfw_module_instance_t *
 nsfw_module_malloc_instance ()
 {
-  if (g_nsfw_module_inst_pool.last_idx >= NSFW_MOUDLE_INSTANCE_POOL_SIZE)
+  if (g_nsfw_module_inst_pool.last_idx >= NSFW_MODULE_INSTANCE_POOL_SIZE)
     {
       return NULL;
     }
@@ -56,7 +56,7 @@ nsfw_module_malloc_instance ()
 NSTACK_STATIC nsfw_module_depends_t *
 nsfw_module_malloc_depends ()
 {
-  if (g_nsfw_module_deps_pool.last_idx >= NSFW_MOUDLE_DEPENDS_POOL_SIZE)
+  if (g_nsfw_module_deps_pool.last_idx >= NSFW_MODULE_DEPENDS_POOL_SIZE)
     {
       return NULL;
     }

@@ -247,8 +247,8 @@ nstack_framework_printInitialResult ()
 
 /**
  * @Function        nstack_framework_init
- * @Description     This function will do framework initial work, it will involk all initial functions
- *                      registed using macro NSFW_MODULE_INIT before
+ * @Description     This function will do framework initial work, it will invoke all initial functions
+ *                      registered using macro NSFW_MODULE_INIT before
  * @param           none
  * @return          0 on success, -1 on error
  */

@@ -65,7 +65,7 @@ struct nsfw_mem_ring
   u8 ringflag;                  //scmp, scsp, mcsp,mcmp
   u16 reserv;                   //reserv data
   u32 size;                     //size of the Ring, must 2^n
-  u32 eltsize;                  //for sppool, it is the size of per buf, if is ring, eltsize is zero.
+  u32 eltsize;                  //for s-pool, it is the size of per buf, if is ring, eltsize is zero.
   u32 mask;                     //mask of the Ring,  used mask mod Head/Tail to get real pos, must 2^n-1
   void *Addrbase;               /*Cause the Addr we support just 40b(1024G),  we using a basAddr+offset to get the real addr; ring[x].data_s.val just store offset;
                                  * not used when no shared mode
@@ -78,13 +78,13 @@ struct nsfw_mem_ring
 
   struct
   {
-    volatile u32 head;          //Head of the Ring, used to indicat pos where to pull a val
+    volatile u32 head;          //Head of the Ring, used to indicate pos where to pull a val
     volatile u32 tail;          //for nshmem, shmem not used.
   } prod;
   struct
   {
     volatile u32 head;          //for nshmem, shmem not used.
-    volatile u32 tail;          //Tail of the Ring, used to indicat pos where to push a val
+    volatile u32 tail;          //Tail of the Ring, used to indicate pos where to push a val
   } cons;
   u32 uireserv[4];              //reserved for update
   union RingData_U ring[0];     //Value of Ring

@@ -44,7 +44,7 @@ nsfw_rec_fun_info g_rec_lock_fun[NSFW_REC_LOCK_REL_MAX_FUN];
 
 /*****************************************************************************
 *   Prototype    : nsfw_recycle_reg_fun
-*   Description  : reg one recycle type recycle funciton
+*   Description  : reg one recycle type recycle function
 *   Input        : u16 rec_type
 *                  nsfw_recycle_fun fun
 *   Output       : None
@@ -191,7 +191,7 @@ nsfw_recycle_callback_all_obj (u32 pid, nsfw_recycle_pool * rec_pool)
   pps_info = nsfw_ps_info_get (pid);
   if (NULL == pps_info)
     {
-      NSFW_LOGERR ("get ps_info falied!]pid=%d", pid);
+      NSFW_LOGERR ("get ps_info failed!]pid=%d", pid);
       return NSFW_RCC_CONTINUE;
     }
 
@@ -259,7 +259,7 @@ nsfw_recycle_pid_obj (u32 pid)
   pps_info = nsfw_ps_info_get (pid);
   if (NULL == pps_info)
     {
-      NSFW_LOGERR ("get ps_info falied!]pid=%d", pid);
+      NSFW_LOGERR ("get ps_info failed!]pid=%d", pid);
       return FALSE;
     }
 
@@ -313,7 +313,7 @@ nsfw_recycle_all_obj (u32 pid)
       pps_info = nsfw_ps_info_alloc (pid, NSFW_PROC_APP);
       if (NULL == pps_info)
         {
-          NSFW_LOGERR ("alloc ps_info falied!]pid=%u", pid);
+          NSFW_LOGERR ("alloc ps_info failed!]pid=%u", pid);
           return FALSE;
         }
     }
@@ -441,7 +441,7 @@ mem_rec_zone_init ()
   for (i = 0; i < NSFW_REC_PRO_MAX; i++)
     {
       if (-1 ==
-          SPRINTF_S (pringinfo.stname.aname, NSFW_MEM_NAME_LENTH, "%s%d",
+          SPRINTF_S (pringinfo.stname.aname, NSFW_MEM_NAME_LENGTH, "%s%d",
                      MEM_REC_QUEUE_NAME, i))
         {
           NSFW_LOGERR ("SPRINTF_S failed]");
@@ -462,11 +462,11 @@ mem_rec_zone_init ()
   nsfw_mem_zone pzoneinfo;
   pzoneinfo.isocket_id = NSFW_SOCKET_ANY;
   pzoneinfo.stname.entype = NSFW_NSHMEM;
-  pzoneinfo.lenth =
+  pzoneinfo.length =
     MEM_RECYCLE_OBJ_MAX_NUM * sizeof (nsfw_recycle_obj) +
     sizeof (nsfw_recycle_pool);
   if (-1 ==
-      SPRINTF_S (pzoneinfo.stname.aname, NSFW_MEM_NAME_LENTH, "%s",
+      SPRINTF_S (pzoneinfo.stname.aname, NSFW_MEM_NAME_LENGTH, "%s",
                  MEM_REC_POOL_NAME))
     {
       NSFW_LOGERR ("SPRINTF_S failed]");
@@ -481,12 +481,12 @@ mem_rec_zone_init ()
     }
 
   MEM_STAT (NSFW_RECYCLE_MODULE, MEM_REC_POOL_NAME, NSFW_NSHMEM,
-            pzoneinfo.lenth);
+            pzoneinfo.length);
 
   int retval;
   retval =
-    MEMSET_S (g_rec_cfg.mem_rec_obj_pool, pzoneinfo.lenth, 0,
-              pzoneinfo.lenth);
+    MEMSET_S (g_rec_cfg.mem_rec_obj_pool, pzoneinfo.length, 0,
+              pzoneinfo.length);
   if (EOK != retval)
     {
       NSFW_LOGERR ("mem set init failed!");

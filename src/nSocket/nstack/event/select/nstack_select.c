@@ -107,7 +107,7 @@ select_cb_split_by_mod (i32 nfds,
               if (select_get_modindex (i) != inx)
                 continue;
             }
-          NSSOC_LOGDBG ("fd is  valiable i= %d fd = %d index = %d\n", i, fd,
+          NSSOC_LOGDBG ("fd is  available i= %d fd = %d index = %d\n", i, fd,
                         inx);
           if ((readfd) && (FD_ISSET (i, readfd)))
             {
@@ -145,7 +145,7 @@ select_cb_split_by_mod (i32 nfds,
 
 /*****************************************************************************
 *   Prototype    : select_add_cb
-*   Description  : add cb to gloab list
+*   Description  : add cb to global list
 *   Input        : struct select_entry *entry
 *   Output       : None
 *   Return Value : i32
@@ -185,7 +185,7 @@ select_add_cb (struct select_entry * entry)
 
 /*****************************************************************************
 *   Prototype    : select_rm_cb
-*   Description  : rm the cb from gloab list
+*   Description  : rm the cb from global list
 *   Input        : struct select_entry *entry
 *   Output       : None
 *   Return Value : i32
@@ -230,10 +230,10 @@ select_rm_cb (struct select_entry * entry)
   return TRUE;
 }
 
-/*get fd set from entrys*/
+/*get fd set from entry*/
 /*****************************************************************************
 *   Prototype    : select_thread_get_fdset
-*   Description  : get module listening  fd form gloab list
+*   Description  : get module listening  fd form global list
 *   Input        : nstack_fd_set *readfd
 *                  nstack_fd_set *writefd
 *                  nstack_fd_set *exceptfd
@@ -292,7 +292,7 @@ select_thread_get_fdset (nstack_fd_set * readfd,
 
 /*****************************************************************************
 *   Prototype    : select_thread_set_fdset
-*   Description  : set ready event to gloab list
+*   Description  : set ready event to global list
 *   Input        : i32 nfds
 *                  nstack_fd_set *readfd
 *                  nstack_fd_set *writefd
@@ -344,7 +344,7 @@ select_thread_set_fdset (i32 nfds,
 
 /*****************************************************************************
 *   Prototype    : select_event_post
-*   Description  : when event ready post sem to awaik nstack_select
+*   Description  : when event ready post sem to awake nstack_select
 *   Input        : struct select_module_info *module
 *   Output       : None
 *   Return Value : void
@@ -589,7 +589,7 @@ lint_unlock ()
 
 /*****************************************************************************
 *   Prototype    : nstack_select_thread
-*   Description  : if gloab list not null scaning all modules ,need to think
+*   Description  : if global list not null scaning all modules ,need to think
                    about block mod
 *   Input        : void *arg
 *   Output       : None
@@ -690,7 +690,7 @@ nstack_select_thread (void *arg)
 
 /*****************************************************************************
 *   Prototype    : nssct_create
-*   Description  : create a select record for eveny fd
+*   Description  : create a select record for event fd
 *   Input        : i32 cfd
 *                  i32 mfd
 *                  i32 inx

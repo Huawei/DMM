@@ -30,7 +30,7 @@
 #include "nstack_info_parse.h"
 
 /*get string value*/
-#define NSTACK_JSON_PARSE_STRING(obj, name, lent, reslt, index) do { \
+#define NSTACK_JSON_PARSE_STRING(obj, name, lent, result, index) do { \
      struct json_object* temp_obj1 = NULL; \
      (void)json_object_object_get_ex((obj), (name), &temp_obj1);  \
      if (temp_obj1)  \
@@ -41,7 +41,7 @@
             NSSOC_LOGERR("can't get value from %s index:%d", name, (index));  \
             goto RETURN_ERROR; \
         }  \
-        (void)STRNCPY_S((reslt), (lent), temp_value1, (lent));  \
+        (void)STRNCPY_S((result), (lent), temp_value1, (lent));  \
      }  \
      else \
      {  \
@@ -51,7 +51,7 @@
 } while ( 0 );
 
 /*get int value*/
-#define NSTACK_JSON_PARSE_INT(obj, name, lent, reslt, index) do { \
+#define NSTACK_JSON_PARSE_INT(obj, name, lent, result, index) do { \
      struct json_object* temp_obj1 = NULL; \
      (void)json_object_object_get_ex((obj), (name), &temp_obj1);  \
      if (temp_obj1)  \
@@ -62,7 +62,7 @@
             NSSOC_LOGERR("can't get value from %s index:%d", name, (index));  \
             goto RETURN_ERROR; \
         }  \
-        (reslt) = atoi(temp_value1);  \
+        (result) = atoi(temp_value1);  \
      }  \
      else \
      {  \
@@ -128,7 +128,7 @@ nstack_parse_module_cfg_json (char *param)
           NSTACK_JSON_PARSE_STRING (module_obj, "function_name",
                                     MODULE_NAME_MAX,
                                     &(g_nstack_module_desc
-                                      [icnt].registe_fn_name[0]), index);
+                                      [icnt].register_fn_name[0]), index);
           NSTACK_JSON_PARSE_STRING (module_obj, "libname", MODULE_NAME_MAX,
                                     &(g_nstack_module_desc[icnt].libPath[0]),
                                     index);
@@ -168,7 +168,7 @@ nstack_parse_module_cfg_json (char *param)
               g_nstack_module_desc[icnt].default_stack = 1;
             }
           icnt++;
-          g_mudle_num = icnt;
+          g_module_num = icnt;
         }
     }
   ret = NSTACK_RETURN_OK;

@@ -28,8 +28,8 @@
 /*
  *the max len of memory name is 32bytes, but app just can use max 22bytes, left 10bytes to memory manager module
  */
-#define NSFW_MEM_NAME_LENTH     (32)
-#define NSFW_MEM_APPNAME_LENTH  (22)
+#define NSFW_MEM_NAME_LENGTH     (32)
+#define NSFW_MEM_APPNAME_LENGTH  (22)
 
 #define NSFW_SOCKET_ANY     (-1)
 #define NSFW_MEM_OK   (0)
@@ -50,9 +50,9 @@ typedef enum
 /*type of ring operation*/
 typedef enum
 {
-  NSFW_MRING_SPSC,              /*sigle producer sigle consumer ring */
-  NSFW_MRING_MPSC,              /*multi producer sigle consumer ring */
-  NSFW_MRING_SPMC,              /*sigle producer multi consumer ring */
+  NSFW_MRING_SPSC,              /*single producer single consumer ring */
+  NSFW_MRING_MPSC,              /*multi producer single consumer ring */
+  NSFW_MRING_SPMC,              /*single producer multi consumer ring */
   NSFW_MRING_MPMC,              /*multi producer multi consumer ring */
   NSFW_MRING_SPSC_ST,           /*single producer single consumer and belong to one thread ring */
   NSFW_MPOOL_TYPEMAX,
@@ -83,13 +83,13 @@ typedef struct
                                  *              must add '_0' at the end of name, if the memory was created by app and the role of process is NSFW_PROC_MASTER, must add
                                  *              _(pid) at the end of name, nstack_123.
                                  */
-  i8 aname[NSFW_MEM_NAME_LENTH];        /*the lenth of name must be less than NSFW_MEM_APPNAME_LENTH. */
+  i8 aname[NSFW_MEM_NAME_LENGTH];        /*the length of name must be less than NSFW_MEM_APPNAME_LENGTH. */
 } nsfw_mem_name;
 
 typedef struct
 {
   nsfw_mem_name stname;
-  size_t lenth;
+  size_t length;
   i32 isocket_id;
   i32 ireserv;
 } nsfw_mem_zone;
@@ -156,7 +156,7 @@ typedef enum
 typedef struct __nsfw_shmem_msg_head
 {
   unsigned usmsg_type;
-  unsigned uslenth;
+  unsigned uslength;
   i32 aidata[0];
 } nsfw_shmem_msg_head;
 
@@ -171,17 +171,17 @@ typedef struct __nsfw_shmem_ack
 
 typedef struct __nsfw_shmem_reserv_req
 {
-  i8 aname[NSFW_MEM_NAME_LENTH];
+  i8 aname[NSFW_MEM_NAME_LENGTH];
   u16 usseq;
   u16 usreserv;
   i32 isocket_id;
-  size_t lenth;
+  size_t length;
   i32 ireserv;
 } nsfw_shmem_reserv_req;
 
 typedef struct __nsfw_shmem_mbuf_req
 {
-  i8 aname[NSFW_MEM_NAME_LENTH];
+  i8 aname[NSFW_MEM_NAME_LENGTH];
   u16 usseq;
   u16 enmptype;
   unsigned usnum;
@@ -194,7 +194,7 @@ typedef struct __nsfw_shmem_mbuf_req
 
 typedef struct __nsfw_shmem_sppool_req
 {
-  i8 aname[NSFW_MEM_NAME_LENTH];
+  i8 aname[NSFW_MEM_NAME_LENGTH];
   u16 usseq;
   u16 enmptype;
   u32 usnum;
@@ -205,7 +205,7 @@ typedef struct __nsfw_shmem_sppool_req
 
 typedef struct __nsfw_shmem_ring_req
 {
-  i8 aname[NSFW_MEM_NAME_LENTH];
+  i8 aname[NSFW_MEM_NAME_LENGTH];
   u16 usseq;
   u16 enmptype;
   u32 usnum;
@@ -215,7 +215,7 @@ typedef struct __nsfw_shmem_ring_req
 
 typedef struct __nsfw_shmem_free_req
 {
-  i8 aname[NSFW_MEM_NAME_LENTH];
+  i8 aname[NSFW_MEM_NAME_LENGTH];
   u16 usseq;
   u16 ustype;                   /*structure of memory(memzone,mbuf,mpool,ring) */
   i32 ireserv;
@@ -223,7 +223,7 @@ typedef struct __nsfw_shmem_free_req
 
 typedef struct __nsfw_shmem_lookup_req
 {
-  i8 aname[NSFW_MEM_NAME_LENTH];
+  i8 aname[NSFW_MEM_NAME_LENGTH];
   u16 usseq;
   u16 ustype;                   /*structure of memory(memzone,mbuf,mpool,ring) */
   i32 ireserv;
@@ -243,7 +243,7 @@ typedef struct
 
 /*
  * memory module init
- * para:point to nstak_fwmem_para
+ * para:point to nstack_fwmem_para
  */
 i32 nsfw_mem_init (void *para);
 
@@ -251,20 +251,20 @@ i32 nsfw_mem_init (void *para);
  * create a block memory with name
  * nsfw_mem_zone::stname
  * nsfw_mem_zone::isize
- * note: 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+ * note: 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
  */
 mzone_handle nsfw_mem_zone_create (nsfw_mem_zone * pinfo);
 
 /*
  *create some memory blocks
- * note: 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+ * note: 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
  */
 i32 nsfw_mem_zone_createv (nsfw_mem_zone * pmeminfo, i32 inum,
                            mzone_handle * paddr_array, i32 iarray_num);
 
 /*
  *look up a memory
- * note: 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+ * note: 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
  *       2. if the memory is shared, pname->enowner indicate that who create this memory,
  *           note:
  *           1. when calling any shared memory create inferface, the name of memory end with _0 created by nStackMain,
@@ -288,7 +288,7 @@ mpool_handle nsfw_mem_mbfmp_create (nsfw_mem_mbfpool * pbufinfo);
 
 /*
  *create some mbuf pools
- * note: 1. the name of lenth must be less than NSFW_MEM_APPNAME_LENTH.
+ * note: 1. the name of length must be less than NSFW_MEM_APPNAME_LENGTH.
  */
 i32 nsfw_mem_mbfmp_createv (nsfw_mem_mbfpool * pmbfname, i32 inum,
                             mpool_handle * phandle_array, i32 iarray_num);
@@ -305,7 +305,7 @@ i32 nsfw_mem_mbf_free (mbuf_handle mhandle, nsfw_mem_type entype);
 
 /*
  *look up mbuf mpool
- * note: 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+ * note: 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
  *       2. if the memory is shared, pname->enowner indicate that who create this memory.
  *           note:
  *           1. when calling any shared memory create inferface, the name of memory end with _0 created by nStackMain,
@@ -321,39 +321,39 @@ mpool_handle nsfw_mem_mbfmp_lookup (nsfw_mem_name * pmbfname);
 
 /*
  *release mbuf pool
- * note: 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+ * note: 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
  */
 i32 nsfw_mem_mbfmp_release (nsfw_mem_name * pname);
 
 /*
  *create a simple pool
- *note: 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+ *note: 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
  */
 mring_handle nsfw_mem_sp_create (nsfw_mem_sppool * pmpinfo);
 
 /*
  *create some simple pools one time
- *note: 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+ *note: 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
  */
 i32 nsfw_mem_sp_createv (nsfw_mem_sppool * pmpinfo, i32 inum,
                          mring_handle * pringhandle_array, i32 iarray_num);
 
 /*
  *create a simple pool with many rings
- *note: 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+ *note: 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
  */
 i32 nsfw_mem_sp_ring_create (nsfw_mem_mring * prpoolinfo,
                              mring_handle * pringhandle_array, i32 iringnum);
 
 /*
  *release a simple mempool
- *note: 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+ *note: 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
  */
 i32 nsfw_mem_sp_release (nsfw_mem_name * pname);
 
 /*
  *look up a simpile ring
- * note: 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+ * note: 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
  *       2. if the memory is shared, pname->enowner indicate that who create this memory,
  *           note:
  *           1. when calling any shared memory create inferface, the name of memory end with _0 created by nStackMain,
@@ -369,15 +369,15 @@ mring_handle nsfw_mem_sp_lookup (nsfw_mem_name * pname);
 
 /*
  *create a ring
- *note: 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
- *      2. shared memory ring (NSFW_SHMEM) just can put a pointor into the queue, the queue also point to a shared block memory.
+ *note: 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
+ *      2. shared memory ring (NSFW_SHMEM) just can put a pointer into the queue, the queue also point to a shared block memory.
  *         no shared memory ring(NSFW_NSHMEM) is other wise.
  */
 mring_handle nsfw_mem_ring_create (nsfw_mem_mring * pringinfo);
 
 /*
  *look up a ring by name
- * note:1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+ * note:1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
  *       2. if the memory is shared, pname->enowner indicate that who create this memory,
  *           note:
  *           1. when calling any shared memory create inferface, the name of memory end with _0 created by nStackMain,
@@ -402,7 +402,7 @@ extern nsfw_ring_ops g_ring_ops_arry[NSFW_MEM_TYPEMAX][NSFW_MPOOL_TYPEMAX];
 /*****************************************************************************
 *   Prototype    : nsfw_mem_ring_dequeue
 *   Description  : get a member from a ring
-*   note         : if NSFW_SHMEM ring, pdata returned alread a local address
+*   note         : if NSFW_SHMEM ring, pdata returned already a local address
 *   Input        : mring_handle mhandle
 *                  void** pdata
 *   Output       : None
@@ -429,7 +429,7 @@ nsfw_mem_ring_dequeue (mring_handle mhandle, void **pdata)
 /*****************************************************************************
 *   Prototype    : nsfw_mem_ring_dequeuev
 *   Description  : get some members from a ring
-*   note         : if NSFW_SHMEM ring, pdata returned alread a local address
+*   note         : if NSFW_SHMEM ring, pdata returned already a local address
 *   Input        : mring_handle mhandle
 *                  void** pdata
 *                  unsigned inum
@@ -501,14 +501,14 @@ u32 nsfw_mem_ring_size (mring_handle mhandle);
 
 /*
  *release a ring memory
- *note: the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+ *note: the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
  */
 i32 nsfw_mem_ring_release (nsfw_mem_name * pname);
 
 /*
  *statics mbufpool, sppool, ring mem size
  *return: <=0, err happen, >0 mem size
- * NSFW_MEM_MZONE: not surport because you already know the lenth when create
+ * NSFW_MEM_MZONE: not surport because you already know the length when create
  */
 ssize_t nsfw_mem_get_len (void *handle, nsfw_mem_struct_type type);
 
@@ -530,14 +530,14 @@ i32 nsfw_mem_mbuf_iterator (mpool_handle handle, u32 start, u32 end,
 *   Description  : print ring info
 *   Input        : mring_handle mhandle
 *                  char *pbuf
-*                  int lenth
+*                  int length
 *   Output       : None
 *   Return Value : i32
 *   Calls        :
 *   Called By    :
 *
 *****************************************************************************/
-i32 nsfw_mem_dfx_ring_print (mring_handle mhandle, char *pbuf, int lenth);
+i32 nsfw_mem_dfx_ring_print (mring_handle mhandle, char *pbuf, int length);
 
 #ifdef SYS_MEM_RES_STAT
 u32 nsfw_mem_mbfpool_free_count (mpool_handle mhandle);

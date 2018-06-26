@@ -36,7 +36,7 @@ typedef int (*nstack_get_route_data) (rd_route_data ** data, int *num);
 
 /*
  *rd init
- *defualtid: if all module check fail, just return defualt id
+ *default id: if all module check fail, just return default id
  *return : 0 success, -1 fail
  */
 int nstack_rd_init (nstack_stack_info * pstack, int num,

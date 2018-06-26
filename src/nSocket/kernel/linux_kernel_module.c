@@ -43,7 +43,7 @@ kernel_stack_info_t g_ksInfo = {.thread_inited = ks_false,.epfd =
 only read is done simultaneously with no chance of other thread writing it.
 so no protection needed.*/
 /* Custodial pointer not freed for events at end of this function */
-/* This can be ignored as this is a thread and reuns in infinite loop. Hence will never return */
+/* This can be ignored as this is a thread and runs in infinite loop. Hence will never return */
 void *
 ks_ep_thread (void *arg)
 {

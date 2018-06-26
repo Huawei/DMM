@@ -195,7 +195,7 @@ nstack_adpt_init (nstack_dmm_para * para)
         }
 
         /**
-        * the share memory for epoll is created and usedy be app, don't clear
+        * the share memory for epoll is created and used by app, don't clear
         * it in fault case.
         */
       if (0 != nsep_adpt_attach_memory ())

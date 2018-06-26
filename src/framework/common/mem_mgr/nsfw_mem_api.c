@@ -34,7 +34,7 @@
 /*****************************************************************************
 *   Prototype    : nsfw_mem_init
 *   Description  : memory mgr module init
-*   Input        : point to nstak_fwmem_para
+*   Input        : point to nstack_fwmem_para
 *   Output       : None
 *   Return Value : i32
 *   Calls        :
@@ -88,7 +88,7 @@ nsfw_mem_init (void *para)
         }
     }
 
-  /*if some module init fail, destory the moudles that success */
+  /*if some module init fail, destory the modules that success */
   if (icount < g_mem_type_num)
     {
       for (iindex = 0; iindex < icount; iindex++)
@@ -111,7 +111,7 @@ nsfw_mem_init (void *para)
 *   Description  : create a block memory with name
 *                  nsfw_mem_zone::stname
 *                  nsfw_mem_zone::isize
-*   note         : 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+*   note         : 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
 *   Input        : nsfw_mem_zone* pinfo
 *   Output       : None
 *   Return Value : mzone_handle
@@ -130,16 +130,16 @@ nsfw_mem_zone_create (nsfw_mem_zone * pinfo)
       return NULL;
     }
 
-  MEM_OP_CALL_OK_RET (pinfo->stname.entype, mem_ops_zone_creae, (pinfo));
+  MEM_OP_CALL_OK_RET (pinfo->stname.entype, mem_ops_zone_create, (pinfo));
   NSCOMM_LOGINF ("mem create fail] memtype=%d, name=%s, size=%zu",
-                 pinfo->stname.entype, pinfo->stname.aname, pinfo->lenth);
+                 pinfo->stname.entype, pinfo->stname.aname, pinfo->length);
   return NULL;
 }
 
 /*****************************************************************************
 *   Prototype    : nsfw_mem_zone_createv
 *   Description  : create some memory blocks
-*   note         : 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+*   note         : 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
 *   Input        : nsfw_mem_zone* pmeminfo
 *                  i32 inum
 *                  mzone_handle* paddr_array
@@ -174,7 +174,7 @@ nsfw_mem_zone_createv (nsfw_mem_zone * pmeminfo, i32 inum,
 /*****************************************************************************
 *   Prototype    : nsfw_mem_zone_lookup
 *   Description  : look up a memory
-*                  1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+*                  1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
 *                  2. if the memory is shared, pname->enowner indicate that who create this memory.
 *   note         : 1. when calling any shared memory create inferface, the name of memory end with _0 created by nStackMain,
 *                     end with none created by nStackMaster, and end with _<pid> created by other.
@@ -252,7 +252,7 @@ nsfw_mem_mbfmp_create (nsfw_mem_mbfpool * pbufinfo)
 /*****************************************************************************
 *   Prototype    : nsfw_mem_mbfmp_createv
 *   Description  : create some mbuf pools
-*                  1. the name of lenth must be less than NSFW_MEM_APPNAME_LENTH.
+*                  1. the name of length must be less than NSFW_MEM_APPNAME_LENGTH.
 *   Input        : nsfw_mem_mbfpool* pmbfname
 *                  i32 inum
 *                  mpool_handle* phandle_array
@@ -328,7 +328,7 @@ nsfw_mem_mbf_free (mbuf_handle mhandle, nsfw_mem_type entype)
 /*****************************************************************************
 *   Prototype    : nsfw_mem_mbfmp_lookup
 *   Description  : look up mbuf mpool
-*                  1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+*                  1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
 *                  2. if the memory is shared, pname->enowner indicate that who create this memory.
 *   note         : 1. when calling any shared memory create inferface, the name of memory end with _0 created by nStackMain,
 *                     end with none created by nStackMaster, and end with _<pid> created by other.
@@ -358,7 +358,7 @@ nsfw_mem_mbfmp_lookup (nsfw_mem_name * pmbfname)
 /*****************************************************************************
 *   Prototype    : nsfw_mem_mbfmp_release
 *   Description  : release mbuf pool
-*   note         : 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+*   note         : 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
 *   Input        : nsfw_mem_name* pname
 *   Output       : None
 *   Return Value : i32
@@ -379,7 +379,7 @@ nsfw_mem_mbfmp_release (nsfw_mem_name * pname)
 /*****************************************************************************
 *   Prototype    : nsfw_mem_sp_create
 *   Description  : create a simple pool
-*   note         : 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+*   note         : 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
 *   Input        : nsfw_mem_sppool* pmpinfo
 *   Output       : None
 *   Return Value : mring_handle
@@ -407,7 +407,7 @@ nsfw_mem_sp_create (nsfw_mem_sppool * pmpinfo)
 /*****************************************************************************
 *   Prototype    : nsfw_mem_sp_createv
 *   Description  : create some simple pools one time
-*   note         : 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+*   note         : 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
 *   Input        : nsfw_mem_sppool* pmpinfo
 *                  i32 inum
 *                  mring_handle* pringhandle_array
@@ -433,7 +433,7 @@ nsfw_mem_sp_createv (nsfw_mem_sppool * pmpinfo, i32 inum,
 /*****************************************************************************
 *   Prototype    : nsfw_mem_sp_ring_create
 *   Description  : create a simple pool with many rings
-*   note         : 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+*   note         : 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
 *   Input        : nsfw_mem_mring* pringinfo
 *                  mring_handle* pringhandle_array
 *                  i32 iringnum
@@ -459,7 +459,7 @@ nsfw_mem_sp_ring_create (nsfw_mem_mring * pringinfo,
 /*****************************************************************************
 *   Prototype    : nsfw_mem_sp_release
 *   Description  : release a simple mempool
-*   note         : 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+*   note         : 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
 *   Input        : nsfw_mem_name* pname
 *   Output       : None
 *   Return Value : i32
@@ -479,7 +479,7 @@ nsfw_mem_sp_release (nsfw_mem_name * pname)
 /*****************************************************************************
 *   Prototype    : nsfw_mem_sp_lookup
 *   Description  : look up a simpile ring
-*                  1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+*                  1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
 *                  2. if the memory is shared, pname->enowner indicate that who create this memory.
 *   note         : 1. when calling any shared memory create inferface, the name of memory end with _0 created by nStackMain,
 *                     end with none created by nStackMaster, and end with _<pid> created by other.
@@ -510,8 +510,8 @@ nsfw_mem_sp_lookup (nsfw_mem_name * pname)
 /*****************************************************************************
 *   Prototype    : nsfw_mem_ring_create
 *   Description  : create a ring
-*   note         : 1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
-*                  2. shared memory ring (NSFW_SHMEM) just can put a pointor into the queue, the queue also point to a shared block memory.
+*   note         : 1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
+*                  2. shared memory ring (NSFW_SHMEM) just can put a pointer into the queue, the queue also point to a shared block memory.
 *                     no shared memory ring(NSFW_NSHMEM) is other wise.
 *   Input        : nsfw_mem_mring* pringinfo
 *   Output       : None
@@ -541,7 +541,7 @@ nsfw_mem_ring_create (nsfw_mem_mring * pringinfo)
 /*****************************************************************************
 *   Prototype    : nsfw_mem_ring_lookup
 *   Description  : look up a ring by name
-*       1. the lenth of name must be less than NSFW_MEM_APPNAME_LENTH.
+*       1. the length of name must be less than NSFW_MEM_APPNAME_LENGTH.
 *       2. if the memory is shared, pname->enowner indicate that who create this memory.
 *           note:
 *           1. when calling any shared memory create inferface, the name of memory end with _0 created by nStackMain,
@@ -730,7 +730,7 @@ nsfw_mem_mbfpool_free_count (mpool_handle mhandle)
 /*****************************************************************************
 *   Prototype    : nsfw_mem_ring_release
 *   Description  : release a ring memory
-*   notes        : the lenth of name must be less than NSFW_MEM_APPNAME_LENTH
+*   notes        : the length of name must be less than NSFW_MEM_APPNAME_LENGTH
 *   Input        : nsfw_mem_name* pname
 *   Output       : None
 *   Return Value : i32
@@ -752,7 +752,7 @@ nsfw_mem_ring_release (nsfw_mem_name * pname)
 *   Prototype    : nsfw_mem_get_len
 *   Description  : statics mbufpool, sppool, ring mem size.
 *                  return: <=0, err happen, >0 mem size
-*                  NSFW_MEM_MZONE: not surport because you already know the lenth when create
+*                  NSFW_MEM_MZONE: not surport because you already know the length when create
 *   Input        : void * handle
 *                  nsfw_mem_struct_type type
 *   Output       : None
@@ -853,25 +853,25 @@ nsfw_mem_mbuf_iterator (mpool_handle handle, u32 start, u32 end,
 *   Description  : print ring info
 *   Input        : mring_handle mhandle
 *   Output       : None
-*   Return Value : if no err happen, return the lenth of string print, 0 or -1 maybe err happen
+*   Return Value : if no err happen, return the length of string print, 0 or -1 maybe err happen
 *   Calls        :
 *   Called By    :
 *****************************************************************************/
 i32
-nsfw_mem_dfx_ring_print (mring_handle mhandle, char *pbuf, int lenth)
+nsfw_mem_dfx_ring_print (mring_handle mhandle, char *pbuf, int length)
 {
   struct nsfw_mem_ring *temp = (struct nsfw_mem_ring *) mhandle;
   u32 head = 0;
   u32 tail = 0;
   int ret = 0;
-  if ((!temp) || (!pbuf) || (lenth <= 0))
+  if ((!temp) || (!pbuf) || (length <= 0))
     {
       return 0;
     }
   head = temp->prod.head;
   tail = temp->cons.tail;
   ret =
-    SPRINTF_S (pbuf, lenth,
+    SPRINTF_S (pbuf, length,
                "[.Head=%u,\n .Tail=%u,\n .(|Tail-Head|)=%u,\n .size=%u,\n .mask=%u]\n",
                head, tail, (tail >= head) ? (tail - head) : (head - tail),
                temp->size, temp->mask);

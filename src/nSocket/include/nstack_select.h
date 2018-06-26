@@ -99,7 +99,7 @@ struct select_cb_p
 struct select_entry_info
 {
   i32 set_num;                  //how many select_c_p is set
-  i32 index;                    //the frist cb was set
+  i32 index;                    //the first cb was set
 };
 
 struct select_entry

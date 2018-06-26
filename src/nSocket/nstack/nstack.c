@@ -76,7 +76,7 @@ nstack_timeval2msec (struct timeval *pTime, u64_t * msec)
 {
   if (pTime->tv_sec < 0 || pTime->tv_usec < 0)
     {
-      NSSOC_LOGERR ("time->tv_sec is nagative");
+      NSSOC_LOGERR ("time->tv_sec is negative");
       return -1;
     }
 

@@ -30,10 +30,10 @@
 #define NSFW_NAME_LENCHECK_RET(name, desc) \
     { \
         i32 inamelen = strlen(name); \
-        if (inamelen >= NSFW_MEM_APPNAME_LENTH) \
+        if (inamelen >= NSFW_MEM_APPNAME_LENGTH) \
         { \
             NSCOMM_LOGERR("name length check fail] desc=%s, name len=%d, expected max=%d", \
-                         #desc, inamelen, NSFW_MEM_APPNAME_LENTH); \
+                         #desc, inamelen, NSFW_MEM_APPNAME_LENGTH); \
             return NSFW_MEM_ERR; \
         } \
     }
@@ -41,10 +41,10 @@
 #define NSFW_NAME_LENCHECK_RET_NULL(name, desc) \
     { \
         i32 inamelen = strlen(name); \
-        if (inamelen >= NSFW_MEM_APPNAME_LENTH) \
+        if (inamelen >= NSFW_MEM_APPNAME_LENGTH) \
         { \
             NSCOMM_LOGERR("name length check fail] desc=%s, name len=%d, expected max=%d", \
-                         #desc, inamelen, NSFW_MEM_APPNAME_LENTH); \
+                         #desc, inamelen, NSFW_MEM_APPNAME_LENGTH); \
             return NULL; \
         } \
     }
@@ -123,7 +123,7 @@ typedef struct
 {
   i32 (*mem_ops_init) (nsfw_mem_para * para);
   void (*mem_ops_destroy) (void);
-    mzone_handle (*mem_ops_zone_creae) (nsfw_mem_zone * pinfo);
+    mzone_handle (*mem_ops_zone_create) (nsfw_mem_zone * pinfo);
     i32 (*mem_ops_zone_createv) (nsfw_mem_zone * pmeminfo, i32 inum,
                                  mzone_handle * paddr_array, i32 iarray_num);
     mzone_handle (*mem_ops_zone_lookup) (nsfw_mem_name * pname);

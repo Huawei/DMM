@@ -124,7 +124,7 @@ nsep_epctl_triggle (struct epitem *epi, nsep_epollInfo_t * info,
   /* Now need to triggle userspace network stack events after add operation */
   if (info->rmidx >= 0)
     {
-      /* fix overflow type codedex issue */
+      /* fix overflow type codex issue */
       if ((info->rmidx >= NSEP_SMOD_MAX)
           || (info->rmidx >= NSTACK_MAX_MODULE_NUM))
         {
@@ -516,7 +516,7 @@ nsep_remove_epfd (nsep_epollInfo_t * pinfo)
   struct free_list *fcurr = &flist;
 #else
   struct list_node **node_arry = NULL;
-  int lenth = NSTACK_MAX_EPOLL_INFO_NUM * sizeof (struct list_node *);
+  int length = NSTACK_MAX_EPOLL_INFO_NUM * sizeof (struct list_node *);
 #endif
   struct epitem *epi = NULL;
   struct epitem *tepi = NULL;
@@ -532,7 +532,7 @@ nsep_remove_epfd (nsep_epollInfo_t * pinfo)
 #ifdef FREE_LIST_SIZE
   flist.next = 0;
 #else
-  node_arry = (struct list_node **) malloc (lenth);
+  node_arry = (struct list_node **) malloc (length);
   if (!node_arry)
     {
       NSSOC_LOGERR ("remove fd from ep malloc mem fail]fd=%d,ep=%p",
@@ -540,7 +540,7 @@ nsep_remove_epfd (nsep_epollInfo_t * pinfo)
       return;
     }
 
-  int retVal = MEMSET_S (node_arry, lenth, 0, lenth);
+  int retVal = MEMSET_S (node_arry, length, 0, length);
   if (EOK != retVal)
     {
       NSSOC_LOGERR ("MEMSET_S failed]retVal=%d", retVal);
@@ -1056,7 +1056,7 @@ nsep_attach_infoMem ()
   hdl = nsep_ring_lookup (MP_NSTACK_EPINFO_RING_NAME);
   if (NULL == hdl)
     {
-      NSSOC_LOGERR ("Fail to loock up epoll info ring]name=%s",
+      NSSOC_LOGERR ("Fail to lock up epoll info ring]name=%s",
                     MP_NSTACK_EPINFO_RING_NAME);
       return -1;
     }
@@ -1079,7 +1079,7 @@ nsep_attach_epItemMem ()
   hdl = nsep_ring_lookup (MP_NSTACK_EPITEM_RING_NAME);
   if (NULL == hdl)
     {
-      NSSOC_LOGERR ("Fail to loock up epoll info ring]name=%s",
+      NSSOC_LOGERR ("Fail to lock up epoll info ring]name=%s",
                     MP_NSTACK_EPITEM_RING_NAME);
       return -1;
     }
@@ -1102,7 +1102,7 @@ nsep_attach_eventpollMem ()
   hdl = nsep_ring_lookup (MP_NSTACK_EVENTPOOL_RING_NAME);
   if (NULL == hdl)
     {
-      NSSOC_LOGERR ("Fail to loock up epoll info ring]name=%s",
+      NSSOC_LOGERR ("Fail to lock up epoll info ring]name=%s",
                     MP_NSTACK_EVENTPOOL_RING_NAME);
       return -1;
     }

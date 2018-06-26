@@ -75,7 +75,7 @@ nsfw_ss_getMemDescFromType (u16 objType, nsfw_ss_objDesc_t * objDesc)
  * @Function    nsfw_ss_store
  * @Description store object to memory
  * @param (in)  objType - type of object with member description
- * @param (in)  obj - adderss of object memory
+ * @param (in)  obj - address of object memory
  * @param (in)  storeMem - address of memory to store object data
  * @param (in)  storeMemLen - maximal length of storage memory
  * @return positive integer means length of memory cost on success. return -1 if error
@@ -228,7 +228,7 @@ nsfw_ss_storeObjMem (u16 objMemType, void *obj, void *storeMem,
  * @Function    nsfw_ss_store
  * @Description store object to memory
  * @param (in)  objType - type of object
- * @param (in)  obj - adderss of object memory
+ * @param (in)  obj - address of object memory
  * @param (in)  storeMem - address of memory to store object data
  * @param (in)  storeMemLen - maximal length of storage memory
  * @return positive integer means length of memory cost on success. return -1 if error
@@ -246,8 +246,8 @@ nsfw_ss_store (u16 objType, void *obj, void *storeMem, u32 storeMemLen)
  * @param (in)      objType - type of object
  * @param (in)      objMem - object memory to restore
  * @param (in)      mem - memory of storage
- * @param (in)      storeMemLength - maximal length of storage memroy
- * @return          0 on succss , -1 on error
+ * @param (in)      storeMemLength - maximal length of storage memory
+ * @return          0 on success , -1 on error
  */
 NSTACK_STATIC int
 nsfw_ss_restoreObjArray (int objType, void *objMem, void *mem,

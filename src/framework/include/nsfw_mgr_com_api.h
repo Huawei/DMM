@@ -46,7 +46,7 @@ typedef enum _mgr_msg_type
   MGR_MSG_MEM_ALLOC_REQ = 64,   /* memory msg type */
 
   /*############################################# */
-  MGR_MSG_DFX_QRY_REQ = 96,     /* nStackCtrl maitain msg */
+  MGR_MSG_DFX_QRY_REQ = 96,     /* nStackCtrl maintain msg */
   MGR_MSG_SET_LOG_REQ,
 
   /*############################################# */
@@ -59,7 +59,7 @@ typedef enum _mgr_msg_type
   /*###query message with large rsp message begin## */
   MGR_MSG_LARGE_QRY_REQ_BEGIN = 384,
   MGR_MSG_LARGE_STA_QRY_REQ = MGR_MSG_LARGE_QRY_REQ_BEGIN,
-  MGR_MSG_LARGE_MT_QRY_REQ,     /* nStackCtrl maitain msg */
+  MGR_MSG_LARGE_MT_QRY_REQ,     /* nStackCtrl maintain msg */
 
   /*############################################# */
   MGR_MSG_LARGE_ALARM_REQ = 500,        /* alarm msg type */
@@ -112,7 +112,7 @@ typedef enum _fw_poc_type
 
 typedef enum _nsfw_mgr_msg_rsp_code
 {
-  NSFW_MGR_SUCESS,
+  NSFW_MGR_SUCCESS,
   NSFW_MGR_MSG_TYPE_ERROR,
 } mgr_msg_rsp_code;
 

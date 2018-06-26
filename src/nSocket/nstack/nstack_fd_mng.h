@@ -70,8 +70,8 @@ typedef enum __nstack_fd_Stat
 #define NSTACK_LISTEN_SUCCESS 0
 #define NSTACK_LISTEN_FAIL  1
 #define NSTACK_BIND_FAIL   1
-#define NSTACK_LISENING    1
-#define NSTACK_NO_LISENING 0
+#define NSTACK_LISTENING    1
+#define NSTACK_NO_LISTENING 0
 
 #define NSTACK_FD_INIT    (0)
 #define NSTACK_FD_OPEN    (1)
@@ -88,7 +88,7 @@ typedef struct
   ns_int32 errCode;
   union
   {
-    struct reslt
+    struct result
     {
       ns_int32 brslt:8;
       ns_int32 lrslt:8;
@@ -99,13 +99,13 @@ typedef struct
   ns_int32 liststate;
 } __attribute__ ((__packed__)) nstack_protoFD_t;
 
-#define NSTACK_FD_ATTR_NONBLOKING 0x00000001
+#define NSTACK_FD_ATTR_NONBLOCKING 0x00000001
 #define NSTACK_FD_ATTR_EPOLL_SOCKET 0x00000002
 #define NSTACK_FD_ATTR_LISTEN_SOCKET 0x00000004
 
-#define NSTACK_IS_FD_NONBLOKING(inf) ((inf)->attr & NSTACK_FD_ATTR_NONBLOKING)
-#define NSTACK_SET_FD_NONBLOKING(inf) ((inf)->attr |= NSTACK_FD_ATTR_NONBLOKING)
-#define NSTACK_SET_FD_BLOKING(inf) ((inf)->attr &= (~NSTACK_FD_ATTR_NONBLOKING))
+#define NSTACK_IS_FD_NONBLOCKING(inf) ((inf)->attr & NSTACK_FD_ATTR_NONBLOCKING)
+#define NSTACK_SET_FD_NONBLOCKING(inf) ((inf)->attr |= NSTACK_FD_ATTR_NONBLOCKING)
+#define NSTACK_SET_FD_BLOCKING(inf) ((inf)->attr &= (~NSTACK_FD_ATTR_NONBLOCKING))
 
 #define NSTACK_IS_FD_EPOLL_SOCKET(inf) ((inf)->attr & NSTACK_FD_ATTR_EPOLL_SOCKET)
 #define NSTACK_SET_FD_EPOLL_SOCKET(inf) ((inf)->attr |= NSTACK_FD_ATTR_EPOLL_SOCKET)

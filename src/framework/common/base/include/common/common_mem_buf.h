@@ -26,7 +26,7 @@ typedef enum __DMM_PROC_TYPE
 {
   DMM_PROC_T_AUTO = 0,          /*auto detect */
   DMM_PROC_T_PRIMARY = 1,       /* set to primary */
-  DMM_PROC_T_SECONDARY = 2,     /* set to seconday */
+  DMM_PROC_T_SECONDARY = 2,     /* set to secondary */
   DMM_PROC_T_INVALID
 } DMM_PROC_TYPE;
 

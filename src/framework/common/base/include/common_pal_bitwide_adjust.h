@@ -34,11 +34,11 @@ extern void **g_LMegAddrArry;
 
 /*get Local Seg addr by segIdx*/
 #define HMEM_SEG_LVADDR(segid)  (g_LMegAddrArry[segid])
-/*get SegIDX by PrimSegAddr, just get the arry Idx of g_PMemSegArry*/
+/*get SegIDX by PrimSegAddr, just get the array Idx of g_PMemSegArry*/
 #define HMEM_SEGID(segaddr)   ((struct common_mem_memseg*)segaddr - &(g_PMemSegArry[0]))
 
 /*****************************************************************
-Parameters    : LMegAddrArry[]    Loacol common_mem_memseg addr Arry
+Parameters    : LMegAddrArry[]    Local common_mem_memseg addr Array
                      SegNum              common_mem_memseg Num.
 Return        :
 Description   :  init  g_PrimAddr2LocalMap g_LocalAddr2PrimMap while the process start

@@ -243,7 +243,7 @@ nsfw_timer_notify_fun (i32 epfd, i32 fd, u32 events)
       i32 timer_fd = nsfw_get_timer_socket ();
       if (timer_fd < 0)
         {
-          NSFW_LOGERR ("get timer_fd faied!]epfd=%d,timer_fd=%d,event=0x%x",
+          NSFW_LOGERR ("get timer_fd failed!]epfd=%d,timer_fd=%d,event=0x%x",
                        epfd, fd, events);
           return FALSE;
         }
@@ -340,7 +340,7 @@ nsfw_timer_module_init (void *param)
   pmpinfo.isocket_id = NSFW_SOCKET_ANY;
   pmpinfo.stname.entype = NSFW_NSHMEM;
   if (-1 ==
-      SPRINTF_S (pmpinfo.stname.aname, NSFW_MEM_NAME_LENTH, "%s",
+      SPRINTF_S (pmpinfo.stname.aname, NSFW_MEM_NAME_LENGTH, "%s",
                  "MS_TM_INFOPOOL"))
     {
       NSFW_LOGERR ("SPRINTF_S failed");

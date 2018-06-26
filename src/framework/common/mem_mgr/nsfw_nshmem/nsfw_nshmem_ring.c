@@ -186,7 +186,7 @@ nsfw_nshmem_ring_mp_enqueue (struct nsfw_mem_ring *mem_ring, void *obj_table)
       common_mem_pause ();
 
       /* Set COMMON_RING_PAUSE_REP_COUNT to avoid spin too long waiting
-       * for other thread finish. It gives pre-empted thread a chance
+       * for other thread finish. It gives pre-emptied thread a chance
        * to proceed and finish with ring dequeue operation. */
       /* check the queue can be operate */
       if (++rep == 5)
@@ -311,7 +311,7 @@ nsfw_nshmem_ring_mc_dequeuev (struct nsfw_mem_ring *r, void **obj_table,
       common_mem_pause ();
 
       /* Set COMMON_RING_PAUSE_REP_COUNT to avoid spin too long waiting
-       * for other thread finish. It gives pre-empted thread a chance
+       * for other thread finish. It gives pre-emptied thread a chance
        * to proceed and finish with ring dequeue operation. */
       /* check the queue can be operate */
       if (++rep == 5)
@@ -327,7 +327,7 @@ nsfw_nshmem_ring_mc_dequeuev (struct nsfw_mem_ring *r, void **obj_table,
 }
 
 /*this is a  multi thread/process dequeue function, please pay attention to the bellow point
-1. while dequeue corrupt,  the tail no one added, may multy the try times.
+1. while dequeue corrupt,  the tail no one added, may multi the try times.
 */
 int
 nsfw_nshmem_ring_mc_dequeue (struct nsfw_mem_ring *ring, void **box)
@@ -422,7 +422,7 @@ nsfw_nshmem_ring_singlethread_dequeuev (struct nsfw_mem_ring *ring,
     {
       tail = ring->cons.tail;
 
-      /* if all entries are dequed return 0 */
+      /* if all entries are dequeued return 0 */
       if (unlikely (ring->prod.head == ring->cons.tail))
         {
           return num;

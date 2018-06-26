@@ -40,16 +40,16 @@ nstack_reset_fdInf (nstack_fd_Inf * fdInf)
   fdInf->nxtfd = -1;
   fdInf->fd = -1;
   fdInf->attr = 0;
-  fdInf->ops = 0;               /*opers of the fd, for save space we user opIdx here */
+  fdInf->ops = 0;               /*operations of the fd, for save space we user opIdx here */
   fdInf->type = 0;              /*the fd type like SOCK_STREAM|SOCK_NONBLOCK ... */
 
-  NSTACK_SET_FD_BLOKING (fdInf);
+  NSTACK_SET_FD_BLOCKING (fdInf);
   for (loop = 0; loop < NSTACK_MAX_MODULE_NUM; loop++)
     {
       fdInf->protoFD[loop].fd = -1;
       fdInf->protoFD[loop].errCode = 0;
       fdInf->protoFD[loop].pad = 0;
-      fdInf->protoFD[loop].liststate = NSTACK_NO_LISENING;
+      fdInf->protoFD[loop].liststate = NSTACK_NO_LISTENING;
     }
 
   nstack_reset_fd_local_lock_info (&(fdInf->local_lock));

@@ -33,7 +33,7 @@ extern "C"{
 #define NSFW_SET_INSTANCE_VALUE(_attr, _inst, _value) \
         nsfw_module_set_instance_##_attr(_inst, _value)
 
-#define NSFW_INIT_CRAETE_LOCAL_INSTANCE() \
+#define NSFW_INIT_CREATE_LOCAL_INSTANCE() \
     if (!nsfwLocalInitInst) {\
         nsfwLocalInitInst = nsfw_module_create_instance(); \
         nsfw_module_add_instance(nsfwLocalInitInst);\
@@ -41,7 +41,7 @@ extern "C"{
 
 #define _NSFW_MODULE_ATTRIBUTE_DEFINE_SURFIX(_attr, _value, _priority, _surfix) \
     static __attribute__((__constructor__(_priority))) void nsfw_module_attribute_##_attr##_surfix(void){\
-        NSFW_INIT_CRAETE_LOCAL_INSTANCE(); \
+        NSFW_INIT_CREATE_LOCAL_INSTANCE(); \
         NSFW_SET_INSTANCE_VALUE(_attr, nsfwLocalInitInst, _value);\
     } \
 
@@ -123,8 +123,8 @@ extern void nsfw_module_set_instance_depends (nsfw_module_instance_t * inst,
 
 /**
  * @Function        nstack_framework_init
- * @Description     This function will do framework initial work, it will involk all initial functions
- *                      registed using macro NSFW_MODULE_INIT before
+ * @Description     This function will do framework initial work, it will invoke all initial functions
+ *                      registered using macro NSFW_MODULE_INIT before
  * @param           none
  * @return          0 on success, -1 on error
  */

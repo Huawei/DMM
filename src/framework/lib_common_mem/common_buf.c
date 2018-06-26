@@ -47,8 +47,8 @@
 #define LOG_DEBUG 3
 #define LOG_MAX   4
 
-#define COMMON_LOG_PRINT(leve, fmt, args...) \
-        if (leve <= log_levl) NSCOMM_LOGERR("===>[COMMON]"fmt, ##args); \
+#define COMMON_LOG_PRINT(level, fmt, args...) \
+        if (level <= log_level) NSCOMM_LOGERR("===>[COMMON]"fmt, ##args); \
 
 #define COMMON_PANIC(fmt) \
         NSCOMM_LOGERR("==>[COMMON_PANIC]"fmt); \
@@ -85,7 +85,7 @@
 #define PATA_STRLENT     64
 #define PATA_NUM_MAX     12
 
-int log_levl = LOG_INFO;
+int log_level = LOG_INFO;
 
 int
 nscomm_pal_module_init (common_mem_pal_module_info * pinfo)

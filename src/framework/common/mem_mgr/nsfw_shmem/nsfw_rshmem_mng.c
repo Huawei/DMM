@@ -53,16 +53,16 @@
     }
 
 /*init the msg head*/
-#define NSFW_SHMEM_MSG_HEAD_INIT(pmsg, type, lenth) { \
+#define NSFW_SHMEM_MSG_HEAD_INIT(pmsg, type, length) { \
         (pmsg)->usmsg_type = (type); \
-        (pmsg)->uslenth = (lenth); \
+        (pmsg)->uslength = (length); \
     }
 
 /*rsp msg head check, and if err goto*/
-#define NSFW_SHMEM_MSGHEAD_CHK_GOTO(pmsg, type, lenth, gotoflag) { \
-        if (((type) != pmsg->usmsg_type) && ((lenth) != pmsg->uslenth)) \
+#define NSFW_SHMEM_MSGHEAD_CHK_GOTO(pmsg, type, length, gotoflag) { \
+        if (((type) != pmsg->usmsg_type) && ((length) != pmsg->uslength)) \
         {  \
-            NSCOMM_LOGERR("check fail] msgtype=%d, type_para=%d, len=%d", (pmsg->usmsg_type), (type), (lenth)); \
+            NSCOMM_LOGERR("check fail] msgtype=%d, type_para=%d, len=%d", (pmsg->usmsg_type), (type), (length)); \
             goto gotoflag;  \
         }  \
     }
@@ -77,9 +77,9 @@
     }
 
 /*mzone msg init*/
-#define NSFW_SHMEM_MZONE_DATA_INIT(pdata, slenth, seg, socketid) { \
+#define NSFW_SHMEM_MZONE_DATA_INIT(pdata, slength, seg, socketid) { \
         (pdata)->isocket_id = (socketid); \
-        (pdata)->lenth = (slenth); \
+        (pdata)->length = (slength); \
         (pdata)->usseq = (seg); \
         (pdata)->ireserv = 0; \
     }
@@ -201,7 +201,7 @@ release:
 }
 
 /*
- *create some memorys by send a msg
+ *create some memories by send a msg
  */
 i32
 nsfw_memzone_remote_reserv_v (nsfw_mem_zone * pmeminfo,
@@ -255,9 +255,9 @@ nsfw_memzone_remote_reserv_v (nsfw_mem_zone * pmeminfo,
                        pmeminfo[itindex].stname.aname, pid);
           if (-1 == retVal)
             {
-              NSCOMM_LOGERR ("SPRINTF_S faild]ret=%d", retVal);
+              NSCOMM_LOGERR ("SPRINTF_S failed]ret=%d", retVal);
             }
-          NSFW_SHMEM_MZONE_DATA_INIT (ptempdata, pmeminfo[itindex].lenth,
+          NSFW_SHMEM_MZONE_DATA_INIT (ptempdata, pmeminfo[itindex].length,
                                       (u16) itindex,
                                       pmeminfo[itindex].isocket_id);
 
@@ -302,9 +302,9 @@ nsfw_memzone_remote_reserv_v (nsfw_mem_zone * pmeminfo,
                        pmeminfo[itindex].stname.aname, pid);
           if (-1 == retVal)
             {
-              NSCOMM_LOGERR ("SPRINTF_S faild]ret=%d", retVal);
+              NSCOMM_LOGERR ("SPRINTF_S failed]ret=%d", retVal);
             }
-          NSFW_SHMEM_MZONE_DATA_INIT (ptempdata, pmeminfo[itindex].lenth,
+          NSFW_SHMEM_MZONE_DATA_INIT (ptempdata, pmeminfo[itindex].length,
                                       (u16) itindex,
                                       pmeminfo[itindex].isocket_id);
           ptempdata++;
@@ -526,7 +526,7 @@ nsfw_remote_shmem_mbf_createv (nsfw_mem_mbfpool * pmbfname,
               goto lerr;
             }
 
-          /*interrup msg head */
+          /*interrupt msg head */
           pack_head = GET_USER_MSG (nsfw_shmem_msg_head, prsp_msg);
           NSFW_SHMEM_MSGHEAD_CHK_GOTO (pack_head, NSFW_MBUF_ACK_MSG,
                                        ieltnum * sizeof (nsfw_shmem_ack),
@@ -737,7 +737,7 @@ nsfw_remote_shmem_mpcreatev (nsfw_mem_sppool * pmpinfo,
               goto mperr;
             }
 
-          /*interrup mgs head */
+          /*interrupt mgs head */
           pack_head = GET_USER_MSG (nsfw_shmem_msg_head, prsp_msg);
           NSFW_SHMEM_MSGHEAD_CHK_GOTO (pack_head, NSFW_SPPOOL_ACK_MSG,
                                        ieltnum * sizeof (nsfw_shmem_ack),
@@ -851,7 +851,7 @@ nsfw_remote_shmem_ringcreate (const char *name, unsigned int n, i32 socket_id,
       goto release;
     }
 
-  /*interrup mgs head */
+  /*interrupt mgs head */
   pack_head = GET_USER_MSG (nsfw_shmem_msg_head, prsp_msg);
   NSFW_SHMEM_MSGHEAD_CHK_GOTO (pack_head, NSFW_RING_ACK_MSG,
                                sizeof (nsfw_shmem_ack), release);
@@ -871,8 +871,8 @@ release:
 /*
  *create a mem pool that the members are rings by send a msg
  *ieltnum:the num of ring member
- *iringnum:the num of ring in simple mem pook
- *entype:the defualt the of ring
+ *iringnum:the num of ring in simple mem pool
+ *entype:the default the of ring
  */
 i32
 nsfw_remote_shmem_ringcreatev (const char *name, i32 ieltnum,
@@ -951,7 +951,7 @@ nsfw_remote_shmem_lookup (const i8 * name, nsfw_mem_struct_type entype)
   pdata = NSFW_SHMEM_GET_DATA (pdata_head, nsfw_shmem_lookup_req);
   if (EOK != STRCPY_S (pdata->aname, sizeof (pdata->aname), name))
     {
-      NSCOMM_LOGERR ("STRCPY_S faild]name=%s", name);
+      NSCOMM_LOGERR ("STRCPY_S failed]name=%s", name);
     }
   pdata->usseq = 0;
   pdata->ustype = entype;
@@ -965,7 +965,7 @@ nsfw_remote_shmem_lookup (const i8 * name, nsfw_mem_struct_type entype)
       goto release;
     }
 
-  /*interrup mgs head */
+  /*interrupt mgs head */
   pack_head = GET_USER_MSG (nsfw_shmem_msg_head, prsp_msg);
   NSFW_SHMEM_MSGHEAD_CHK_GOTO (pack_head, NSFW_MEM_LOOKUP_ACK_MSG,
                                sizeof (nsfw_shmem_ack), perr);

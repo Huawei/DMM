@@ -63,7 +63,7 @@ typedef struct _nsfw_ss_objDesc
   u16 objType;                  /* Type number of object */
   u8 memNum;                    /* Nubmer of object members */
   u32 objSize;
-  nsfw_ss_objMemDesc_t *memDesc;        /* Member descripe */
+  nsfw_ss_objMemDesc_t *memDesc;        /* Member descript */
 } nsfw_ss_objDesc_t;
 
 #define NSFW_SS_MAX_OBJDESC_NUM 256
@@ -81,8 +81,8 @@ extern nsfw_ss_objDescManager_t g_nsfw_ss_objDescManager;
 #define nsfw_ss_getObjDescManagerInst() (&g_nsfw_ss_objDescManager)
 
 /**
- * @Function        nsfw_ss_registe_ObjDesc
- * @Description     Registe object description to snapshot
+ * @Function        nsfw_ss_register_ObjDesc
+ * @Description     Register object description to snapshot
  * @param           objDesc - description of object
  * @return          void
  */
@@ -92,7 +92,7 @@ extern void nsfw_ss_register_ObjDesc (nsfw_ss_objDesc_t * objDesc);
  * @Function    nsfw_ss_store
  * @Description store object to memory
  * @param (in)  objType - type of object
- * @param (in)  obj - adderss of object memory
+ * @param (in)  obj - address of object memory
  * @param (in)  storeMem - address of memory to store object data
  * @param (in)  storeMemLen - maximal length of storage memory
  * @return positive integer means length of memory cost on success. return -1 if error
@@ -130,7 +130,7 @@ extern int nsfw_ss_getObjStoreMemLen (int objType);
     NSFW_SNAPSHOT_OBJDESC_REGISTER_SURFIX(_value, __LINE__)
 
 /**
- *  Using this marcro to register object description
+ *  Using this macro to register object description
  */
 #define NSFW_SS_REGSITER_OBJDESC(_value) \
         NSFW_SNAPSHOT_OBJDESC_REGISTER_UNIQUE(_value)

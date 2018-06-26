@@ -181,7 +181,7 @@ nsfw_nshmem_destory (void)
 *   Prototype    : nsfw_nshmem_reserv_safe
 *   Description  : malloc a memory and save to memzone
 *   Input        : const char* name
-*                  size_t lenth
+*                  size_t length
 *   Output       : None
 *   Return Value : mzone_handle
 *   Calls        :
@@ -189,20 +189,20 @@ nsfw_nshmem_destory (void)
 *
 *****************************************************************************/
 mzone_handle
-nsfw_nshmem_reserv_safe (const char *name, size_t lenth)
+nsfw_nshmem_reserv_safe (const char *name, size_t length)
 {
   void *addr = NULL;
   i32 iret = NSFW_MEM_OK;
   nsfw_nshmem_mzone *pmemzone = NULL;
 
-  if (lenth <= 0)
+  if (length <= 0)
     {
       return NULL;
     }
 
   nsfw_write_lock (nsfw_get_glb_lock ());
 
-  addr = malloc (lenth);
+  addr = malloc (length);
   if (!addr)
     {
       NSCOMM_LOGERR ("nshmem malloc addr fail] addr=%p", addr);
@@ -210,7 +210,7 @@ nsfw_nshmem_reserv_safe (const char *name, size_t lenth)
       return NULL;
     }
 
-  iret = MEMSET_S (addr, lenth, 0, lenth);
+  iret = MEMSET_S (addr, length, 0, length);
   if (EOK != iret)
     {
       NSCOMM_LOGERR ("nshmem malloc addr MEMSET_S fail] addr=%p", addr);
@@ -230,8 +230,8 @@ nsfw_nshmem_reserv_safe (const char *name, size_t lenth)
     }
 
   pmemzone->addr = addr;
-  pmemzone->lenth = lenth;
-  /*name must be less than NSFW_MEM_APPNAME_LENTH */
+  pmemzone->length = length;
+  /*name must be less than NSFW_MEM_APPNAME_LENGTH */
   if (EOK !=
       STRCPY_S ((char *) pmemzone->aname, sizeof (pmemzone->aname), name))
     {
@@ -256,7 +256,7 @@ nsfw_nshmem_create (nsfw_mem_zone * pinfo)
 
   NSFW_NAME_LENCHECK_RET_NULL (pinfo->stname.aname, "nshmem create");
   NSFW_NSHMEM_INIT_CHK_RET_NULL ();
-  return nsfw_nshmem_reserv_safe (pinfo->stname.aname, pinfo->lenth);
+  return nsfw_nshmem_reserv_safe (pinfo->stname.aname, pinfo->length);
 }
 
 /*****************************************************************************
@@ -284,7 +284,7 @@ nsfw_nshmem_lookup (nsfw_mem_name * pname)
       mz = &g_nshmem_internal_cfg->amemzone[icnt];
 
       if (mz->addr != NULL
-          && !strncmp (pname->aname, mz->aname, NSFW_MEM_NAME_LENTH))
+          && !strncmp (pname->aname, mz->aname, NSFW_MEM_NAME_LENGTH))
         {
           nsfw_read_unlock (nsfw_get_glb_lock ());
           return mz->addr;
@@ -320,7 +320,7 @@ nsfw_nshmem_release (nsfw_mem_name * pname)
       mz = &g_nshmem_internal_cfg->amemzone[icnt];
 
       if (mz->addr != NULL
-          && !strncmp (pname->aname, mz->aname, NSFW_MEM_NAME_LENTH))
+          && !strncmp (pname->aname, mz->aname, NSFW_MEM_NAME_LENGTH))
         {
           nsfw_nshmem_free_zone (mz);
           nsfw_read_unlock (nsfw_get_glb_lock ());
@@ -380,7 +380,7 @@ nsfw_nshmem_spcreate (nsfw_mem_sppool * pmpinfo)
                                               ringflag].ring_ops_enqueue
           (pringhead, (void *) pmz))
         {
-          NSCOMM_LOGERR ("nsfw_nshmem_ringenqueue enque fail] uscnt=%u",
+          NSCOMM_LOGERR ("nsfw_nshmem_ringenqueue enqueue fail] uscnt=%u",
                          uscnt);
         }
 
@@ -516,7 +516,7 @@ nsfw_nshmem_ring_statics (mring_handle handle)
 }
 
 /*****************************************************************************
-*   Prototype    : nsfw_nshmem_stactic
+*   Prototype    : nsfw_nshmem_static
 *   Description  : static the memory size according to mem type
 *   Input        : void* handle
 *                  nsfw_mem_struct_type type
@@ -527,7 +527,7 @@ nsfw_nshmem_ring_statics (mring_handle handle)
 *
 *****************************************************************************/
 ssize_t
-nsfw_nshmem_stactic (void *handle, nsfw_mem_struct_type type)
+nsfw_nshmem_static (void *handle, nsfw_mem_struct_type type)
 {
   switch (type)
     {

@@ -60,20 +60,20 @@ extern int nsfw_module_addDoneNode (nsfw_module_instance_t * inst);
 extern nsfw_module_manager_t g_nsfw_module_manager;
 #define nsfw_module_getManager() (&g_nsfw_module_manager)
 
-#define NSFW_MOUDLE_INSTANCE_POOL_SIZE 64
-#define NSFW_MOUDLE_DEPENDS_POOL_SIZE 128
+#define NSFW_MODULE_INSTANCE_POOL_SIZE 64
+#define NSFW_MODULE_DEPENDS_POOL_SIZE 128
 
 typedef struct _nsfw_module_instance_pool
 {
   int last_idx;
     nsfw_module_instance_t
-    module_instance_pool[NSFW_MOUDLE_INSTANCE_POOL_SIZE];
+    module_instance_pool[NSFW_MODULE_INSTANCE_POOL_SIZE];
 } nsfw_module_instance_pool_t;
 
 typedef struct _nsfw_module_depends_pool
 {
   int last_idx;
-  nsfw_module_depends_t module_depends_pool[NSFW_MOUDLE_DEPENDS_POOL_SIZE];
+  nsfw_module_depends_t module_depends_pool[NSFW_MODULE_DEPENDS_POOL_SIZE];
 } nsfw_module_depends_pool_t;
 
 #ifdef __cplusplus

@@ -87,7 +87,7 @@ nsfw_set_log_path (const char *param, const char *value)
 
       NSFW_LOGINF ("renew log path]%s", g_log_cfg.master_log_path);
       nstack_modify_log_dir (g_log_cfg.master_log_path);
-      NSFW_LOGINF ("set log sucess]newpath=%s!", g_log_cfg.master_log_path);
+      NSFW_LOGINF ("set log success]newpath=%s!", g_log_cfg.master_log_path);
       return TRUE;
     }
   return FALSE;
@@ -112,7 +112,7 @@ nsfw_flush_log_info (const char *param, u8 proc_type)
       return FALSE;
     }
   glogFlushLogFiles (GLOG_LEVEL_DEBUG);
-  NSFW_LOGINF ("flush log sucess]proc_type=%u", proc_type);
+  NSFW_LOGINF ("flush log success]proc_type=%u", proc_type);
   return TRUE;
 }
 

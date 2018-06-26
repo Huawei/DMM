@@ -48,7 +48,7 @@ typedef struct nstack_tick_info
 {
   uint64_t *tick_ptr;           // tick from shared memory
   uint64_t interval;            // tick interval, only used in stack process
-  /* tick refference, updated periodically and read in tcpip_thread only */
+  /* tick reference, updated periodically and read in tcpip_thread only */
   struct timeval ref_time;      // ref tick time
   uint64_t ref_tick;            // ref tick
 } nstack_tick_info_t;

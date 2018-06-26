@@ -19,7 +19,7 @@
 
 /*
  * mem mgr module init
- * para:point to nstak_fwmem_para
+ * para:point to nstack_fwmem_para
  */
 i32 nsfw_shmem_init (nsfw_mem_para * para);
 
@@ -37,7 +37,7 @@ void nsfw_shmem_destroy (void);
 mzone_handle nsfw_shmem_create (nsfw_mem_zone * pinfo);
 
 /*
- *create some blocks memeory
+ *create some blocks memory
  */
 i32 nsfw_shmem_createv (nsfw_mem_zone * pmeminfo, i32 inum,
                         mzone_handle * paddr_array, i32 iarray_num);
@@ -72,7 +72,7 @@ mbuf_handle nsfw_shmem_mbfalloc (mpool_handle mhandle);
 i32 nsfw_shmem_mbffree (mbuf_handle mhandle);
 
 /*
- *put mbuf backto mbuf pool
+ *put mbuf back to mbuf pool
  */
 i32 nsfw_shmem_mbfmprelease (nsfw_mem_name * pname);
 
@@ -121,7 +121,7 @@ mring_handle nsfw_shmem_ring_lookup (nsfw_mem_name * pname);
  */
 i32 nsfw_shmem_ringrelease (nsfw_mem_name * pname);
 
-ssize_t nsfw_shmem_stactic (void *handle, nsfw_mem_struct_type type);
+ssize_t nsfw_shmem_static (void *handle, nsfw_mem_struct_type type);
 
 i32 nsfw_shmem_mbuf_recycle (mpool_handle handle);
 

@@ -41,7 +41,7 @@ typedef enum _nsfw_recycle_priority
 {
   NSFW_REC_PRO_HIGHTEST = 0,
   NSFW_REC_PRO_NORMAL = 1,
-  NSFW_REC_PRO_DEFALUT = 2,
+  NSFW_REC_PRO_DEFAULT = 2,
   NSFW_REC_PRO_LOWEST = 3,
   NSFW_REC_PRO_MAX = 4
 } nsfw_recycle_priority;

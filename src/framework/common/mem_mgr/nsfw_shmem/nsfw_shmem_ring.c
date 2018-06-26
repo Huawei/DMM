@@ -119,7 +119,7 @@ nsfw_shmem_pool_create (const char *name, unsigned int n,
   unsigned int num = common_mem_align32pow2 (n + 1);
 
   struct nsfw_shmem_ring_head *pcur = NULL;
-  /*calculat the empty rte_perf_ring Size */
+  /*calculate the empty rte_perf_ring Size */
   size_t len =
     sizeof (struct nsfw_shmem_ring_head) + sizeof (struct nsfw_mem_ring) +
     (size_t) num * sizeof (union RingData_U) + (size_t) num * elt_size;
@@ -258,7 +258,7 @@ nsfw_shmem_pool_create (const char *name, unsigned int n,
           break;
         }
 
-      // second time allocate should not containd all ring head
+      // second time allocate should not contained all ring head
       alloc_len =
         (size_t) (num - alloc_index) * elt_size +
         sizeof (struct nsfw_shmem_ring_head);
@@ -341,7 +341,7 @@ nsfw_shmem_ring_mp_enqueue (struct nsfw_mem_ring *ring, void *box)
       if (tmpTail + size - CurHead == 0)
         {
           /*
-             here we give enque a chance to recorrect the Tail,   if tail not has Data let tail++
+             here we give enqueue a chance to recorrect the Tail,   if tail not has Data let tail++
            */
           if (ring->ring[tmpTail & mask].data_s.val == 0)
             {
@@ -374,10 +374,10 @@ nsfw_shmem_ring_mp_enqueue (struct nsfw_mem_ring *ring, void *box)
         {
           /*
              enqueue success, add Head Value now
-             here we using  CAS set instead __sync_fetch_and_add(&ring->Head, 1) to assume that, if one process enque sucess && been killed before
+             here we using  CAS set instead __sync_fetch_and_add(&ring->Head, 1) to assume that, if one process enqueue success && been killed before
              add Head, other process can recorrect the Head Value;
              one more thing the direction of Tail must been add-direction, so we using the condition (ring->Head - CurHead >0x80000000);
-             while many thread do enque at same time, Head may not correct,exp:
+             while many thread do enqueue at same time, Head may not correct,exp:
              thread A get old head 10, thread A want set head to 11
              thread B get old head 10, thread B want set head to 12
              thread A do CAS && thread B do CAS at same time, thread A do CAS success;
@@ -385,7 +385,7 @@ nsfw_shmem_ring_mp_enqueue (struct nsfw_mem_ring *ring, void *box)
 
              then thread C get old head 11, thread C will set head to 13[cause pos 12 already has value, thread C will skill 12],
              the head will be recorrect by thread C.
-             if no thread C, thread A& B are the last enque thread; the head must recorrect by the deque function.
+             if no thread C, thread A& B are the last enqueue thread; the head must recorrect by the deque function.
            */
           tmpHead = ring->prod.head;
 
@@ -441,7 +441,7 @@ nsfw_shmem_ring_sp_enqueue (struct nsfw_mem_ring *ring, void *box)
       if (tmpTail + uisize - CurHead == 0)
         {
           /*
-           *here we give enque a chance to recorrect the Tail,   if tail not has Data let tail++
+           *here we give enqueue a chance to recorrect the Tail,   if tail not has Data let tail++
            */
           if (ring->ring[tmpTail & mask].data_s.val == 0)
             {
@@ -523,7 +523,7 @@ nsfw_shmem_ring_mc_dequeue (struct nsfw_mem_ring *ring, void **box)
 
           /*
              enqueue success, add Tail Value now
-             here we using  CAS set instead __sync_fetch_and_add(&ring->Tail, 1) to assume that, if one process dequeue sucess && been killed before
+             here we using  CAS set instead __sync_fetch_and_add(&ring->Tail, 1) to assume that, if one process dequeue success && been killed before
              add Tail, other process can recorrect the Tail Value;
              one more thing the direction of Tail must been add-direction, so we using the condition (rlTail - CurTail >0x80000000);
              while multi CAS done the result value of CurTail may not correct, but we don't care, it will be recorrect while next deque done.
@@ -611,7 +611,7 @@ nsfw_shmem_ring_mc_dequeuev (struct nsfw_mem_ring *ring, void **box,
 
           /*
              enqueue success, add Tail Value now
-             here we using  CAS set instead __sync_fetch_and_add(&ring->Tail, 1) to assume that, if one process dequeue sucess && been killed before
+             here we using  CAS set instead __sync_fetch_and_add(&ring->Tail, 1) to assume that, if one process dequeue success && been killed before
              add Tail, other process can recorrect the Tail Value;
              one more thing the direction of Tail must been add-direction, so we using the condition (rlTail - CurTail >0x80000000);
 
@@ -790,7 +790,7 @@ nsfw_shmem_ring_singlethread_dequeue (struct nsfw_mem_ring *ring, void **box)
 {
   u32 tail = 0;
 
-  /* if all entries are dequed return 0 */
+  /* if all entries are dequeued return 0 */
   if (unlikely (ring->prod.head == ring->cons.tail))
     {
       return 0;
@@ -818,7 +818,7 @@ nsfw_shmem_ring_singlethread_dequeuev (struct nsfw_mem_ring *ring, void **box,
     {
       tail = ring->cons.tail;
 
-      /* if all entries are dequed return 0 */
+      /* if all entries are dequeued return 0 */
       if (unlikely (ring->prod.head == ring->cons.tail))
         {
           return num;

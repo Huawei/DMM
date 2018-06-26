@@ -40,7 +40,7 @@ nsfw_mem_ops g_shmem_ops = {
   nsfw_shmem_ringcreate,
   nsfw_shmem_ring_lookup,
   nsfw_shmem_ringrelease,
-  nsfw_shmem_stactic,
+  nsfw_shmem_static,
   nsfw_shmem_mbuf_recycle,
   nsfw_shmem_sp_iterator,
   nsfw_shmem_mbuf_iterator

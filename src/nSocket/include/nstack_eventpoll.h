@@ -81,7 +81,7 @@ struct eventpoll
   sys_sem_st sem;
 
   /*
-   * This sempaphore is used to block epoll_wait function
+   * This semaphore is used to block epoll_wait function
    */
   sem_t waitSem;
 
@@ -123,7 +123,7 @@ typedef struct
   u32 sleepTime;                //add for NSTACK_SEM_SLEEP
   nsep_pidinfo pidinfo;
   nsfw_res res_chk;
-  void *private_data;           /*add for degbu, just used to record extern infomation, for example sbr conn */
+  void *private_data;           /*add for debug, just used to record extern infomation, for example sbr conn */
   i32 reserv[4];
 } nsep_epollInfo_t;
 

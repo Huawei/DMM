@@ -49,14 +49,14 @@ nstack_module_info g_nstack_modules = {
 /* *INDENT-ON* */
 nstack_module_keys g_nstack_module_desc[NSTACK_MAX_MODULE_NUM];
 
-ns_uint32 g_mudle_num = 0;
+ns_uint32 g_module_num = 0;
 
 int
 nstack_get_deploy_type ()
 {
   int icnt = 0;
   int type = 0;
-  for (icnt = 0; icnt < g_mudle_num; icnt++)
+  for (icnt = 0; icnt < g_module_num; icnt++)
     {
       if (g_nstack_module_desc[icnt].deploytype > type)
         {
@@ -71,7 +71,7 @@ nstack_register_one_module (nstack_module_keys * pKeys)
 {
 
   nstack_module *pmod = NULL;
-  nstack_stack_registe_fn stack_registe_fn = NULL;
+  nstack_stack_register_fn stack_register_fn = NULL;
   nstack_event_cb val = { 0 };
   int retVal;
   int ret = 0;
@@ -119,11 +119,11 @@ nstack_register_one_module (nstack_module_keys * pKeys)
       pmod->handle = RTLD_DEFAULT;
     }
 
-  stack_registe_fn = dlsym (pmod->handle, pKeys->registe_fn_name);
-  if (!stack_registe_fn)
+  stack_register_fn = dlsym (pmod->handle, pKeys->register_fn_name);
+  if (!stack_register_fn)
     {
       /* optimize dlopen err print */
-      NSSOC_LOGERR ("registe function not found]err_string=%s", dlerror ());
+      NSSOC_LOGERR ("register function not found]err_string=%s", dlerror ());
       if (pmod->handle)
         {
           dlclose (pmod->handle);
@@ -135,9 +135,9 @@ nstack_register_one_module (nstack_module_keys * pKeys)
   val.handle = pmod->handle;
   val.type = pKeys->modInx;
   val.event_cb = nstack_event_callback;
-  if (stack_registe_fn (&pmod->mops, &val))
+  if (stack_register_fn (&pmod->mops, &val))
     {
-      NSSOC_LOGERR ("registe function failed");
+      NSSOC_LOGERR ("register function failed");
       if (pmod->handle)
         {
           dlclose (pmod->handle);
@@ -180,15 +180,15 @@ nstack_register_module ()
   };
 
   pstacks =
-    (nstack_stack_info *) malloc (sizeof (nstack_stack_info) * g_mudle_num);
+    (nstack_stack_info *) malloc (sizeof (nstack_stack_info) * g_module_num);
   if (!pstacks)
     {
       NSSOC_LOGERR ("malloc failed]");
       return ns_fail;
     }
   ret =
-    MEMSET_S (pstacks, sizeof (nstack_stack_info) * g_mudle_num, 0,
-              sizeof (nstack_stack_info) * g_mudle_num);
+    MEMSET_S (pstacks, sizeof (nstack_stack_info) * g_module_num, 0,
+              sizeof (nstack_stack_info) * g_module_num);
   if (EOK != ret)
     {
       NSSOC_LOGERR ("MEMSET_S failed]ret=%d", ret);
@@ -196,7 +196,7 @@ nstack_register_module ()
       return ns_fail;
     }
 
-  for (idx = 0; idx < g_mudle_num; idx++)
+  for (idx = 0; idx < g_module_num; idx++)
     {
       if (0 != nstack_register_one_module (&g_nstack_module_desc[idx]))
         {
@@ -235,7 +235,7 @@ nstack_register_module ()
       return ns_fail;
     }
 
-  g_nstack_modules.modNum = g_mudle_num;
+  g_nstack_modules.modNum = g_module_num;
   /*rd module init */
   if (ns_success !=
       nstack_rd_init (pstacks, idx, rd_fun,
@@ -253,7 +253,7 @@ int
 nstack_stack_module_init ()
 {
   ns_uint32 idx;
-  for (idx = 0; idx < g_mudle_num; idx++)
+  for (idx = 0; idx < g_module_num; idx++)
     {
       if (g_nstack_modules.modules[idx].mops.extern_ops.module_init)
         {

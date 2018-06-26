@@ -132,7 +132,7 @@ mem_alloc_ps_info (u32 pid, u8 proc_type)
   pps_info = nsfw_ps_info_alloc (pid, proc_type);
   if (NULL == pps_info)
     {
-      NSFW_LOGERR ("alloc ps_info falied!]pid=%u,proc_type=%u", pid,
+      NSFW_LOGERR ("alloc ps_info failed!]pid=%u,proc_type=%u", pid,
                    proc_type);
       return FALSE;
     }
@@ -240,7 +240,7 @@ mem_item_get_cfg_from_msg (u16 msg_type)
 
 /*****************************************************************************
 *   Prototype    : mem_item_get_callargv
-*   Description  : change the message value to structur value
+*   Description  : change the message value to structure value
 *   Input        : u16 msg_type
 *                  char* msg_body
 *                  char *memstr_buf
@@ -257,7 +257,7 @@ mem_item_get_callargv (u16 msg_type, char *msg_body, char *memstr_buf,
   switch (msg_type)
     {
     case NSFW_RESERV_REQ_MSG:
-      MEM_GET_CALLARGV (lenth, lenth, nsfw_mem_zone, nsfw_shmem_reserv_req,
+      MEM_GET_CALLARGV (length, length, nsfw_mem_zone, nsfw_shmem_reserv_req,
                         memstr_buf, msg_body);
       MEM_GET_CALLARGV (isocket_id, isocket_id, nsfw_mem_zone,
                         nsfw_shmem_reserv_req, memstr_buf, msg_body);
@@ -308,7 +308,7 @@ mem_item_get_callargv (u16 msg_type, char *msg_body, char *memstr_buf,
     }
   if (EOK !=
       STRCPY_S (((nsfw_mem_zone *) memstr_buf)->stname.aname,
-                NSFW_MEM_NAME_LENTH,
+                NSFW_MEM_NAME_LENGTH,
                 ((nsfw_shmem_reserv_req *) msg_body)->aname))
     {
       NSFW_LOGERR ("STRCPY_S failed]msg_type=%u", msg_type);
@@ -467,10 +467,10 @@ mem_init_rsp_msg (nsfw_shmem_msg_head * msg, nsfw_shmem_msg_head * rsp)
     }
 
   int idx;
-  int mem_count = msg->uslenth / item_cfg->item_size;
+  int mem_count = msg->uslength / item_cfg->item_size;
 
   rsp->usmsg_type = msg->usmsg_type + 1;
-  rsp->uslenth = mem_count * sizeof (nsfw_shmem_ack);
+  rsp->uslength = mem_count * sizeof (nsfw_shmem_ack);
   nsfw_shmem_ack *pack = (nsfw_shmem_ack *) & (rsp->aidata[0]);
   char *pdata = NULL;
   for (idx = 0; idx < mem_count; idx++)
@@ -511,7 +511,7 @@ mem_rel_mem_by_msg (nsfw_shmem_msg_head * req_msg,
       return FALSE;
     }
 
-  unsigned int mem_count = req_msg->uslenth / item_cfg->item_size;
+  unsigned int mem_count = req_msg->uslength / item_cfg->item_size;
   char *pdata = NULL;
   nsfw_shmem_ack *pack = (nsfw_shmem_ack *) & (rsp->aidata[0]);
   for (i = 0; i < mem_count; i++)
@@ -552,7 +552,7 @@ mem_lookup_mem_by_msg (nsfw_shmem_msg_head * mgr_msg,
       return FALSE;
     }
 
-  int mem_count = mgr_msg->uslenth / item_cfg->item_size;
+  int mem_count = mgr_msg->uslength / item_cfg->item_size;
   char *pdata = NULL;
   void *paddr = NULL;
   nsfw_shmem_ack *pack = (nsfw_shmem_ack *) & (rsp->aidata[0]);
@@ -600,7 +600,7 @@ mem_alloc_mem_by_msg (nsfw_shmem_msg_head * mem_msg,
   char *pdata = NULL;
   void *p_addr = NULL;
 
-  int mem_count = mem_msg->uslenth / item_cfg->item_size;
+  int mem_count = mem_msg->uslength / item_cfg->item_size;
   nsfw_shmem_ack *pack = (nsfw_shmem_ack *) & (rsp->aidata[0]);
   for (i = 0; i < mem_count; i++)
     {
@@ -630,7 +630,7 @@ fail_free_mem:
     {
       pdata = (char *) mem_msg->aidata + j * item_cfg->item_size;
       if (EOK !=
-          STRCPY_S (mem_free.stname.aname, NSFW_MEM_NAME_LENTH,
+          STRCPY_S (mem_free.stname.aname, NSFW_MEM_NAME_LENGTH,
                     ((nsfw_shmem_reserv_req *) pdata)->aname))
         {
           NSFW_LOGERR ("STRCPY_S failed]j=%d", j);
@@ -835,7 +835,7 @@ mem_srv_ctrl_proc (nsfw_mgr_msg * msg)
   nsfw_srv_ctrl_msg *ctrl_rsp_msg = GET_USER_MSG (nsfw_srv_ctrl_msg, rsp_msg);
   NSFW_LOGINF ("get srv ctrl state] state=%d", ctrl_msg->srv_state);
 
-  ctrl_rsp_msg->rsp_code = NSFW_MGR_SUCESS;
+  ctrl_rsp_msg->rsp_code = NSFW_MGR_SUCCESS;
 
   (void) nsfw_mgr_send_msg (rsp_msg);
   nsfw_mgr_msg_free (rsp_msg);

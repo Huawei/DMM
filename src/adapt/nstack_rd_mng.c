@@ -41,7 +41,7 @@ rd_route_table *g_rd_table_handle = NULL;
 
 /*****************************************************************************
 *   Prototype    : nstack_rd_mng_int
-*   Description  : rd mng moudule init, create a block memory
+*   Description  : rd mng module init, create a block memory
 *   Input        : int flag
 *   Output       : None
 *   Return Value : int
@@ -206,7 +206,7 @@ nstack_rd_ip_node_insert (char *name, rd_ip_data * data)
 *   Return Value : int
 *   Calls        :
 *   Called By    : nStackMain
-*                  just set delete flag, becuase
+*                  just set delete flag, because
 *****************************************************************************/
 int
 nstack_rd_ip_node_delete (rd_ip_data * data)

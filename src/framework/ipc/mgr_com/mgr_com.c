@@ -50,7 +50,7 @@ extern "C"{
 /* *INDENT-OFF* */
 nsfw_mgr_msg_fun g_mgr_fun[MGR_MSG_MAX][NSFW_MGRCOM_MAX_PROC_FUN];
 nsfw_mgr_init_cfg g_mgr_com_cfg;
-nsfw_mgr_sock_map g_mgr_sockt_map = {{0}, NULL};
+nsfw_mgr_sock_map g_mgr_socket_map = {{0}, NULL};
 nsfw_mgrcom_stat g_mgr_stat;
 nsfw_mgrcom_proc g_ep_proc = { 0 };
 /* *INDENT-ON* */
@@ -87,7 +87,7 @@ nsfw_get_proc_name (u8 proc_type)
 
 /*****************************************************************************
 *   Prototype    : nsfw_mgr_reg_msg_fun
-*   Description  : reg the callback funciton when receive new message
+*   Description  : reg the callback function when receive new message
 *   Input        : u16 msg_type
 *                  nsfw_mgr_msg_fun fun
 *   Output       : None
@@ -519,13 +519,13 @@ NSTACK_STATIC inline u8
 nsfw_mgr_new_socket (i32 fd, u8 proc_type, u32 host_pid)
 {
   nsfw_mgr_sock_info *sock_info = NULL;
-  if (((i32) NSFW_MGR_FD_MAX <= fd) || (fd < 0) || (!g_mgr_sockt_map.sock))
+  if (((i32) NSFW_MGR_FD_MAX <= fd) || (fd < 0) || (!g_mgr_socket_map.sock))
     {
-      NSFW_LOGERR ("fd err]mgr_fd=%d, sock=%p", fd, g_mgr_sockt_map.sock);
+      NSFW_LOGERR ("fd err]mgr_fd=%d, sock=%p", fd, g_mgr_socket_map.sock);
       return FALSE;
     }
 
-  sock_info = &g_mgr_sockt_map.sock[fd];
+  sock_info = &g_mgr_socket_map.sock[fd];
   if (host_pid != sock_info->host_pid)
     {
       NSFW_LOGDBG
@@ -538,7 +538,7 @@ nsfw_mgr_new_socket (i32 fd, u8 proc_type, u32 host_pid)
 
   if (proc_type < NSFW_PROC_MAX)
     {
-      g_mgr_sockt_map.proc_cache[proc_type] = fd;
+      g_mgr_socket_map.proc_cache[proc_type] = fd;
     }
 
   return TRUE;
@@ -557,18 +557,18 @@ NSTACK_STATIC inline u8
 nsfw_mgr_del_socket (u32 fd)
 {
   nsfw_mgr_sock_info *sock_info = NULL;
-  if ((NSFW_MGR_FD_MAX <= fd) || (!g_mgr_sockt_map.sock))
+  if ((NSFW_MGR_FD_MAX <= fd) || (!g_mgr_socket_map.sock))
     {
-      NSFW_LOGERR ("fd err]mgr_fd=%u, sock=%p", fd, g_mgr_sockt_map.sock);
+      NSFW_LOGERR ("fd err]mgr_fd=%u, sock=%p", fd, g_mgr_socket_map.sock);
       return FALSE;
     }
 
-  sock_info = &g_mgr_sockt_map.sock[fd];
+  sock_info = &g_mgr_socket_map.sock[fd];
 
   if (sock_info->proc_type < NSFW_PROC_MAX
-      && fd == g_mgr_sockt_map.proc_cache[sock_info->proc_type])
+      && fd == g_mgr_socket_map.proc_cache[sock_info->proc_type])
     {
-      g_mgr_sockt_map.proc_cache[sock_info->proc_type] = 0;
+      g_mgr_socket_map.proc_cache[sock_info->proc_type] = 0;
     }
 
   NSFW_LOGDBG ("del sock]mgr_fd=%u,type=%u,pid=%u", fd,
@@ -597,17 +597,17 @@ nsfw_mgr_get_dst_socket (u8 proc_type, u32 dst_pid)
 
   if (proc_type < NSFW_PROC_MAX)
     {
-      fd = g_mgr_sockt_map.proc_cache[proc_type];
+      fd = g_mgr_socket_map.proc_cache[proc_type];
     }
 
-  if (!g_mgr_sockt_map.sock)
+  if (!g_mgr_socket_map.sock)
     {
       return -1;
     }
 
   if (fd > 0 && fd < (i32) NSFW_MGR_FD_MAX)
     {
-      sock_info = &g_mgr_sockt_map.sock[fd];
+      sock_info = &g_mgr_socket_map.sock[fd];
       if (sock_info->host_pid != 0)
         {
           if (0 == dst_pid || dst_pid == sock_info->host_pid)
@@ -624,7 +624,7 @@ nsfw_mgr_get_dst_socket (u8 proc_type, u32 dst_pid)
   i32 i;
   for (i = 0; i < (i32) NSFW_MGR_FD_MAX; i++)
     {
-      sock_info = &g_mgr_sockt_map.sock[i];
+      sock_info = &g_mgr_socket_map.sock[i];
       if (sock_info->host_pid != 0 && proc_type == sock_info->proc_type)
         {
           if (0 == dst_pid || dst_pid == sock_info->host_pid)
@@ -673,14 +673,14 @@ u8
 nsfw_mgr_clr_fd_lock ()
 {
   i32 i;
-  if (!g_mgr_sockt_map.sock)
+  if (!g_mgr_socket_map.sock)
     {
       NSFW_LOGERR ("clr fd lock fail, sock is null");
       return FALSE;
     }
   for (i = 0; i < (i32) NSFW_MGR_FD_MAX; i++)
     {
-      common_mem_spinlock_init (&(g_mgr_sockt_map.sock[i].opr_lock));
+      common_mem_spinlock_init (&(g_mgr_socket_map.sock[i].opr_lock));
     }
   return TRUE;
 }
@@ -1063,7 +1063,7 @@ nsfw_mgr_msg_in (i32 fd)
     }
 
   NSFW_LOGERR ("drop msg]" MSGINFO, PRTMSG (msg));
-  /* fix "Out-of-bounds write" type codedex issue */
+  /* fix "Out-of-bounds write" type codex issue */
   if (msg->msg_type < MGR_MSG_MAX)
     {
       g_mgr_stat.recv_drop[msg->msg_type]++;
@@ -1075,7 +1075,7 @@ nsfw_mgr_msg_in (i32 fd)
 
 /*****************************************************************************
 *   Prototype    : nsfw_mgr_new_msg
-*   Description  : when new mgr message recive from socket, this funciton
+*   Description  : when new mgr message receive from socket, this function
                    will call back
 *   Input        : i32 epfd
 *                  i32 fd
@@ -1142,7 +1142,7 @@ nsfw_mgr_com_socket_error (i32 fd, nsfw_mgr_sock_fun fun, i32 timer)
 
 /*****************************************************************************
 *   Prototype    : nsfw_mgr_new_connection
-*   Description  : when new mgr connection in, this funciton will call back
+*   Description  : when new mgr connection in, this function will call back
 *   Input        : i32 epfd
 *                  i32 fd
 *                  u32 events
@@ -1164,7 +1164,7 @@ nsfw_mgr_new_connection (i32 epfd, i32 fd, u32 events)
       if (listen_fd < 0)
         {
           NSFW_LOGERR
-            ("get listen_fd faied!]epfd=%d,listen_fd=%d,event=0x%x", epfd,
+            ("get listen_fd failed!]epfd=%d,listen_fd=%d,event=0x%x", epfd,
              fd, events);
           return FALSE;
         }
@@ -1225,7 +1225,7 @@ nsfw_mgr_new_connection (i32 epfd, i32 fd, u32 events)
 
 /*****************************************************************************
 *   Prototype    : nsfw_set_sock_block
-*   Description  : set fd blok or not for epoll thread
+*   Description  : set fd block or not for epoll thread
 *   Input        : i32 sock
 *                  u8 flag
 *   Output       : None
@@ -1507,15 +1507,15 @@ nsfw_sock_add_to_ep (i32 epfd)
 u8
 nsfw_mgr_com_start ()
 {
-  i32 listern_fd = nsfw_mgr_get_listen_socket ();
-  if (listern_fd < 0)
+  i32 listen_fd = nsfw_mgr_get_listen_socket ();
+  if (listen_fd < 0)
     {
-      NSFW_LOGERR ("get listern_fd failed!");
+      NSFW_LOGERR ("get listen_fd failed!");
       return FALSE;
     }
 
-  NSFW_LOGINF ("start mgr_com module!] listern_fd=%d", listern_fd);
-  (void) nsfw_mgr_reg_sock_fun (listern_fd, nsfw_mgr_new_connection);
+  NSFW_LOGINF ("start mgr_com module!] listen_fd=%d", listen_fd);
+  (void) nsfw_mgr_reg_sock_fun (listen_fd, nsfw_mgr_new_connection);
   return TRUE;
 }
 
@@ -1714,7 +1714,7 @@ nsfw_mgr_com_chk_hbt (int v_add)
 
 /*****************************************************************************
 *   Prototype    : nsfw_mgr_comm_fd_destroy
-*   Description  : free the memeory
+*   Description  : free the memory
 *   Input        :
 *   Output       : None
 *   Return Value : int
@@ -1729,10 +1729,10 @@ nsfw_mgr_comm_fd_destroy ()
       free (g_ep_proc.ep_fun);
       g_ep_proc.ep_fun = NULL;
     }
-  if (g_mgr_sockt_map.sock)
+  if (g_mgr_socket_map.sock)
     {
-      free (g_mgr_sockt_map.sock);
-      g_mgr_sockt_map.sock = NULL;
+      free (g_mgr_socket_map.sock);
+      g_mgr_socket_map.sock = NULL;
     }
   return;
 }
@@ -1750,7 +1750,7 @@ int
 nsfw_mgr_comm_fd_init (u32 proc_type)
 {
   /*only app need to do this */
-  if ((g_mgr_sockt_map.sock) && (g_ep_proc.ep_fun))
+  if ((g_mgr_socket_map.sock) && (g_ep_proc.ep_fun))
     {
       return 0;
     }
@@ -1773,18 +1773,18 @@ nsfw_mgr_comm_fd_init (u32 proc_type)
         }
     }
   NSFW_LOGINF ("] final max fd=%d", NSFW_MGR_FD_MAX);
-  if (!g_mgr_sockt_map.sock)
+  if (!g_mgr_socket_map.sock)
     {
-      g_mgr_sockt_map.sock =
+      g_mgr_socket_map.sock =
         (nsfw_mgr_sock_info *) malloc (sizeof (nsfw_mgr_sock_info) *
                                        NSFW_MGR_FD_MAX);
-      if (NULL == g_mgr_sockt_map.sock)
+      if (NULL == g_mgr_socket_map.sock)
         {
           NSFW_LOGERR ("malloc fail] length=%d",
                        sizeof (nsfw_mgr_sock_info) * NSFW_MGR_FD_MAX);
           return -1;
         }
-      (void) MEMSET_S (g_mgr_sockt_map.sock,
+      (void) MEMSET_S (g_mgr_socket_map.sock,
                        sizeof (nsfw_mgr_sock_info) * NSFW_MGR_FD_MAX, 0,
                        sizeof (nsfw_mgr_sock_info) * NSFW_MGR_FD_MAX);
     }

@@ -62,12 +62,12 @@ rd_data_proc g_rd_cpy[RD_DATA_TYPE_MAX] = {
    },
 };
 
-rd_data_defaut_ip g_defualt_ip_config[] = {
+rd_data_defaut_ip g_default_ip_config[] = {
   {{"127.0.0.1"}, {RD_LINUX_PLANENAME}, 32},
   {{"0.0.0.0"}, {RD_LINUX_PLANENAME}, 32},
 };
 
-rd_data_defaut_protocol g_defualt_protcol[] = {
+rd_data_defaut_protocol g_default_protcol[] = {
   {0xf001, {RD_STACKX_PLANENAME}},
 };
 
@@ -122,9 +122,9 @@ nstack_rd_get_stackid (nstack_rd_key * pkey, int *stackid)
       *stackid = item.stack_id;
       return NSTACK_RD_SUCCESS;
     }
-  if (g_rd_cpy[type].rd_item_defualt)
+  if (g_rd_cpy[type].rd_item_default)
     {
-      *stackid = g_rd_cpy[type].rd_item_defualt ((void *) pkey);
+      *stackid = g_rd_cpy[type].rd_item_default ((void *) pkey);
     }
   else
     {
@@ -137,7 +137,7 @@ nstack_rd_get_stackid (nstack_rd_key * pkey, int *stackid)
 
 /*****************************************************************************
 *   Prototype    : nstack_rd_sys_default
-*   Description  : sys defualt rd info,
+*   Description  : sys default rd info,
 *   Input        : None
 *   Output       : None
 *   Return Value : int
@@ -152,12 +152,12 @@ nstack_rd_sys_default ()
   rd_data_defaut_protocol *pprotodata = NULL;
   int icnt = 0, iindex = 0;
 
-  /*get the ip defualt route */
+  /*get the ip default route */
   for (icnt = 0;
-       icnt < sizeof (g_defualt_ip_config) / sizeof (rd_data_defaut_ip);
+       icnt < sizeof (g_default_ip_config) / sizeof (rd_data_defaut_ip);
        icnt++)
     {
-      pdata = &g_defualt_ip_config[icnt];
+      pdata = &g_default_ip_config[icnt];
       for (iindex = 0; iindex < g_rd_map_num; iindex++)
         {
           if (0 ==
@@ -186,12 +186,12 @@ nstack_rd_sys_default ()
                                                (RD_DATA_TYPE_IP), &item);
     }
 
-  /*get the protocol defualt route */
+  /*get the protocol default route */
   (void) MEMSET_S (&item, sizeof (item), 0, sizeof (item));
   for (icnt = 0;
-       icnt < sizeof (g_defualt_protcol) / sizeof (rd_data_defaut_ip); icnt++)
+       icnt < sizeof (g_default_protcol) / sizeof (rd_data_defaut_ip); icnt++)
     {
-      pprotodata = &g_defualt_protcol[icnt];
+      pprotodata = &g_default_protcol[icnt];
       for (iindex = 0; iindex < g_rd_map_num; iindex++)
         {
           if (0 ==
@@ -346,7 +346,7 @@ nstack_rd_sys ()
       return NSTACK_RD_FAIL;
     }
 
-  /*insert defualt rd info */
+  /*insert default rd info */
   nstack_rd_sys_default ();
 
   /*get from config file */

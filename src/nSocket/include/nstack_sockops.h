@@ -31,7 +31,7 @@ extern "C"{
     {\
         if((retval = ((ops)->pf##fun args)) == -1)\
         {\
-            NSSOC_LOGDBG("function=%s excute failed,ret=%d.errno=%d.",  #fun, retval, errno);  \
+            NSSOC_LOGDBG("function=%s execute failed,ret=%d.errno=%d.",  #fun, retval, errno);  \
         }\
     }\
     else\

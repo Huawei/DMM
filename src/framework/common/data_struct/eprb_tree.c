@@ -55,7 +55,7 @@ __ep_rb_rotate_left (struct ep_rb_node *X, struct ep_rb_root *root)
      **************************/
   struct ep_rb_node *Y = (struct ep_rb_node *) ADDR_SHTOL (X->rb_right);
 
-  /* estblish X->Right link */
+  /* establish X->Right link */
   X->rb_right = Y->rb_left;
 
   if (Y->rb_left != NULL)
@@ -64,7 +64,7 @@ __ep_rb_rotate_left (struct ep_rb_node *X, struct ep_rb_root *root)
         (struct ep_rb_node *) ADDR_LTOSH_EXT (X);
     }
 
-  /* estblish Y->Parent link */
+  /* establish Y->Parent link */
   Y->rb_parent = X->rb_parent;
 
   if (X->rb_parent)
@@ -101,7 +101,7 @@ __ep_rb_rotate_right (struct ep_rb_node *X, struct ep_rb_root *root)
      ****************************/
   struct ep_rb_node *Y = (struct ep_rb_node *) ADDR_SHTOL (X->rb_left);
 
-  /* estblish X->Left link */
+  /* establish X->Left link */
   X->rb_left = Y->rb_right;
 
   if (Y->rb_right != NULL)
@@ -110,7 +110,7 @@ __ep_rb_rotate_right (struct ep_rb_node *X, struct ep_rb_root *root)
         (struct ep_rb_node *) ADDR_LTOSH_EXT (X);
     }
 
-  /* estblish Y->Parent link */
+  /* establish Y->Parent link */
   Y->rb_parent = X->rb_parent;
 
   if (X->rb_parent)
@@ -190,7 +190,7 @@ ep_rb_insert_color (struct ep_rb_node *X, struct ep_rb_root *root)
         }
       else
         {
-          /* miror image of above code */
+          /* mirror image of above code */
           struct ep_rb_node *Y =
             (struct ep_rb_node *) ADDR_SHTOL (EP_RBTREE_GRANDF (X)->rb_left);
 

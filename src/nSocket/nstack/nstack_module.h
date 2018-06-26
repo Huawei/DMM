@@ -51,7 +51,7 @@ extern "C"{
 typedef struct __NSTACK_MODULE_KEYS
 {
   ns_char modName[MODULE_NAME_MAX];     /*stack name */
-  ns_char registe_fn_name[MODULE_NAME_MAX];     /*stack regist fun name */
+  ns_char register_fn_name[MODULE_NAME_MAX];     /*stack register fun name */
   ns_char libPath[MODULE_NAME_MAX];     /*if libtype is dynamic, it is the path of lib */
   ns_char deploytype;           /*delpoly model type: model type1, model type2, model type3 */
   ns_char libtype;              /*dynamic lib or static lib */
@@ -81,7 +81,7 @@ typedef struct __NSTACK_MODULE
 
 typedef struct
 {
-  ns_int32 modNum;              // Number of modules registed
+  ns_int32 modNum;              // Number of modules registered
   ns_int32 fix_mid;
   nstack_module *defMod;        // The default module
   nstack_module modules[NSTACK_MAX_MODULE_NUM];

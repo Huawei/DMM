@@ -48,7 +48,7 @@
 #define NSTACK_MOD_CFG_RD    "NSTACK_MOD_CFG_RD"
 
 extern nstack_module_keys g_nstack_module_desc[NSTACK_MAX_MODULE_NUM];
-extern ns_uint32 g_mudle_num;
+extern ns_uint32 g_module_num;
 
 extern int nstack_module_parse ();
 extern int nstack_stack_rd_parse (rd_route_data ** data, int *num);

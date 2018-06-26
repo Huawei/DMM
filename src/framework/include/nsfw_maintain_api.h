@@ -72,8 +72,8 @@ typedef int (*nsfw_res_free_fun) (void *pdata);
 typedef struct _nsfw_res_scn_cfg
 {
   u8 type;                      /*nsfw_res_scan_type */
-  u8 force_free_percent;        /*if the resource free percent below this vlaue, begin to force free the element */
-  u16 force_free_chk_num;       /*if the check count beyone this vlaue, call free fun release this element */
+  u8 force_free_percent;        /*if the resource free percent below this value, begin to force free the element */
+  u16 force_free_chk_num;       /*if the check count beyone this value, call free fun release this element */
   u16 alloc_speed_factor;       /*alloc fast with higher value */
 
   u32 num_per_cyc;              /*define the element number in one scan cycle process and increase chk_count of every element */
@@ -174,7 +174,7 @@ typedef struct _nsfw_set_log_msg
 #define SPL_DFX_RES_CONN        "conn"
 #define SPL_DFX_RES_L2TO4       "l2to4"
 #define SPL_DFX_RES_UNMATCH     "version"
-#define SPL_DFX_RES_SOCKT_CB    "socketcb"
+#define SPL_DFX_RES_SOCKET_CB    "socketcb"
 #define SPL_DFX_RES_COMM_MEMPOOL "mbufpool"
 #define SPL_DFX_RES_PCBLIST     "pcblist"
 #define SPL_DFX_RES_ARPLIST     "arplist"

@@ -155,23 +155,23 @@ nsfw_shmem_create (nsfw_mem_zone * pinfo)
   NSFW_INIT_CHK_RET_NULL ()if (NSFW_PROC_MAIN == NSFW_SHMEM_FLAG)
     {
       return common_memzone_data_reserve_name (pinfo->stname.aname,
-                                               pinfo->lenth,
+                                               pinfo->length,
                                                pinfo->isocket_id);
     }
   else
     {
-      /*app must less than NSFW_MEM_APPNAME_LENTH */
+      /*app must less than NSFW_MEM_APPNAME_LENGTH */
       NSFW_NAME_LENCHECK_RET_NULL (pinfo->stname.aname, "shmem create")
         if (-1 ==
             SPRINTF_S (aname, COMMON_MEM_MEMPOOL_NAMESIZE, "%s_%x",
                        pinfo->stname.aname, NSFW_SHMEM_PID))
         {
-          NSCOMM_LOGERR ("SPRINTF_S faild]");
+          NSCOMM_LOGERR ("SPRINTF_S failed]");
           return NULL;
         }
     }
 
-  return nsfw_memzone_remote_reserv ((char *) &aname[0], pinfo->lenth,
+  return nsfw_memzone_remote_reserv ((char *) &aname[0], pinfo->length,
                                      SOCKET_ID_ANY);
 }
 
@@ -220,20 +220,20 @@ nsfw_shmem_lookup (nsfw_mem_name * pname)
         SPRINTF_S (aname, COMMON_MEM_MEMPOOL_NAMESIZE, "%s", pname->aname);
       if (-1 == retVal)
         {
-          NSCOMM_LOGERR ("SPRINTF_S faild");
+          NSCOMM_LOGERR ("SPRINTF_S failed");
           return NULL;
         }
     }
   else
     {
-      /*app must less than NSFW_MEM_APPNAME_LENTH */
+      /*app must less than NSFW_MEM_APPNAME_LENGTH */
       NSFW_NAME_LENCHECK_RET_NULL (pname->aname, "shmem lookup")
         int retVal =
         SPRINTF_S (aname, COMMON_MEM_MEMPOOL_NAMESIZE, "%s_%x", pname->aname,
                    NSFW_SHMEM_PID);
       if (-1 == retVal)
         {
-          NSCOMM_LOGERR ("SPRINTF_S faild");
+          NSCOMM_LOGERR ("SPRINTF_S failed");
           return NULL;
         }
     }
@@ -265,7 +265,7 @@ nsfw_shmem_release (nsfw_mem_name * pname)
             SPRINTF_S (aname, COMMON_MEM_MEMPOOL_NAMESIZE, "%s_%x",
                        pname->aname, NSFW_SHMEM_PID))
         {
-          NSCOMM_LOGERR ("SPRINTF_S faild");
+          NSCOMM_LOGERR ("SPRINTF_S failed");
           return NSFW_MEM_ERR;
         }
     }
@@ -291,13 +291,13 @@ nsfw_shmem_mbfmpcreate (nsfw_mem_mbfpool * pbufinfo)
     }
   else
     {
-      /*app must less than NSFW_MEM_APPNAME_LENTH */
+      /*app must less than NSFW_MEM_APPNAME_LENGTH */
       NSFW_NAME_LENCHECK_RET_NULL (pbufinfo->stname.aname, "mbufpool create")
         if (-1 ==
             SPRINTF_S (aname, COMMON_MEM_MEMPOOL_NAMESIZE, "%s_%x",
                        pbufinfo->stname.aname, NSFW_SHMEM_PID))
         {
-          NSCOMM_LOGERR ("SPRINTF_S faild]");
+          NSCOMM_LOGERR ("SPRINTF_S failed]");
         }
     }
 
@@ -374,18 +374,18 @@ nsfw_shmem_mbfmplookup (nsfw_mem_name * pmbfname)
           SPRINTF_S (aname, COMMON_MEM_MEMPOOL_NAMESIZE, "%s",
                      pmbfname->aname))
         {
-          NSCOMM_LOGERR ("SPRINTF_S faild]");
+          NSCOMM_LOGERR ("SPRINTF_S failed]");
         }
     }
   else
     {
-      /*app must less than NSFW_MEM_APPNAME_LENTH */
+      /*app must less than NSFW_MEM_APPNAME_LENGTH */
       NSFW_NAME_LENCHECK_RET_NULL (pmbfname->aname, "shmem lookup")
         if (-1 ==
             SPRINTF_S (aname, COMMON_MEM_MEMPOOL_NAMESIZE, "%s_%x",
                        pmbfname->aname, NSFW_SHMEM_PID))
         {
-          NSCOMM_LOGERR ("SPRINTF_S faild]");
+          NSCOMM_LOGERR ("SPRINTF_S failed]");
         }
     }
 
@@ -412,7 +412,7 @@ nsfw_shmem_spcreate (nsfw_mem_sppool * pmpinfo)
             SPRINTF_S (aname, COMMON_MEM_MEMPOOL_NAMESIZE, "%s_%x",
                        pmpinfo->stname.aname, NSFW_SHMEM_PID))
         {
-          NSCOMM_LOGERR ("SPRINTF_S faild]");
+          NSCOMM_LOGERR ("SPRINTF_S failed]");
         }
     }
 
@@ -512,7 +512,7 @@ nswf_shmem_sp_ringcreate (nsfw_mem_mring * prpoolinfo,
                                 prpoolinfo->stname.aname, NSFW_SHMEM_PID);
       if (-1 == retVal)
         {
-          NSCOMM_LOGERR ("SPRINTF_S faild]");
+          NSCOMM_LOGERR ("SPRINTF_S failed]");
         }
     }
 
@@ -549,7 +549,7 @@ nsfw_shmem_sprelease (nsfw_mem_name * pname)
             SPRINTF_S (aname, COMMON_MEM_MEMPOOL_NAMESIZE, "%s_%x",
                        pname->aname, NSFW_SHMEM_PID))
         {
-          NSCOMM_LOGERR ("SPRINTF_S faild]");
+          NSCOMM_LOGERR ("SPRINTF_S failed]");
         }
     }
 
@@ -584,18 +584,18 @@ nsfw_shmem_sp_lookup (nsfw_mem_name * pname)
       if (-1 ==
           SPRINTF_S (aname, COMMON_MEM_MEMPOOL_NAMESIZE, "%s", pname->aname))
         {
-          NSCOMM_LOGERR ("SPRINTF_S faild]");
+          NSCOMM_LOGERR ("SPRINTF_S fails]");
         }
     }
   else
     {
-      /*app's name can not over NSFW_MEM_APPNAME_LENTH */
+      /*app's name can not over NSFW_MEM_APPNAME_LENGTH */
       NSFW_NAME_LENCHECK_RET_NULL (pname->aname, "shmem lookup")
         if (-1 ==
             SPRINTF_S (aname, COMMON_MEM_MEMPOOL_NAMESIZE, "%s_%x",
                        pname->aname, NSFW_SHMEM_PID))
         {
-          NSCOMM_LOGERR ("SPRINTF_S faild]");
+          NSCOMM_LOGERR ("SPRINTF_S failed]");
         }
     }
 
@@ -622,7 +622,7 @@ nsfw_shmem_ringcreate (nsfw_mem_mring * pringinfo)
             SPRINTF_S (aname, COMMON_MEM_MEMPOOL_NAMESIZE, "%s_%x",
                        pringinfo->stname.aname, NSFW_SHMEM_PID))
         {
-          NSCOMM_LOGERR ("SPRINTF_S faild]");
+          NSCOMM_LOGERR ("SPRINTF_S failed]");
         }
     }
 
@@ -680,7 +680,7 @@ nsfw_shmem_ring_statics (mring_handle handle)
 }
 
 ssize_t
-nsfw_shmem_stactic (void *handle, nsfw_mem_struct_type type)
+nsfw_shmem_static (void *handle, nsfw_mem_struct_type type)
 {
   switch (type)
     {
@@ -737,7 +737,7 @@ nsfw_shmem_mbuf_recycle (mpool_handle handle)
      1.if proc.head != proc.tail  set proc.head to proc.tail [may lost some buf,but the queue still can use]
      App May not putIn Data , just done head++, we can't set proc.tail to proc.head.
      2.if cons.head != cons.tail set cons.tail to cons.head [may lost some buf,but the queue still can use]
-     App May alread finish deque,just not tail++, we can't set cons.head to cons.tail.
+     App May already finish deque,just not tail++, we can't set cons.head to cons.tail.
    */
   if ((rteRing->prod.head != rteRing->prod.tail)
       || (rteRing->cons.head != rteRing->cons.tail))

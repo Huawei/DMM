@@ -71,7 +71,7 @@ nsfw_mem_ring_init (struct nsfw_mem_ring *ring, unsigned int size,
 
 /*
 another way to init Pool while no continuous space
-1. init a empt rte_perf_ring
+1. init a empty rte_perf_ring
 2. add element to PerRing.
 */
 static inline void
