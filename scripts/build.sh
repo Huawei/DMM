@@ -17,7 +17,7 @@
 set -x
 
 TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)
-log_file="/dmm/scripts/build_log.txt-$TIMESTAMP"
+log_file="/tmp/build_log.txt-$TIMESTAMP"
 exec 1> >(tee -a "$log_file")  2>&1
 
 # Get Command Line arguements if present
@@ -139,12 +139,19 @@ if [ "$OS_ID" == "centos" ]; then
 fi
 
 #===========check running env =================
-sudo sysctl -w vm.nr_hugepages=1024
+hugepagesize=$(cat /proc/meminfo | grep Hugepagesize | awk -F " " {'print$2'})
+if [ "$hugepagesize" == "2048" ]; then
+    pages=1536
+elif [ "$hugepagesize" == "1048576" ]; then
+    pages=3
+fi
+sudo sysctl -w vm.nr_hugepages=$pages
 HUGEPAGES=`sysctl -n  vm.nr_hugepages`
-if [ $HUGEPAGES != 1024 ]; then
-    echo "ERROR: Unable to get 1024 hugepages, only got $HUGEPAGES.  Cannot finish."
+if [ $HUGEPAGES != $pages ]; then
+    echo "ERROR: Unable to get $pages hugepages, only got $HUGEPAGES.  Cannot finish."
     exit
 fi
+
 hugepageTotal=$(cat /proc/meminfo | grep -c "HugePages_Total:       0")
 if [ $hugepageTotal -ne 0 ]; then
   echo "HugePages_Total is zero"
@@ -163,9 +170,12 @@ if [ $hugepageSize -ne 0 ]; then
   exit
 fi
 
-
 sudo mkdir /mnt/nstackhuge -p
-sudo mount -t hugetlbfs -o pagesize=2M none /mnt/nstackhuge/
+if [ "$hugepagesize" == "2048" ]; then
+    sudo mount -t hugetlbfs -o pagesize=2M none /mnt/nstackhuge/
+elif [ "$hugepagesize" == "1048576" ]; then
+    sudo mount -t hugetlbfs -o pagesize=1G none /mnt/nstackhuge/
+fi
 sudo mkdir -p /var/run/ip_module/
 
 export LD_LIBRARY_PATH=$LIB_PATH

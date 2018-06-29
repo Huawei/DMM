@@ -1,5 +1,5 @@
 #!/bin/bash -x
-log_file="/dmm/resources/extras/install_log.txt-`date +'%Y-%m-%d_%H-%M-%S'`"
+log_file="/tmp/install_log.txt-`date +'%Y-%m-%d_%H-%M-%S'`"
 exec 1> >(tee -a "$log_file")  2>&1
 
 if [ "$(uname)" <> "Darwin" ]; then
