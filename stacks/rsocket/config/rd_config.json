@@ -1,0 +1,10 @@
+{
+  "ip_route": [
+    {
+	  "subnet": "192.168.1.1/24",
+	  "type": "nstack-rsocket",
+    },
+  ],
+  "prot_route": [
+  ],
+}

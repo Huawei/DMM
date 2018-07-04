@@ -39,6 +39,7 @@ if (!ptr)\
 /* *INDENT-OFF* */
 rd_stack_plane_map g_nstack_plane_info[] = {
    {{RD_LINUX_NAME}, {RD_LINUX_PLANENAME}, -1},
+   {"rsocket", "nstack-rsocket", -1},
    {{RD_STACKX_NAME}, {RD_STACKX_PLANENAME}, -1},
 };
 /* *INDENT-ON* */
