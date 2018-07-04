@@ -190,12 +190,18 @@ UNLOCK_CLOSE (nstack_fd_local_lock_info_t * local_lock)
 
 #define UNLOCK_FOR_EP(local_lock) UNLOCK_CLOSE(local_lock)
 
-#define NSTACK_INIT_CHECK_RET(fun) \
-    if (nstack_fw_init()) { \
-        NSSOC_LOGERR("nstack %s call, but initial not finished yet [return]", #fun); \
-        nstack_set_errno(ENOSYS); \
-        return -1; \
-    }
+#define NSTACK_INIT_CHECK_RET(fun, args...) \
+    do { \
+        if (NSTACK_MODULE_INITING == g_nStackInfo.fwInited) { \
+            NSSOC_LOGINF ("call kernel func %s", #fun); \
+            return nsfw_base_##fun(args); \
+            } \
+        if (nstack_fw_init()) { \
+            NSSOC_LOGERR("nstack %s call, but initial not finished yet [return]", #fun); \
+            nstack_set_errno(ENOSYS); \
+            return -1; \
+        } \
+    }while(0)
 
 #define NSTACK_MODULE_ERROR_SET(Index)
 

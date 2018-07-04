@@ -137,7 +137,7 @@ dmm_pktmbuf_pool_iterator (struct common_mem_mempool * mp, uint32_t start,
     }
 
   int32_t elm_size = mp->elt_size + mp->header_size + mp->trailer_size;
-  struct common_mem_mbuf *elm_mbuf = (struct common_mem_mbuf *) (mp->elt_va_start + start * elm_size + mp->header_size);        /*lint !e647 */
+  struct common_mem_mbuf *elm_mbuf = (struct common_mem_mbuf *) (STAILQ_FIRST(&mp->mem_list)->addr + start * elm_size + mp->header_size);        /*lint !e647 */
 
   uint32_t i;
   uint32_t mbuf_end = COMMON_MEM_MIN (end, mp->size) - start;

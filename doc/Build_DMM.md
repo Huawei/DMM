@@ -10,21 +10,24 @@ Note:
 
 - Steps :
 
-  Download dpdk-16.04.tar.xz from DPDK release, you can get it from [http://static.dpdk.org/rel](http://static.dpdk.org/rel)
+  Download dpdk-18.02.tar.xz from DPDK release, you can get it from [http://static.dpdk.org/rel](http://static.dpdk.org/rel)
 ```
-    #wget http://static.dpdk.org/rel/dpdk-16.04.tar.xz
-    #tar xvf dpdk-16.04.tar.xz
-    #vi dpdk-16.04/config/common_base //make CONFIG_RTE_BUILD_SHARED_LIB=y, CONFIG_RTE_EXEC_ENV=y, CONFIG_RTE_LIBRTE_EAL=y
-    #cd dpdk-16.04
+    #wget http://static.dpdk.org/rel/dpdk-18.02.tar.xz
+    #tar xvf dpdk-18.02.tar.xz
+    #vi dpdk-18.02/config/common_base
+      //make CONFIG_RTE_BUILD_SHARED_LIB=y, CONFIG_RTE_EXEC_ENV=y, CONFIG_RTE_LIBRTE_EAL=y, CONFIG_RTE_EAL_PMD_PATH="/tmp/dpdk/drivers/"
+    #cd dpdk-18.02
     #make install  T=x86_64-native-linuxapp-gcc DESTDIR=/usr -j 4
     #cd x86_64-native-linuxapp-gcc
     #make           //install the dpdk which will generate .so inside lib folder in the path.
+    #mkdir -p /tmp/dpdk/drivers/
+    #cp -f /usr/lib/librte_mempool_ring.so /tmp/dpdk/drivers/
 ```
 
 Note:
 
   Environment:
-  Linux ubuntu 16.04 or some distro which support dpdk-16.04
+  Linux ubuntu 16.04 or some distro which support dpdk-18.02
 
 # 3. Build DMM:
 

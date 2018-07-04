@@ -39,6 +39,7 @@
 #include <linux/netlink.h>
 #include <dirent.h>
 #include <fnmatch.h>
+#include "common_mem_common.h"
 
 #ifdef __cplusplus
 /* *INDENT-OFF* */

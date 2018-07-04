@@ -22,6 +22,8 @@
 #include "types.h"
 #include "list.h"
 
+#include "common_mem_common.h"
+
 #include "nstack_securec.h"
 #include "nsfw_init.h"
 #include "nsfw_mgr_com_api.h"

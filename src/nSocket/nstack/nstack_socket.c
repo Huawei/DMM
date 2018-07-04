@@ -150,7 +150,7 @@ nstack_socket (int domain, int itype, int protocol)
   int selectmod = -1;
 
   /*check whether module init finish or not */
-  NSTACK_INIT_CHECK_RET (socket);
+  NSTACK_INIT_CHECK_RET (socket, domain, itype, protocol);
 
   NSSOC_LOGINF ("(domain=%d, type=%d, protocol=%d) [Caller]", domain, itype,
                 protocol);
@@ -286,6 +286,8 @@ nstack_bind (int fd, const struct sockaddr *addr, socklen_t addrlen)
   int selectmod = -1;
   struct sockaddr_in *iaddr = NULL;
   nstack_rd_key rdkey = { 0 };
+
+  NSTACK_INIT_CHECK_RET (bind, fd, addr, addrlen);
 
   NSSOC_LOGINF ("(sockfd=%d, addr=%p, addrlen=%u) [Caller]", fd, addr,
                 addrlen);
@@ -452,6 +454,8 @@ nstack_listen (int fd, int backlog)
   int tfd;
   int func_called = 0;
 
+  NSTACK_INIT_CHECK_RET (listen, fd, backlog);
+
   NSSOC_LOGINF ("(sockfd=%d, backlog=%d) [Caller]", fd, backlog);
   if (fd < 0)
     {
@@ -518,6 +522,8 @@ nstack_accept (int fd, struct sockaddr *addr, socklen_t * addr_len)
   int ret_fd = -1;
   nstack_fd_Inf *accInf;
   int ret = -1;
+
+  NSTACK_INIT_CHECK_RET (accept, fd, addr, addr_len);
 
   NSSOC_LOGINF ("(sockfd=%d, addr=%p, addrlen=%p) [Caller]", fd, addr,
                 addr_len);
@@ -672,6 +678,8 @@ nstack_accept4 (int fd, struct sockaddr *addr,
   int ret = -1;
   nstack_fd_Inf *accInf;
 
+  NSTACK_INIT_CHECK_RET (accept4, fd, addr, addr_len, flags);
+
   NSSOC_LOGINF ("(sockfd=%d, addr=%p, addrlen=%p, flags=%d) [Caller]", fd,
                 addr, addr_len, flags);
   if (fd < 0)
@@ -822,6 +830,8 @@ nstack_connect (int fd, const struct sockaddr *addr, socklen_t addrlen)
   int selectmod = -1;
   nstack_rd_key rdkey = { 0 };
 
+  NSTACK_INIT_CHECK_RET (connect, fd, addr, addrlen);
+
   NSSOC_LOGINF ("(sockfd=%d, addr=%p, addrlen=%u) [Caller]", fd, addr,
                 addrlen);
 
@@ -947,6 +957,8 @@ nstack_shutdown (int fd, int how)
       return -1;
     }
 
+  NSTACK_INIT_CHECK_RET (shutdown, fd, how);
+
   NSSOC_LOGINF ("(fd=%d, how=%d) [Caller]", fd, how);
 
   NSTACK_FD_LINUX_CHECK (fd, shutdown, fdInf, (fd, how));
@@ -1058,6 +1070,8 @@ nstack_close (int fd)
   nstack_fd_Inf *fdInf;
   int ret = -1;
 
+  NSTACK_INIT_CHECK_RET (close, fd);
+
   /*linux fd check */
   if (!(fdInf = nstack_getValidInf (fd)))
     {
@@ -1119,6 +1133,8 @@ nstack_send (int fd, const void *buf, size_t len, int flags)
   nstack_fd_Inf *fdInf = NULL;
   int size = -1;
 
+  NSTACK_INIT_CHECK_RET (send, fd, buf, len, flags);
+
   NS_LOG_CTRL (LOG_CTRL_SEND, NSOCKET, "NSSOC", NSLOG_DBG,
                "(sockfd=%d, buf=%p, len=%zu, flags=%d) [Caller]", fd, buf,
                len, flags);
@@ -1151,6 +1167,8 @@ nstack_recv (int fd, void *buf, size_t len, int flags)
 {
   nstack_fd_Inf *fdInf = NULL;
   int size = -1;
+
+  NSTACK_INIT_CHECK_RET (recv, fd, buf, len, flags);
 
   NS_LOG_CTRL (LOG_CTRL_RECV, NSOCKET, "NSSOC", NSLOG_DBG,
                "(sockfd=%d, buf=%p, len=%zu, flags=%d) [Caller]", fd, buf,
@@ -1185,6 +1203,8 @@ nstack_write (int fd, const void *buf, size_t count)
   nstack_fd_Inf *fdInf = NULL;
   int size = -1;
 
+  NSTACK_INIT_CHECK_RET (write, fd, buf, count);
+
   NSTACK_FD_LINUX_CHECK (fd, write, fdInf, (fd, buf, count));
 
   NS_LOG_CTRL (LOG_CTRL_WRITE, NSOCKET, "NSSOC", NSLOG_DBG,
@@ -1217,6 +1237,8 @@ nstack_read (int fd, void *buf, size_t count)
   nstack_fd_Inf *fdInf = NULL;
   int size = -1;
 
+  NSTACK_INIT_CHECK_RET (read, fd, buf, count);
+
   NS_LOG_CTRL (LOG_CTRL_READ, NSOCKET, "NSSOC", NSLOG_DBG,
                "(fd=%d, buf=%p, count=%zu) [Caller]", fd, buf, count);
 
@@ -1247,6 +1269,8 @@ nstack_writev (int fd, const struct iovec * iov, int iovcnt)
 {
   nstack_fd_Inf *fdInf = NULL;
   int size = -1;
+
+  NSTACK_INIT_CHECK_RET (writev, fd, iov, iovcnt);
 
   NS_LOG_CTRL (LOG_CTRL_WRITEV, NSOCKET, "NSSOC", NSLOG_DBG,
                "(fd=%d, iov=%p, count=%d) [Caller]", fd, iov, iovcnt);
@@ -1279,6 +1303,8 @@ nstack_readv (int fd, const struct iovec * iov, int iovcnt)
 {
   nstack_fd_Inf *fdInf = NULL;
   int size = -1;
+
+  NSTACK_INIT_CHECK_RET (readv, fd, iov, iovcnt);
 
   NS_LOG_CTRL (LOG_CTRL_READV, NSOCKET, "NSSOC", NSLOG_DBG,
                "(fd=%d, iov=%p, count=%d) [Caller]", fd, iov, iovcnt);
@@ -1317,6 +1343,8 @@ nstack_sendto (int fd, const void *buf, size_t len, int flags,
   int selectmod = -1;
   int retval = 0;
   nstack_rd_key rdkey = { 0 };
+
+  NSTACK_INIT_CHECK_RET (sendto, fd, buf, len, flags, dest_addr,addrlen);
 
   NSSOC_LOGDBG
     ("(sockfd=%d, buf=%p, len=%zu, flags=%d, dest_addr=%p, addrlen=%u) [Caller]",
@@ -1400,6 +1428,8 @@ nstack_sendmsg (int fd, const struct msghdr * msg, int flags)
   int retval = 0;
   nstack_rd_key rdkey = { 0 };
 
+  NSTACK_INIT_CHECK_RET (sendmsg, fd, msg, flags);
+
   NS_LOG_CTRL (LOG_CTRL_SENDMSG, NSOCKET, "NSSOC", NSLOG_DBG,
                "(sockfd=%d, msg=%p, flags=%d) [Caller]", fd, msg, flags);
 
@@ -1482,6 +1512,8 @@ nstack_recvfrom (int fd, void *buf, size_t len, int flags,
   nstack_fd_Inf *fdInf = NULL;
   int size = -1;
 
+  NSTACK_INIT_CHECK_RET (recvfrom, fd, buf, len, flags, src_addr, addrlen);
+
   NSSOC_LOGDBG
     ("(sockfd=%d, buf=%p, len=%zu, flags=%d, src_addr=%p, addrlen=%p) [Caller]",
      fd, buf, len, flags, src_addr, addrlen);
@@ -1524,6 +1556,8 @@ nstack_recvmsg (int fd, struct msghdr * msg, int flags)
   nstack_fd_Inf *fdInf = NULL;
   int size = -1;
 
+  NSTACK_INIT_CHECK_RET (recvmsg, fd, msg, flags);
+
   NS_LOG_CTRL (LOG_CTRL_RECVMSG, NSOCKET, "NSSOC", NSLOG_DBG,
                "(sockfd=%d, msg=%p, flags=%d) [Caller]", fd, msg, flags);
 
@@ -1563,6 +1597,8 @@ nstack_getsockname (int fd, struct sockaddr *addr, socklen_t * addrlen)
   nstack_fd_Inf *fdInf = NULL;
   int tfd = -1;
   int ret = -1;
+
+  NSTACK_INIT_CHECK_RET (getsockname, fd, addr, addrlen);
 
   NS_LOG_CTRL (LOG_CTRL_GETSOCKNAME, NSOCKET, "NSSOC", NSLOG_INF,
                "(fd=%d, addr=%p, addrlen=%p) [Caller]", fd, addr, addrlen);
@@ -1633,6 +1669,8 @@ nstack_getpeername (int fd, struct sockaddr *addr, socklen_t * addrlen)
   nstack_fd_Inf *fdInf;
   int tfd;
   int ret = -1;
+
+  NSTACK_INIT_CHECK_RET (getpeername, fd, addr, addrlen);
 
   NS_LOG_CTRL (LOG_CTRL_GETPEERNAME, NSOCKET, "NSSOC", NSLOG_INF,
                "(fd=%d, addr=%p, addrlen=%p) [Caller]", fd, addr, addrlen);
@@ -1766,6 +1804,8 @@ nstack_getsockopt (int fd, int level, int optname, void *optval,
   int ret = -1;
   nstack_socket_ops *ops;
 
+  NSTACK_INIT_CHECK_RET (getsockopt, fd, level, optname, optval, optlen);
+
   NS_LOG_CTRL (LOG_CTRL_GETSOCKOPT, NSOCKET, "NSSOC", NSLOG_INF,
                "(fd=%d, level=%d, optname=%d, optval=%p, optlen=%p) [Caller]",
                fd, level, optname, optval, optlen);
@@ -1849,6 +1889,8 @@ nstack_setsockopt (int fd, int level, int optname, const void *optval,
   int curRet = -1;
   int lerror = 0;
   int flag = 0;
+
+  NSTACK_INIT_CHECK_RET (setsockopt, fd, level, optname, optval, optlen);
 
   NSSOC_LOGINF
     ("(fd=%d, level=%d, optname=%d, optval=%p, optlen=%u) [Caller]", fd,
@@ -1940,6 +1982,8 @@ nstack_ioctl (int fd, unsigned long request, unsigned long argp)
   int lerror = 0;
   int flag = 0;
 
+  NSTACK_INIT_CHECK_RET (ioctl, fd, request, argp);
+
   NSSOC_LOGINF ("(fd=%d, request=%lu) [Caller]", fd, request);
   if (fd < 0)
     {
@@ -2018,6 +2062,8 @@ nstack_fcntl (int fd, int cmd, unsigned long argp)
   int curRet = -1;
   int lerror = 0;
   int flag = 0;
+
+  NSTACK_INIT_CHECK_RET (fcntl, fd, cmd, argp);
 
   NSSOC_LOGINF ("(fd=%d, cmd=%d) [Caller]", fd, cmd);
   if (fd < 0)
@@ -2141,6 +2187,8 @@ nstack_select (int nfds, fd_set * readfds, fd_set * writefds,
   u64_t msec;
 
   int i;
+
+  NSTACK_INIT_CHECK_RET (select, nfds, readfds, writefds, exceptfds, timeout);
 
   if ((nfds > __FD_SETSIZE) || (nfds < 0)
       || ((timeout) && ((timeout->tv_sec < 0) || (timeout->tv_usec < 0))))
@@ -2319,6 +2367,8 @@ nstack_epoll_ctl (int epfd, int op, int fd, struct epoll_event *event)
   struct epoll_event ep_event = { 0 };
   struct epitem *epi = NULL;
 
+  NSTACK_INIT_CHECK_RET (epoll_ctl, epfd, op, fd, event);
+
   NSSOC_LOGINF ("(epfd=%d, op=%d, fd=%d, event=%p) [Caller]", epfd, op, fd,
                 event);
   if (event)
@@ -2450,7 +2500,7 @@ nstack_epoll_create (int size)
   nstack_socket_ops *ops;
   int ret = 0;
 
-  NSTACK_INIT_CHECK_RET (epoll_create);
+  NSTACK_INIT_CHECK_RET (epoll_create, size);
 
   NSSOC_LOGINF ("(size=%d) [Caller]", size);
 
@@ -2580,6 +2630,8 @@ nstack_epoll_wait (int epfd, struct epoll_event *events, int maxevents,
   int evt = 0;
   int ret = 0;
 
+  NSTACK_INIT_CHECK_RET (epoll_wait, epfd, events, maxevents, timeout);
+
   NSTACK_FD_LINUX_CHECK (epfd, epoll_wait, fdInf,
                          (epfd, events, maxevents, timeout));
 
@@ -2705,6 +2757,8 @@ nstack_fork (void)
 {
   pid_t pid;
   pid_t parent_pid = sys_get_hostpid_from_file (getpid ());
+
+  NSTACK_INIT_CHECK_RET (fork);
 
   common_mem_rwlock_write_lock (get_fork_lock ());
   if (NSTACK_MODULE_SUCCESS == g_nStackInfo.fwInited)

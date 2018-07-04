@@ -176,7 +176,7 @@ nsfw_res_flash_data (nsfw_res_mgr_item_cfg * res_scn_item)
           (struct common_mem_mempool *) scn_cfg->data;
         if (NULL == ring)
           {
-            ring = mp->ring;
+            ring = mp->pool_data;
             if (NULL == ring)
               return FALSE;
           }

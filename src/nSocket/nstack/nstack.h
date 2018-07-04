@@ -55,6 +55,7 @@ extern "C"{
 typedef enum
 {
   NSTACK_MODULE_INIT,
+  NSTACK_MODULE_INITING,
   NSTACK_MODULE_SUCCESS,
   NSTACK_MODULE_FAIL
 } nstack_module_state;
