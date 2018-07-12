@@ -120,7 +120,6 @@ fi
 #===========build DMM=================
 echo "DMM build started....."
 
-cd $DMM_DIR/thirdparty/glog/glog-0.3.4/ && autoreconf -ivf
 cd $BUILD_DIR
 rm -rf *
 cmake ..
