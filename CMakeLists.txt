@@ -139,7 +139,7 @@ ExternalProject_Add(
 		GLOG
 		SOURCE_DIR ${GLOG_SRC}
 		BUILD_IN_SOURCE 1
-		CONFIGURE_COMMAND autoreconf COMMAND sh configure CFLAGS=-fPIC CXXFLAGS=-fPIC
+		CONFIGURE_COMMAND autoreconf -ivf COMMAND sh configure CFLAGS=-fPIC CXXFLAGS=-fPIC
         BUILD_COMMAND COMMAND make -j 8
 		INSTALL_COMMAND cp -f ${GLOG_SRC}/.libs/libglog.a ${LIB_PATH_STATIC}/
 )
