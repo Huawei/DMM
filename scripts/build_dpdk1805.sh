@@ -31,41 +31,34 @@ mkdir -p rpmbuild/SOURCES
 
 cd ~/rpmbuild/SOURCES
 
-if [ ! -s dpdk-16.04.tar.gz ]; then
-wget http://dpdk.org/browse/dpdk/snapshot/dpdk-16.04.tar.gz
+if [ ! -s dpdk-18.05.tar.gz ]; then
+wget http://dpdk.org/browse/dpdk/snapshot/dpdk-18.05.tar.gz
 fi
 
-tar xzvf dpdk-16.04.tar.gz
-cp dpdk-16.04/pkg/dpdk.spec ~/rpmbuild/SOURCES/
+tar xzvf dpdk-18.05.tar.gz
+cp dpdk-18.05/pkg/dpdk.spec ~/rpmbuild/SOURCES/
 
 echo "modify the spec"
-
-#get rid of the dependence of xen-devel
-sed -i '48d' dpdk.spec
-sed -i '47a BuildRequires: kernel-devel, kernel-headers, libpcap-devel' dpdk.spec
 
 #get rid of the dependence of texlive-collection
 sed -i '/BuildRequires: texlive-collection/s/^/#&/' dpdk.spec
 
-#delete something about xen
-sed -i '/LIBRTE_PMD_XENVIRT/s/^/#&/' dpdk.spec
-sed -i '/LIBRTE_XEN_DOM0/s/^/#&/' dpdk.spec
-
 #delete something of generating doc
 sed -i '/%{target} doc/s/^/#&/' dpdk.spec
-sed -i '94d' dpdk.spec
-sed -i '93a      datadir=%{_datadir}/dpdk' dpdk.spec
-sed -i '94a #      datadir=%{_datadir}/dpdk docdir=%{_docdir}/dpdk' dpdk.spec
+sed -i '70d' dpdk.spec
+sed -i '69a      datadir=%{_datadir}/dpdk' dpdk.spec
+sed -i '70a #      datadir=%{_datadir}/dpdk docdir=%{_docdir}/dpdk' dpdk.spec
 sed -i '/%files doc/s/^/#&/' dpdk.spec
 sed -i '/%doc %{_docdir}/s/^/#&/' dpdk.spec
 
-sed -i '76a sed -i 's!CONFIG_RTE_EXEC_ENV=.*!CONFIG_RTE_EXEC_ENV=y!1' config/common_base' dpdk.spec
-sed -i '77a sed -i 's!CONFIG_RTE_BUILD_SHARED_LIB=.*!CONFIG_RTE_BUILD_SHARED_LIB=y!1' config/common_base' dpdk.spec
-sed -i '78a sed -i 's!CONFIG_RTE_LIBRTE_EAL=.*!CONFIG_RTE_LIBRTE_EAL=y!1' config/common_base' dpdk.spec
+sed -i '54a sed -i '\''s!CONFIG_RTE_EXEC_ENV=.*!CONFIG_RTE_EXEC_ENV=y!1'\'' config/common_base' dpdk.spec
+sed -i '55a sed -i '\''s!CONFIG_RTE_BUILD_SHARED_LIB=.*!CONFIG_RTE_BUILD_SHARED_LIB=y!1'\'' config/common_base' dpdk.spec
+sed -i '56a sed -i '\''s!CONFIG_RTE_LIBRTE_EAL=.*!CONFIG_RTE_LIBRTE_EAL=y!1'\'' config/common_base' dpdk.spec
+sed -i '57a sed -i '\''s!CONFIG_RTE_EAL_PMD_PATH=.*!CONFIG_RTE_EAL_PMD_PATH="/tmp/dpdk/drivers/"!1'\'' config/common_base' dpdk.spec
+sed -i '58a sed -i '\''s!CONFIG_RTE_LIBRTE_DPAA2_USE_PHYS_IOVA=.*!CONFIG_RTE_LIBRTE_DPAA2_USE_PHYS_IOVA=n!1'\'' config/common_base' dpdk.spec
 
 echo "build the dependence"
 #sudo yum-builddep -y dpdk.spec
-
 sudo yum install -y  libpcap-devel python-sphinx inkscape
 
 
@@ -80,6 +73,10 @@ fi
 
 echo "install the rpm"
 cd ../RPMS/x86_64/
-sudo rpm -ivh dpdk-16.04-1.x86_64.rpm
-sudo rpm -ivh dpdk-devel-16.04-1.x86_64.rpm
+sudo rpm -ivh dpdk-18.05-1.x86_64.rpm
+sudo rpm -ivh dpdk-devel-18.05-1.x86_64.rpm
+
+mkdir -p /tmp/dpdk/drivers/
+cp -f /usr/lib64/librte_mempool_ring.so /tmp/dpdk/drivers/
+
 cd ${cur_directory}

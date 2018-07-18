@@ -98,11 +98,14 @@ We need to setup configuration as given below.
 
 Usage:
 
-After building the DMM, inside the DMM/release directory below perf-test app will be generated.
+After building the DMM, inside the DMM/release/bin directory below perf-test app will be generated.
 
 *kc_common, ks_epoll, ks_select, vc_common, vs_epoll, vs_select*
 
 The use of ks_epoll,ks_select,vs_epoll and vs_select are the same.
+
+Before executing the app, we should disable ASLR (Address space layout randomization).
+  echo 0 > /proc/sys/kernel/randomize_va_space
 
 Examples:
 

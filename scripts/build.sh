@@ -81,6 +81,7 @@ fi
 #DPDK will be having dependancy on linux headers
 if [ "$OS_ID" == "ubuntu" ]; then
     sudo apt-get -y install git build-essential linux-headers-`uname -r`
+    sudo apt-get install libnuma-dev
 elif [ "$OS_ID" == "debian" ]; then
     sudo apt-get -y install git build-essential linux-headers-`uname -r`
 elif [ "$OS_ID" == "centos" ]; then
@@ -95,25 +96,28 @@ fi
 #===========build DPDK================
 
 if [ "$OS_ID" == "centos" ]; then
-    bash -x $DMM_DIR/scripts/build_dpdk.sh
+    bash -x $DMM_DIR/scripts/build_dpdk1802.sh
 else
 
     if [ ! -d  /usr/include/dpdk ] || [ ! -d  /usr/share/dpdk ] || [ ! -d  /usr/lib/modules/4.4.0-31-generic/extra/dpdk ]; then
-	    mkdir -p $DPDK_DOWNLOAD_PATH
+        mkdir -p $DPDK_DOWNLOAD_PATH
 
-	    DPDK_FOLDER=$DPDK_DOWNLOAD_PATH/dpdk-16.04-$TIMESTAMP
-	    cd $DPDK_DOWNLOAD_PATH
-	    mkdir $DPDK_FOLDER
-	    wget -N https://fast.dpdk.org/rel/dpdk-16.04.tar.xz --no-check-certificate
-	    tar xvf dpdk-16.04.tar.xz -C $DPDK_FOLDER
-	    cd $DPDK_FOLDER/dpdk-16.04
+        DPDK_FOLDER=$DPDK_DOWNLOAD_PATH/dpdk-18.02-$TIMESTAMP
+        cd $DPDK_DOWNLOAD_PATH
+        mkdir $DPDK_FOLDER
+        wget -N https://fast.dpdk.org/rel/dpdk-18.02.tar.xz --no-check-certificate
+        tar xvf dpdk-18.02.tar.xz -C $DPDK_FOLDER
+        cd $DPDK_FOLDER/dpdk-18.02
 
-	    sed -i 's!CONFIG_RTE_EXEC_ENV=.*!CONFIG_RTE_EXEC_ENV=y!1' config/common_base
-	    sed -i 's!CONFIG_RTE_BUILD_SHARED_LIB=.*!CONFIG_RTE_BUILD_SHARED_LIB=y!1' config/common_base
-	    sed -i 's!CONFIG_RTE_LIBRTE_EAL=.*!CONFIG_RTE_LIBRTE_EAL=y!1' config/common_base
+        sed -i 's!CONFIG_RTE_EXEC_ENV=.*!CONFIG_RTE_EXEC_ENV=y!1' config/common_base
+        sed -i 's!CONFIG_RTE_BUILD_SHARED_LIB=.*!CONFIG_RTE_BUILD_SHARED_LIB=y!1' config/common_base
+        sed -i 's!CONFIG_RTE_LIBRTE_EAL=.*!CONFIG_RTE_LIBRTE_EAL=y!1' config/common_base
+        sed -i 's!CONFIG_RTE_EAL_PMD_PATH=.*!CONFIG_RTE_EAL_PMD_PATH="/tmp/dpdk/drivers/"!1' config/common_base
 
-	    sudo make install  T=x86_64-native-linuxapp-gcc DESTDIR=${DPDK_INSTALL_PATH} -j 4
+        sudo make install  T=x86_64-native-linuxapp-gcc DESTDIR=${DPDK_INSTALL_PATH} -j 4
 
+        mkdir -p /tmp/dpdk/drivers/
+        cp -f /usr/lib/librte_mempool_ring.so /tmp/dpdk/drivers/
     fi
 fi
 
@@ -175,6 +179,9 @@ elif [ "$hugepagesize" == "1048576" ]; then
     sudo mount -t hugetlbfs -o pagesize=1G none /mnt/nstackhuge/
 fi
 sudo mkdir -p /var/run/ip_module/
+
+#disable ASLR, othewise it may have some problems when mapping memory for secondary process
+echo 0 > /proc/sys/kernel/randomize_va_space
 
 export LD_LIBRARY_PATH=$LIB_PATH
 export NSTACK_LOG_ON=DBG

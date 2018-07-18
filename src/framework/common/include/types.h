@@ -58,10 +58,6 @@ typedef unsigned long long u64;
 #define NULL ((void *)0)
 #endif
 
-#define container_of(ptr, type, member) ( \
-    (type *)((char *)(ptr) - offsetof(type,member)) \
-    )
-
 #define PRIMARY_ADDR
 
 typedef struct _nsfw_res

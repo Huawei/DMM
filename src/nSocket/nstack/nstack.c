@@ -767,6 +767,7 @@ nstack_fw_init ()
 
   if (NSTACK_MODULE_INIT == g_nStackInfo.fwInited)
     {
+      g_nStackInfo.fwInited = NSTACK_MODULE_INITING;
       nstack_log_init_app();
 
       if (0 != nstack_stack_module_load())

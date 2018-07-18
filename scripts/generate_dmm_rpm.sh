@@ -22,7 +22,7 @@ version="18.04"
 mkdir -p ~/rpmbuild/SOURCES
 
 cd ../
-git archive --format=tar.gz -o ~/rpmbuild/SOURCES/${name}-${version}.tar.gz --prefix=${name}-${version}/ master
+git archive --format=tar.gz -o ~/rpmbuild/SOURCES/${name}-${version}.tar.gz --prefix=${name}-${version}/ HEAD
 
 cd ~/rpmbuild/SOURCES
 tar xzvf ${name}-${version}.tar.gz
