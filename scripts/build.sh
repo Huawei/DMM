@@ -65,6 +65,8 @@ if [ "$OS_ID" == "ubuntu" ]; then
     sudo apt-get update ${APT_OPTS}
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump libpcre3 libpcre3-dev zlibc zlib1g zlib1g-dev vim pkg-config tcl libnl-route-3-200 flex graphviz tk debhelper dpatch gfortran ethtool libgfortran3 bison dkms quilt chrpath swig python-libxml2
 elif [ "$OS_ID" == "debian" ]; then
+    echo "not tested for debian and exit"
+    exit 1
     export DEBIAN_FRONTEND=noninteractive
     export DEBCONF_NONINTERACTIVE_SEEN=true
 
@@ -74,6 +76,8 @@ elif [ "$OS_ID" == "debian" ]; then
 elif [ "$OS_ID" == "centos" ]; then
     sudo yum install -y deltarpm git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump vim sudo yum-utils pcre-devel zlib-devel libiverbs tk tcl tcsh
 elif [ "$OS_ID" == "opensuse" ]; then
+    echo "not tested for opensuse and exit"
+    exit 1
     sudo yum install -y git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump vim sudo yum-utils pcre-devel zlib-devel
 fi
 
@@ -81,12 +85,13 @@ fi
 #DPDK will be having dependancy on linux headers
 if [ "$OS_ID" == "ubuntu" ]; then
     sudo apt-get -y install git build-essential linux-headers-`uname -r`
-    sudo apt-get install libnuma-dev
+    sudo apt-get -y install libnuma-dev
 elif [ "$OS_ID" == "debian" ]; then
     sudo apt-get -y install git build-essential linux-headers-`uname -r`
 elif [ "$OS_ID" == "centos" ]; then
     sudo yum groupinstall -y "Development Tools"
     sudo yum install -y kernel-headers
+    sudo yum install -y numactl-devel
 elif [ "$OS_ID" == "opensuse" ]; then
     sudo yum groupinstall -y "Development Tools"
     sudo yum install -y kernel-headers
