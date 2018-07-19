@@ -16,21 +16,27 @@
 #!/bin/sh
 
 cur_directory=${PWD}
-name="dmm"
-version="18.04"
 
-mkdir -p ~/rpmbuild/SOURCES
+mkdir -p /tmp/mkdeb
+mkdir -p /tmp/mkdeb/DEBIAN
+mkdir -p /tmp/mkdeb/usr/bin
+mkdir -p /tmp/mkdeb/usr/lib
 
 cd ../
-git archive --format=tar.gz -o ~/rpmbuild/SOURCES/${name}-${version}.tar.gz --prefix=${name}-${version}/ HEAD
+git archive --format=tar.gz -o /tmp/dmm.tar.gz --prefix=dmm/ HEAD
 
-cd ~/rpmbuild/SOURCES
-tar xzvf ${name}-${version}.tar.gz
+cd /tmp/
+tar xzvf dmm.tar.gz
+cd dmm/build
+cmake ..
+make -j 8
 
-cp ${name}-${version}/pkg/rpm/dmm.spec ~/rpmbuild/SOURCES
+cd ../
+cp -f release/bin/* /tmp/mkdeb/usr/bin
+cp -f release/lib64/* /tmp/mkdeb/usr/lib
+cp -f pkg/deb/control /tmp/mkdeb/DEBIAN/
 
-echo "generate the rpm package"
-#QA_RPATHS=$[ 0x0002 ] is to shield the warning about rpath when generating the rpm package
-QA_RPATHS=$[ 0x0002 ] rpmbuild -ba dmm.spec   --define "_sourcedir ${PWD}" --define "%_rpmdir ${cur_directory}/../release/rpm"
+cd /tmp/
+dpkg-deb -b mkdeb/ ${cur_directory}/../release/deb/dmm.deb
 
 cd ${cur_directory}

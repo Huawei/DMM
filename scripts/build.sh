@@ -138,6 +138,8 @@ fi
 
 if [ "$OS_ID" == "centos" ]; then
     make pkg-rpm
+elif [ "$OS_ID" == "ubuntu" ]; then
+    make pkg-deb
 fi
 
 #===========check running env =================
