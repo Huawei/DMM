@@ -25,7 +25,10 @@
 [**5 Release file**](#5-release-file)<br>
 [**5.1 libs**](#5.1-libs)<br>
 [**5.2 Posix API of nSocket**](#5.2-posix-api-of-nsocket)<br>
- [**6 Log & Debug**](#5.1-libs)<br>
+[**6 Log & Debug**](#6-log-debug)<br>
+[**7 How to use the incidental apps to test the protocol stack**](#7-how-to-use-the-incidental-apps-to-test-the-protocol-stack)<br>
+[**7.1 App introduction**](#7.1-app-introduction)<br>
+[**7.2 Test implementation**](#7.2-Test-implementation)<br>
 
 **1. Introduction**<br>
 ============================
@@ -1049,3 +1052,64 @@ Also we can memntioned the file name for App log.
 ```
 export NSTACK_APP_LOG_PATH=/path_to_log
 ```
+**7. How to use the incidental apps to test the protocol stack**<br>
+============================
+
+**7.1 App introduction**
+-------------------------
+
+After building the DMM, test apps will be generated like below.The following table is the
+introduction of the client and server apps.
+
+
+ App name| client | server |use DMM| send/recv|s/r + epoll |s/r + select
+  --------------------                |            ---------------------
+  vc_common   | 　Ｙ 　|　Ｎ|　Ｙ|　send　　|　　Ｎ　|    　　 Ｎ
+   kc_common   | 　Ｙ 　|　Ｎ|　Ｎ|　send　　|　　Ｎ　|    　　 Ｎ
+   vs_common   | 　Ｎ 　|　Ｙ|　Ｙ|　recv　　|　　Ｎ　|    　　 Ｎ
+   ks_common   | 　Ｎ 　|　Ｙ|　Ｎ|　recv　　|　　Ｎ　|    　　 Ｎ
+ vs_epoll   | 　Ｎ 　|　Ｙ|　Ｙ|　recv　　|　　Ｙ　|    　　 Ｎ
+ ks_epoll   | 　Ｎ 　|　Ｙ|　Ｎ|　recv　　|　　Ｙ　|    　　 Ｎ
+vs_select   | 　Ｎ 　|　Ｙ|　Ｙ|　recv　　|　　Ｎ　|    　　 Ｙ
+ks_select   | 　Ｎ 　|　Ｙ|　Ｎ|　recv　　|　　Ｎ　|    　　 Ｙ
+Here, the app's name whose first letter is 'k' means that it will run through the kernel.
+If the first letter is 'v', it will run through the dmm stack. If the second letter in the
+app's name is 's', which means it is the server app. If the second letter is 'c', it means it
+is the client app. The 'common' means that the app only implements the function of send or
+receive,no select or epoll. The 'select' means the app uses the select() function to
+implement the listening service.The 'epoll' means the app uses the epoll() function to
+implement the listening service.
+
+**7.2 Test implementation**
+-------------------------
+Before testing, we need two servers, one for the client and one for the server.Then run the
+following codes. The following takes ks_common and vc_epoll as examples.
+**server**
+  ```
+./ks_common -p 20000 -d <server ip> -a 10000 -s <client ip> -l 200 -t 5000000 -i 0 -f 1 -r 20000 -n 1 -w 10 -u 10000 -e 10 -x 1
+  ```
+**client**
+  ```
+./vc_epoll -p 20000 -d <client ip> -a 10000 -s <server ip> -l 200 -t 5000000 -i 0 -f 1 -r 20000 -n 1 -w 10 -u 10000 -e 10 -x 1
+```
+The following table is an introduction to some parameters in the code.
+
+ parameter name   |  Functional description
+  ------------------- |  ---------------------
+  -p                         |           dest portid
+  -d                         |            dest severIP
+  -a                         |            src portid
+  -s                         |            src clientIP
+  -l                         |           msg length
+  -t                         |            max test time
+  -i                          |           msg interval
+  -f                         |           client fd number
+  -r                         |           receive pord
+  -n                        |            connect number(one server vs n client)
+  -w                       |            wait time
+  -u                        |            unit print
+  -e                        |            sleep cut
+  -x                        |            flag print
+
+
+

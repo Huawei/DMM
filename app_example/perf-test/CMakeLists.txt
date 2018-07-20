@@ -37,3 +37,11 @@ TARGET_LINK_LIBRARIES(ks_epoll pthread)
 
 ADD_EXECUTABLE(ks_select multi_tcp_select_app_Ser.c)
 TARGET_LINK_LIBRARIES(ks_select pthread)
+
+ADD_EXECUTABLE(vs_common multi_tcp_common_Ser.c)
+ADD_DEPENDENCIES(vs_common nStackAPI)
+TARGET_LINK_LIBRARIES(vs_common libnStackAPI.so -lpthread -lrt)
+
+ADD_EXECUTABLE(ks_common multi_tcp_common_Ser.c)
+TARGET_LINK_LIBRARIES(ks_common pthread)
+

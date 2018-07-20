@@ -35,6 +35,8 @@ install -c ../BUILD/%{name}-%{version}/release/bin/vc_common %{name}-%{version}-
 install -c ../BUILD/%{name}-%{version}/release/bin/vs_epoll %{name}-%{version}-%{release}.x86_64/usr/bin
 install -c ../BUILD/%{name}-%{version}/release/bin/ks_select %{name}-%{version}-%{release}.x86_64/usr/bin
 install -c ../BUILD/%{name}-%{version}/release/bin/vs_select %{name}-%{version}-%{release}.x86_64/usr/bin
+install -c ../BUILD/%{name}-%{version}/release/bin/ks_common %{name}-%{version}-%{release}.x86_64/usr/bin
+install -c ../BUILD/%{name}-%{version}/release/bin/vs_common %{name}-%{version}-%{release}.x86_64/usr/bin
 
 install -c ../BUILD/%{name}-%{version}/release/lib64/libdmm_api.a %{name}-%{version}-%{release}.x86_64/usr/lib64
 install -c ../BUILD/%{name}-%{version}/release/lib64/libnStackAPI.so %{name}-%{version}-%{release}.x86_64/usr/lib64
