@@ -30,6 +30,8 @@ typedef enum
                                  *and nStack don't take care the communication between stack and stack adpt
                                  */
   NSTACK_MODEL_TYPE3 = 3,       /*nSocket and stack belong to different processes, and sbr was supplied to communicate whit stack */
+  NSTACK_MODEL_TYPE_SIMPLE_STACK = 4,   /* like TYPE1, DMM will NOT provide SBR or pipeline mode, just allocate 32M, and use dpdk file
+                                         * prefix to support multiple running app under DMM */
   NSTACK_MODEL_INVALID,
 } nstack_model_deploy_type;
 

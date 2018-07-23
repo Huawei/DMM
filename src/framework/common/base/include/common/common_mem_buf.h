@@ -21,6 +21,7 @@
 #else
 
 #include "common_mem_base_type.h"
+#include "types.h"
 
 typedef enum __DMM_PROC_TYPE
 {
@@ -63,7 +64,7 @@ typedef struct __common_pal_module_info
  * @param name
  *   The name of the buf pool.
  */
-int nscomm_pal_module_init (common_mem_pal_module_info * pinfo);
+int nscomm_pal_module_init (common_mem_pal_module_info * pinfo, u8 app_mode);
 
 void *nscomm_memzone_data_reserve_name (const char *name, size_t len,
                                         int socket_id);

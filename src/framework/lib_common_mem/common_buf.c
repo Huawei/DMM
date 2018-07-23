@@ -88,7 +88,7 @@
 int log_level = LOG_INFO;
 
 int
-nscomm_pal_module_init (common_mem_pal_module_info * pinfo)
+nscomm_pal_module_init (common_mem_pal_module_info * pinfo, u8 app_mode)
 {
   char tempargv[PATA_NUM_MAX][PATA_STRLENT];
   char *argv[PATA_NUM_MAX];
@@ -98,6 +98,8 @@ nscomm_pal_module_init (common_mem_pal_module_info * pinfo)
   int agindex = 0;
   int intmask = 0;
   int retVal;
+  char name[10] = { '\0' };
+
   retVal = MEMSET_S (tempargv, sizeof (tempargv), '\0', sizeof (tempargv));
   if (EOK != retVal)
     {
@@ -115,9 +117,24 @@ nscomm_pal_module_init (common_mem_pal_module_info * pinfo)
       PARA1_SET (argv, tempargv, agindex, "nStackMain");
       PARA2_SET (argv, tempargv, agindex, "-c", "0x1");
       PARA2_SET (argv, tempargv, agindex, "-n", "4");
-      PARA2_SET (argv, tempargv, agindex, "-m", "2048");
       PARA1_SET (argv, tempargv, agindex, "--huge-dir=/mnt/nstackhuge");
       PARA1_SET (argv, tempargv, agindex, "--proc-type=primary");
+
+      if (app_mode == 1)
+        {
+          sprintf (name, "dmm_app_%ld", (long) getpid ());
+          PARA2_SET (argv, tempargv, agindex, "--file-prefix", name);
+          // TODO: the size of the memory should not be fixed
+          PARA2_SET (argv, tempargv, agindex, "-m", "32");
+        }
+      else
+        {
+          // TODO: replay the name 'nStackMain'
+          /* snprintf(name, 10, "dmm_main_%ld", (long) getpid()); */
+          PARA2_SET (argv, tempargv, agindex, "--file-prefix", "nStackMain");
+          PARA2_SET (argv, tempargv, agindex, "-m", "2048");
+        }
+
     }
   else
     {

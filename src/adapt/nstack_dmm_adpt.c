@@ -121,7 +121,8 @@ nstack_adpt_init (nstack_dmm_para * para)
   stinfo.iargsnum = para->argc;
   stinfo.pargs = para->argv;
   stinfo.enflag = para->proc_type;
-  if (para->deploy_type >= NSTACK_MODEL_TYPE1)
+  if (para->deploy_type != NSTACK_MODEL_TYPE1
+      && para->deploy_type != NSTACK_MODEL_TYPE_SIMPLE_STACK)
     {
       g_same_process = 0;
     }

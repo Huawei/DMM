@@ -57,6 +57,10 @@ nStack_info_t g_nStackInfo = {
 /*if this flag was set, maybe all socket interface called during initializing*/
 __thread int g_tloadflag = 0;
 
+/* app_mode 1: simple stack with APP*/
+u8 app_mode=0;
+
+
 /*check init stack*/
 #define NSTACK_INIT_STATE_CHECK_RET(state)  do {\
     if ((state) == NSTACK_MODULE_SUCCESS)  \
@@ -411,7 +415,7 @@ nstack_init_shmem ()
 
   int deploytype = nstack_get_deploy_type ();
 
-  if (deploytype > NSTACK_MODEL_TYPE1)
+  if (deploytype != NSTACK_MODEL_TYPE1 && deploytype != NSTACK_MODEL_TYPE_SIMPLE_STACK )
     {
       if (-1 == nsep_attach_memory ())
     {
@@ -449,7 +453,7 @@ nstack_init_mem (void)
   int deploytype = nstack_get_deploy_type ();
     /* record unmatched app version*/
     /* check lib version match - Begin */
-  if (deploytype > NSTACK_MODEL_TYPE1)
+  if (deploytype != NSTACK_MODEL_TYPE1 && deploytype != NSTACK_MODEL_TYPE_SIMPLE_STACK )
     {
       check_main_version ();
       initflag = 1;
@@ -772,7 +776,7 @@ nstack_fw_init ()
 
       if (0 != nstack_stack_module_load())
       {
-            NSSOC_LOGERR("nstack stack module load fail");
+         NSSOC_LOGERR("nstack stack module load fail");
          g_nStackInfo.fwInited = NSTACK_MODULE_FAIL;
          return -1;
       }
@@ -787,6 +791,10 @@ nstack_fw_init ()
       if (deploytype == NSTACK_MODEL_TYPE1)
       {
          proc_type  = NSFW_PROC_MAIN;
+      }else if (deploytype == NSTACK_MODEL_TYPE_SIMPLE_STACK)
+      {
+         proc_type  = NSFW_PROC_MAIN;
+         app_mode=1;
       }
 
       stinfo.iargsnum = 0;
