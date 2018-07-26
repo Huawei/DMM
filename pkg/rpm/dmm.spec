@@ -7,6 +7,9 @@ License:        GPL
 URL:            https://gerrit.fd.io/r/dmm
 Source:         %{name}-%{version}.tar.gz
 
+BuildRequires: glibc, libstdc++, libgcc, numactl-libs
+BuildRequires: dpdk >= 18.02, dpdk-devel >= 18.02
+
 %description
 The DMM framework provides posix socket APIs to the application. A protocol
 stack could be plugged into the DMM. DMM will choose the most suitable stack

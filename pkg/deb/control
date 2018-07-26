@@ -1,0 +1,13 @@
+Package: dmm
+Version: 18.04
+Section: tuils
+Priority: optional
+Depends: libc6, libstdc++6, libgcc1
+Suggests:
+Architecture: amd64
+Installed-Size:
+Maintainer: jorth
+Original-Maintainer:
+Provides:
+Description: DMM is a framework for protocol stack.
+Homepage: https://gerrit.fd.io/r/dmm
