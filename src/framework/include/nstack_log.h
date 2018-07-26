@@ -106,7 +106,7 @@ enum _LOG_PROCESS
 
 #define GET_FILE_NAME(name_have_path) strrchr(name_have_path,'/')?strrchr(name_have_path,'/')+1:name_have_path
 
-#define NSTACK_LOG_NAME "/product/gpaas/log/nStack"
+#define NSTACK_LOG_NAME "/var/log/nStack/"
 
 #define STACKX_LOG_NAME "running.log"
 
@@ -118,7 +118,7 @@ enum _LOG_PROCESS
 
 #define FAILURE_LOG_NAME "fail_dump.log"
 
-#define FLUSH_TIME 30
+#define FLUSH_TIME 10
 
 #define APP_LOG_SIZE 30
 #define APP_LOG_COUNT 10

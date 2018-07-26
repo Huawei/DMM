@@ -1000,7 +1000,7 @@ stack itself. The standard socket APIs defined by DMM are as follows:
   **6. Log & Debug**<br>
 ============================
 nStack uses GLOG framework to provide multi level logs. Supported log levels are debug, info,
-warning, error and emergency. Logs will be stored at /product/gpaas/log/nStack. To enable log,
+warning, error and emergency. Logs will be stored at /var/log/nStack/. To enable log,
 need to set the environment variables NSTACK\_LOG\_ON
 ```
 export NSTACK_LOG_ON=DBG

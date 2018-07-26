@@ -191,7 +191,7 @@ if [ "$hugepagesize" == "2048" ]; then
 elif [ "$hugepagesize" == "1048576" ]; then
     sudo mount -t hugetlbfs -o pagesize=1G none /mnt/nstackhuge/
 fi
-sudo mkdir -p /var/run/ip_module/
+#sudo mkdir -p /var/run/ip_module/
 
 #disable ASLR, othewise it may have some problems when mapping memory for secondary process
 echo 0 > /proc/sys/kernel/randomize_va_space
