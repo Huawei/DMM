@@ -37,8 +37,22 @@ MESSAGE(STATUS "Shared library dir: " ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 
 add_custom_target(clean-cmake-files
-   COMMAND ${CMAKE_COMMAND} -P clean-all.cmake
+  COMMAND ${CMAKE_COMMAND} -P clean-all.cmake
 )
+
+execute_process(COMMAND git config --local --get commit.template
+                OUTPUT_VARIABLE  commit_template)
+if(commit_template STREQUAL "")
+  message(STATUS "Setting git commit template...")
+  execute_process(COMMAND git config --local commit.template ${CMAKE_SOURCE_DIR}/scripts/git/commit-msg-template)
+  message(STATUS "Setting git commit template...done")
+endif()
+
+if(NOT EXISTS "${CMAKE_SOURCE_DIR}/.git/hooks/commit-msg")
+  message(STATUS "Setting git commit hook...")
+  execute_process(COMMAND ln -s ${CMAKE_SOURCE_DIR}/scripts/git/commit-msg-hook.py ${CMAKE_SOURCE_DIR}/.git/hooks/commit-msg)
+  message(STATUS "Setting git commit hook...done")
+endif()
 
 option(WITH_SECUREC_LIB "Option description" OFF)
 option(WITH_HAL_LIB "Option description" OFF)
