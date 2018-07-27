@@ -107,7 +107,7 @@ fi
 #===========build DPDK================
 
 if [ "$OS_ID" == "centos" ]; then
-    bash -x $DMM_DIR/scripts/build_dpdk1802.sh
+    bash -x $DMM_DIR/scripts/build_dpdk1802.sh || exit 1
 else
 
     if [ ! -d  /usr/include/dpdk ] || [ ! -d  /usr/share/dpdk ] || [ ! -d  /usr/lib/modules/4.4.0-31-generic/extra/dpdk ]; then

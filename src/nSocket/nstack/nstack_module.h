@@ -46,7 +46,7 @@ extern "C"{
 #define NSTACK_EP_FREE_NEED_REF   1     /*when epoll information free, need to wait that stack would not notify event */
 #define NSTACK_EP_FREE_NONEED_REF 0
 
-#define MODULE_NAME_MAX    64
+#define MODULE_NAME_MAX    128
 
 typedef struct __NSTACK_MODULE_KEYS
 {

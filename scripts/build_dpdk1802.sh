@@ -1,3 +1,4 @@
+#!/bin/bash -x
 #########################################################################
 #
 # Copyright (c) 2018 Huawei Technologies Co.,Ltd.
@@ -13,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #########################################################################
-#!/bin/bash -x
 
 echo "check whether dpdk installed"
 cur_directory=${PWD}
@@ -72,8 +72,8 @@ fi
 
 echo "install the rpm"
 cd ../RPMS/x86_64/
-sudo rpm -ivh dpdk-18.02-1.x86_64.rpm
-sudo rpm -ivh dpdk-devel-18.02-1.x86_64.rpm
+sudo rpm -ivh dpdk-18.02-1.x86_64.rpm || exit 1
+sudo rpm -ivh dpdk-devel-18.02-1.x86_64.rpm || exit 1
 
 mkdir -p /tmp/dpdk/drivers/
 cp -f /usr/lib64/librte_mempool_ring.so /tmp/dpdk/drivers/
