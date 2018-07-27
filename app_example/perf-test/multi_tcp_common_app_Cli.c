@@ -255,7 +255,7 @@ process_client (void)
                       sizeof (g_dest));
           if (errconn[i] < 0)
             {
-              printf ("client %d Connect Failed %d\n", i, errno);
+              printf ("client %d Connect Failed %s\n", i, strerror(errno));
               _CLOSE (c_socketfd[i]);
               c_socketfd[i] = -1;
               continue;

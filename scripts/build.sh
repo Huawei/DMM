@@ -48,7 +48,13 @@ echo KERNEL_MACHINE: $KERNEL_MACHINE
 echo KERNEL_RELEASE: $KERNEL_RELEASE
 echo KERNEL_VERSION: $KERNEL_VERSION
 echo OS_ID: $OS_ID
-echo OS_VERSION_ID: $OS_ID
+echo OS_VERSION_ID: $OS_VERSION_ID
+
+
+# add inherited proxy for sudo user
+LINE='Defaults env_keep += "ftp_proxy http_proxy https_proxy no_proxy"'
+FILE=/etc/sudoers
+grep -qF -- "$LINE" "$FILE" || sudo echo "$LINE" >> "$FILE"
 
 #DPDK download path
 DPDK_DOWNLOAD_PATH=/tmp/dpdk
@@ -74,7 +80,7 @@ elif [ "$OS_ID" == "debian" ]; then
     sudo apt-get update ${APT_OPTS}
     sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump libpcre3 libpcre3-dev zlibc zlib1g zlib1g-dev vim
 elif [ "$OS_ID" == "centos" ]; then
-    sudo yum install -y deltarpm git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump vim sudo yum-utils pcre-devel zlib-devel libiverbs tk tcl tcsh
+    sudo yum install -y deltarpm git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump vim sudo yum-utils pcre-devel zlib-devel libiverbs tk tcl tcsh redhat-lsb-core
 elif [ "$OS_ID" == "opensuse" ]; then
     echo "not tested for opensuse and exit"
     exit 1
@@ -261,11 +267,14 @@ if [ "$OS_ID" == "ubuntu" ]; then
     tar -zxvf MLNX_OFED_LINUX-4.4-1.0.0.0-ubuntu16.04-x86_64.tgz
     cd MLNX_OFED_LINUX-4.4-1.0.0.0-ubuntu16.04-x86_64
 elif [ "$OS_ID" == "centos" ]; then
-    wget http://www.mellanox.com/downloads/ofed/MLNX_OFED-4.4-1.0.0.0/MLNX_OFED_LINUX-4.4-1.0.0.0-rhel7.2-x86_64.tgz
-    tar -zxvf MLNX_OFED_LINUX-4.4-1.0.0.0-rhel7.2-x86_64.tgz
-    cd MLNX_OFED_LINUX-4.4-1.0.0.0-rhel7.2-x86_64
+    CENT_VERSION=`grep -oE '[0-9]+\.[0-9]+' /etc/redhat-release`
+    wget http://www.mellanox.com/downloads/ofed/MLNX_OFED-4.4-1.0.0.0/MLNX_OFED_LINUX-4.4-1.0.0.0-rhel${CENT_VERSION}-x86_64.tgz
+    tar -zxvf MLNX_OFED_LINUX-4.4-1.0.0.0-rhel${CENT_VERSION}-x86_64.tgz
+    cd MLNX_OFED_LINUX-4.4-1.0.0.0-rhel${CENT_VERSION}-x86_64
 fi
-./mlnxofedinstall --force
+
+./mlnxofedinstall --force || exit 1
+
 cd $BUILD_DIR
 make dmm_rsocket
 if [ $? -eq 0 ]; then
