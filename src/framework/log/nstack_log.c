@@ -576,6 +576,31 @@ app_default:
 }
 
 /*****************************************************************************
+*   Prototype    : nstack_get_app_logname
+*   Description  : get the name of app's log
+*   Input        : None
+*   Output       : None
+*   Return Value : int
+*   Calls        :
+*   Called By    :
+*****************************************************************************/
+int
+nstack_get_app_logname (char* log_name)
+{
+  int pid = getpid ();
+  char processname[FILE_NAME_LEN] = {0};
+
+  if (log_name == NULL)
+    return 1;
+
+  strncpy (processname, program_invocation_short_name, 10);
+
+  snprintf (log_name, FILE_NAME_LEN, "app_%s_%d.log", processname, pid);
+
+  return 0;
+}
+
+/*****************************************************************************
 *   Prototype    : nstack_log_init_app
 *   Description  : called by environment-specific log init function
 *   Input        : None
@@ -592,6 +617,8 @@ nstack_log_init_app ()
   int i = 0;
   int file_flag = 0;
   char app_log_path[FILE_NAME_LEN] = { 0 };
+  int ret = 0;
+  char app_log_name[FILE_NAME_LEN] = { 0 };
 
   /* log already initialized, just return */
   if (LOG_PRO_INVALID != g_my_pro_type)
@@ -661,7 +688,15 @@ nstack_log_init_app ()
         glogSetLogSymlink (i, "");
       nstack_log_count_set (APP_LOG_COUNT);
       glogMaxLogSizeSet (APP_LOG_SIZE);
-      glogSetLogFilenameExtension (APP_LOG_NAME);
+      ret = nstack_get_app_logname (app_log_name);
+      if (ret == 0)
+        {
+          glogSetLogFilenameExtension (app_log_name);
+        }
+      else
+        {
+          glogSetLogFilenameExtension (APP_LOG_NAME);
+        }
       glogFlushLogSecsSet (FLUSH_TIME);
     }
   else
