@@ -1,3 +1,4 @@
+#!/bin/bash -x
 #########################################################################
 #
 # Copyright (c) 2018 Huawei Technologies Co.,Ltd.
@@ -13,11 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #########################################################################
-#!/bin/bash -x
 
 echo "check whether dpdk installed"
 cur_directory=${PWD}
-check_dpdk=$(rpm -qa | grep dpdk)
+check_dpdk=$(rpm -qa | grep dpdk-devel)
 if [ -z "$check_dpdk"  ]; then
     echo "system will install the dpdk"
 else
@@ -55,6 +55,12 @@ sed -i '82a sed -i '\''s!CONFIG_RTE_EXEC_ENV=.*!CONFIG_RTE_EXEC_ENV=y!1'\'' conf
 sed -i '83a sed -i '\''s!CONFIG_RTE_BUILD_SHARED_LIB=.*!CONFIG_RTE_BUILD_SHARED_LIB=y!1'\'' config/common_base' dpdk.spec
 sed -i '84a sed -i '\''s!CONFIG_RTE_LIBRTE_EAL=.*!CONFIG_RTE_LIBRTE_EAL=y!1'\'' config/common_base' dpdk.spec
 sed -i '85a sed -i '\''s!CONFIG_RTE_EAL_PMD_PATH=.*!CONFIG_RTE_EAL_PMD_PATH="/tmp/dpdk/drivers/"!1'\'' config/common_base' dpdk.spec
+
+#disable KNI mode by default
+sed -i '93a sed -ri '\''s!CONFIG_RTE_LIBRARY_KNI=.*!CONFIG_RTE_LIBRARY_KNI=n!1'\'' %{target}/.config' dpdk.spec
+sed -i '94a sed -ri '\''s!CONFIG_RTE_LIBRARY_PMD_KNI=.*!CONFIG_RTE_LIBRARY_PMD_KNI=n!1'\'' %{target}/.config' dpdk.spec
+sed -i '95a sed -ri '\''s!CONFIG_RTE_KNI_KMOD=.*!CONFIG_RTE_KNI_KMOD=n!1'\'' %{target}/.config' dpdk.spec
+sed -i '96a sed -ri '\''s!CONFIG_RTE_KNI_PREEMPT_DEFAULT=.*!CONFIG_RTE_KNI_PREEMPT_DEFAULT=n!1'\'' %{target}/.config' dpdk.spec
 
 echo "build the dependence"
 #sudo yum-builddep -y dpdk.spec
