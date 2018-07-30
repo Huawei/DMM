@@ -2436,7 +2436,7 @@ nstack_epoll_ctl (int epfd, int op, int fd, struct epoll_event *event)
       if (!epi)
         {
           ep_event.events |= (EPOLLERR | EPOLLHUP);     // Check `man epoll_ctl` if you don't understand , smile :)
-          common_mem_rwlock_read_lock (get_fork_lock ());       /* to ensure that there is no fd to create and close when fork. added by tongshaojun t00391048 */
+          common_mem_rwlock_read_lock (get_fork_lock ());       /* to ensure that there is no fd to create and close when fork. */
           ret = nsep_epctl_add (ep, fd, &ep_event);
           common_mem_rwlock_read_unlock (get_fork_lock ());
         }

@@ -1,13 +1,14 @@
-# 1.  Introduction:
+# 1.  Introduction
 
-# ![nStack_Architecture](resources/nStack_Architecture.png "nStack_Architecture")
+![nStack_Architecture](resources/nStack_Architecture.png "nStack_Architecture")
+
 DMM (Dual Mode, Multi-protocol, Multi-instance) is a framework between applications
 and transport layer of networking stack. This framework can host different types of
 networking stack instances operating on different domains (kernel/user-space)  with
 different protocol suites (TCP/IP, RDMA, or others). Application can use different type of
 protocol stack implementations based on functional/performance requirements.
 
-# 2.  History:
+# 2.  History
 Emerging applications are bringing extremely high-performance requirements to the
 network system. Eg. AR/VR, IOT etc. And many of them come with their unique demand
 of QOS/SLA. Some applications need low latency network, some need high reliability etc.
@@ -32,34 +33,17 @@ different transport layer protocol and also provide the flexibility to choose a 
 from manybased on functional/performance requirements.
 # 3.  Quick Start
 Refer doc/Build_DMM.md 
+
 # 4.  Involved
  * [Bi-Weekly DMM Metting.](https://wiki.fd.io/view/DMM/Meettng)
  * [Join the DMM Mailing List.](https://lists.fd.io/g/dmm-dev)
  * [Join fdio-dmm IRC channel.](https://wiki.fd.io/view/IRC)
  * [Browse the code.](https://git.fd.io/dmm/tree/)
- * [18.04 Release Plan](https://wiki.fd.io/view/Projects/dmm/Release_Plans/Release_Plan_18.04)
+ * [18.07 Release Plan](https://wiki.fd.io/view/Projects/dmm/Release_Plans/Release_Plan_18.07)
  
 # 5. More Information
 - https://wiki.fd.io/view/DMM
 - https://wiki.fd.io/view/Project_Proposals/DMM
 - Enabling “Protocol Routing”: Revisiting Transport Layer Protocol Design in Internet
 Communications(http://ieeexplore.ieee.org/document/8114687/)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
