@@ -753,12 +753,15 @@ nsep_epoll_close (int sock)
       return 0;
     }
 
-  nsep_set_infoSockMap (sock, NULL);
-
   if (NSTACK_EPOL_FD == epInfo->fdtype)
     {
-      return nsp_epoll_close_ep_fd (sock, epInfo);
+      ret = nsp_epoll_close_ep_fd (sock, epInfo);
+      nsep_set_infoSockMap (sock, NULL);
+      return ret;
     }
+
+  nsep_set_infoSockMap (sock, NULL);
+
 
   nstack_each_modInx (modInx)
   {
