@@ -123,7 +123,7 @@ with open(sys.argv[1], 'r') as commit_msg:
 
 for line in contents:
     dup = line.lstrip()
-    if dup.startswith('#'):
+    if dup.startswith('#') or dup.startswith("Change-Id") or dup.startswith("Signed-of-by"):
         continue
     if subject is True:
         ret = check_subject(line)
