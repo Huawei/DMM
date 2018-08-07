@@ -4,7 +4,7 @@
 
 [**1. Introduction**](#1.-introduction)<br>
 [**2. DMM Overall Architecture**](#2.-dmm-overall-architecture)<br>
-[**3. Core Components**](#3.-Core Components)<br>
+[**3. Core Components**](#3.-Core-Components)<br>
 [**3.1 nSocket**](#3.1-nsocket)<br>
 [**3.2 Framework**](#3.2-framework)<br>
 [**3.3 Adapter**](#3.3-adapter)<br>
@@ -15,7 +15,7 @@
 [**4.2 Plug-in interface**](#4.2-plug-in-interface)<br>
 [**4.2.1 Interface of Stackx adapter APIs**](#4.2.1-interface-of-stackx-adapter-apis)<br>
 [**4.2.1.1 nstack\_stack\_register\_fn**](#4.2.1.1-nstack\_stack\_register\_fn)<br>
-[**4.2.2 Interface of DMM-adapter APIs**](#4.2.2-interface-of dmm-adapter-apis)<br>
+[**4.2.2 Interface of DMM-adapter APIs**](#4.2.2-interface-of-dmm-adapter-apis)<br>
 [**4.2.2.1 nstack\_adpt\_init**](#4.2.2.1-nstack\_adpt\_init)<br>
 [**4.2.5 Multithreading**](#4.2.5-multithreading)<br>
 [**4.2.6 Resource recovery**](#**4.2.6-resource-recovery)<br>
@@ -1062,17 +1062,17 @@ After building the DMM, test apps will be generated like below.The following tab
 introduction of the client and server apps.
 
 
- App name| client | server |use DMM| send/recv|s/r + epoll |s/r + select
-  --------------------                |            ---------------------
-  vc_common   | 　Ｙ 　|　Ｎ|　Ｙ|　send　　|　　Ｎ　|    　　 Ｎ
-   kc_common   | 　Ｙ 　|　Ｎ|　Ｎ|　send　　|　　Ｎ　|    　　 Ｎ
-   vs_common   | 　Ｎ 　|　Ｙ|　Ｙ|　recv　　|　　Ｎ　|    　　 Ｎ
-   ks_common   | 　Ｎ 　|　Ｙ|　Ｎ|　recv　　|　　Ｎ　|    　　 Ｎ
- vs_epoll   | 　Ｎ 　|　Ｙ|　Ｙ|　recv　　|　　Ｙ　|    　　 Ｎ
- ks_epoll   | 　Ｎ 　|　Ｙ|　Ｎ|　recv　　|　　Ｙ　|    　　 Ｎ
-vs_select   | 　Ｎ 　|　Ｙ|　Ｙ|　recv　　|　　Ｎ　|    　　 Ｙ
-ks_select   | 　Ｎ 　|　Ｙ|　Ｎ|　recv　　|　　Ｎ　|    　　 Ｙ
-Here, the app's name whose first letter is 'k' means that it will run through the kernel.
+| App name  | client  | server  | use DMM  |send/recv   | s/r + epoll  |  s/r + select |
+| ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
+| vc_common   |Y   | N  |Y   | send  | N  | N  |
+| kc_common  |Y   | N  |  N | send  |N   | N  |
+| vs_common  |N   | Y  | Y  |recv   |N   | N  |
+| ks_common  |N   |  Y | N  |recv   | N  | N  |
+| vs_epoll  |N   | Y  |  Y | recv  | Y  | N  |
+| ks_epoll  |  N | Y  |  N | recv  | Y  | N  |
+| vs_select  | N  | Y  | Y  | recv  |N   | Y  |
+| ks_select  | N  | Y  | N  | recv  |N   | Y  |
+Here, the app's name whose first letter is k means that it will run through the kernel.
 If the first letter is 'v', it will run through the dmm stack. If the second letter in the
 app's name is 's', which means it is the server app. If the second letter is 'c', it means it
 is the client app. The 'common' means that the app only implements the function of send or
@@ -1083,20 +1083,24 @@ implement the listening service.
 **7.2 Test implementation**
 -------------------------
 Before testing, we need two servers, one for the client and one for the server.Then run the
-following codes. The following takes ks_common and vc_epoll as examples.
+following codes. The following takes ks_common and vc_common as examples.
 **server**
+
   ```
 ./ks_common -p 20000 -d <server ip> -a 10000 -s <client ip> -l 200 -t 5000000 -i 0 -f 1 -r 20000 -n 1 -w 10 -u 10000 -e 10 -x 1
   ```
+
 **client**
+
   ```
-./vc_epoll -p 20000 -d <client ip> -a 10000 -s <server ip> -l 200 -t 5000000 -i 0 -f 1 -r 20000 -n 1 -w 10 -u 10000 -e 10 -x 1
+./vc_common -p 20000 -d <client ip> -a 10000 -s <server ip> -l 200 -t 5000000 -i 0 -f 1 -r 20000 -n 1 -w 10 -u 10000 -e 10 -x 1
 ```
+
 The following table is an introduction to some parameters in the code.
 
  parameter name   |  Functional description
   ------------------- |  ---------------------
-  -p                         |           dest portid
+  -p                         |           destination port number
   -d                         |            dest severIP
   -a                         |            src portid
   -s                         |            src clientIP
@@ -1104,7 +1108,7 @@ The following table is an introduction to some parameters in the code.
   -t                         |            max test time
   -i                          |           msg interval
   -f                         |           client fd number
-  -r                         |           receive pord
+  -r                         |           receive port
   -n                        |            connect number(one server vs n client)
   -w                       |            wait time
   -u                        |            unit print
