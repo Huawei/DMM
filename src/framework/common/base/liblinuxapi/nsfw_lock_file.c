@@ -94,13 +94,6 @@ nsfw_proc_start_with_lock (u8 proc_type)
       return -1;
     }
 
-  ret = STRCAT_S (lock_fpath, NSFW_FILE_PATH_LEN, LOCK_FOLDER);
-  if (EOK != ret)
-    {
-      NSFW_LOGERR ("lock init STRCAT_S failed]ret=%d", ret);
-      return -1;
-    }
-
   ret = STRCAT_S (lock_fpath, NSFW_FILE_PATH_LEN, module_name);
   if (EOK != ret)
     {

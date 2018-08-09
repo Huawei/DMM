@@ -52,8 +52,8 @@ extern "C"{
 #define MGR_COM_RECV_TIMEOUT    (g_mgr_com_cfg.max_recv_timeout)
 #define MGR_COM_MAX_DROP_MSG    (g_mgr_com_cfg.max_recv_drop_msg)
 
-#define NSFW_MAIN_FILE "/ip_module/nStackMainMgr"
-#define NSFW_MASTER_FILE "/ip_module/nStackMasterMgr"
+#define NSFW_MAIN_FILE "nStackMainMgr"
+#define NSFW_MASTER_FILE "nStackMasterMgr"
 #define NSFW_ALARM_FILE "/HuskyAlarm.domain"
 
 #define NSFW_MGRCOM_THREAD "nStackMgrCom"

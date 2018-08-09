@@ -107,7 +107,7 @@ typedef enum _fw_poc_type
   NSFW_PROC_MAX = 16
 } fw_poc_type;
 
-#define NSFW_DOMAIN_DIR "/var/run"
+#define NSFW_DOMAIN_DIR "/var/log/nStack/ip_module/"
 #define NSTACK_MAX_PROC_NAME_LEN 20
 
 typedef enum _nsfw_mgr_msg_rsp_code

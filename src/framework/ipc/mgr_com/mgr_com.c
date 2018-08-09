@@ -32,6 +32,7 @@
 #include <stddef.h>
 #include <sys/epoll.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 
 #include "nsfw_maintain_api.h"
 #include "nsfw_ps_api.h"
@@ -320,8 +321,9 @@ nsfw_mgr_msg_free (nsfw_mgr_msg * msg)
 i32
 nsfw_mgr_get_listen_socket ()
 {
-  i32 fd, len;
+  i32 fd, len, retVal;
   struct sockaddr_un un;
+  char name[NSFW_MGRCOM_PATH_LEN] = { 0 };
 
   if ((fd = nsfw_base_socket (AF_UNIX, SOCK_STREAM, 0)) < 0)
     {
@@ -329,7 +331,23 @@ nsfw_mgr_get_listen_socket ()
       return -1;
     }
 
-  if (-1 == unlink ((char *) g_mgr_com_cfg.domain_path))
+  retVal = STRCPY_S ((char *) name, sizeof (name),
+                     (char *) g_mgr_com_cfg.domain_path);
+  if (EOK != retVal)
+    {
+      (void) nsfw_base_close (fd);
+      NSFW_LOGERR ("module mgr get listen STRCPY_S failed! ret=%d", retVal);
+      return -1;
+    }
+
+  if (EOK != STRCAT_S (name, NSFW_MGRCOM_PATH_LEN, NSFW_MAIN_FILE))
+    {
+      (void) nsfw_base_close (fd);
+      NSFW_LOGERR ("module mgr get listen STRCAT_S failed!");
+      return -1;
+    }
+
+  if (-1 == unlink ((char *) name))
     {
       NSFW_LOGWAR ("unlink failed]error=%d", errno);
     }
@@ -341,8 +359,8 @@ nsfw_mgr_get_listen_socket ()
     }
 
   un.sun_family = AF_UNIX;
-  int retVal = STRCPY_S ((char *) un.sun_path, sizeof (un.sun_path),
-                         (char *) g_mgr_com_cfg.domain_path);
+  retVal = STRCPY_S ((char *) un.sun_path, sizeof (un.sun_path),
+                     (char *) name);
   if (EOK != retVal)
     {
       (void) nsfw_base_close (fd);
@@ -358,9 +376,7 @@ nsfw_mgr_get_listen_socket ()
       return -1;
     }
 
-  len =
-    offsetof (struct sockaddr_un,
-              sun_path) +strlen ((char *) g_mgr_com_cfg.domain_path);
+  len = offsetof (struct sockaddr_un, sun_path) +strlen ((char *) name);
 
   if (nsfw_base_bind (fd, (struct sockaddr *) &un, len) < 0)
     {
@@ -1807,6 +1823,58 @@ nsfw_mgr_comm_fd_init (u32 proc_type)
 }
 
 /*****************************************************************************
+*   Prototype    : nsfw_mgr_com_mkdir_domainpath
+*   Description  : check whether the domain path exist.if not exist, create it.
+*   Input        : char *pathname
+*   Output       : None
+*   Return Value : void
+*   Calls        :
+*   Called By    :
+*****************************************************************************/
+void nsfw_mgr_com_mkdir_domainpath (char *pathname);
+void
+nsfw_mgr_com_mkdir_domainpath (char *pathname)
+{
+  char dirname[NSFW_MGRCOM_PATH_LEN] = { 0 };
+  int i, len;
+
+  if (NULL == pathname)
+    {
+      NSFW_LOGERR ("the pathname is null.");
+      return;
+    }
+
+  strncpy (dirname, pathname, NSFW_MGRCOM_PATH_LEN - 1);
+  len = strlen (dirname);
+  if (dirname[len - 1] != '/')
+    strncat (dirname, "/", 2);
+
+  if (access (dirname, F_OK) == 0)
+    return;
+
+  len = strlen (dirname);
+
+  for (i = 1; i < len; i++)
+    {
+      if (dirname[i] == '/')
+        {
+          dirname[i] = 0;
+          if (access (dirname, F_OK) != 0)
+            {
+              if (mkdir (dirname, 0755) == -1)
+                {
+                  NSFW_LOGERR ("mkdir:%s error", dirname);
+                  return;
+                }
+            }
+          dirname[i] = '/';
+        }
+    }
+
+  return;
+}
+
+/*****************************************************************************
 *   Prototype    : nsfw_mgr_com_module_init
 *   Description  : module init
 *   Input        : void* param
@@ -1849,15 +1917,7 @@ nsfw_mgr_com_module_init (void *param)
           return -1;
         }
 
-      /* modify destMax, remove "-1" */
-      if (EOK !=
-          STRCAT_S (mgr_cfg->domain_path, NSFW_MGRCOM_PATH_LEN,
-                    NSFW_MAIN_FILE))
-        {
-          NSFW_LOGERR ("module mgr init STRCAT_S failed!");
-          lint_unlock_1 ();
-          return -1;
-        }
+      nsfw_mgr_com_mkdir_domainpath (mgr_cfg->domain_path);
 
       NSFW_LOGINF ("module mgr init]NSFW_PROC_MAIN domain_path=%s",
                    mgr_cfg->domain_path);
@@ -1876,16 +1936,6 @@ nsfw_mgr_com_module_init (void *param)
           STRCPY_S (mgr_cfg->domain_path, NSFW_MGRCOM_PATH_LEN, directory))
         {
           NSFW_LOGERR ("module mgr init STRCPY_S failed!");
-          lint_unlock_1 ();
-          return -1;
-        }
-
-      /* modify destMax, remove "-1" */
-      if (EOK !=
-          STRCAT_S (mgr_cfg->domain_path, NSFW_MGRCOM_PATH_LEN,
-                    NSFW_MASTER_FILE))
-        {
-          NSFW_LOGERR ("module mgr init STRCAT_S failed!");
           lint_unlock_1 ();
           return -1;
         }
