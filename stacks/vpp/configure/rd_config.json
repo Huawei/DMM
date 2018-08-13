@@ -1,0 +1,26 @@
+{
+  "ip_route": [
+    {
+      "subnet": "192.168.122.1/24",
+      "type": "nstack-dpdk",
+    },
+    {
+      "subnet": "10.145.240.1/24",
+      "type": "nstack-kernel",
+    },
+    {
+      "subnet": "192.166.1.1/24",
+      "type": "nstack-kernel",
+    }
+  ],
+  "prot_route": [
+    {
+      "proto_type": "1",
+      "type": "nstack-dpdk",
+    },
+    {
+      "proto_type": "2",
+      "type": "nstack-kernel",
+    }
+  ],
+}

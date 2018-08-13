@@ -1,0 +1,30 @@
+{
+    "default_stack_name": "kernel",                /*when rd can't be find maybe choose the defualt one*/
+    "module_list": [
+    {
+        "stack_name": "kernel",			   /*stack name*/
+        "function_name": "kernel_stack_register",  /*function name*/
+        "libname": "./",			   /*library name, if loadtype is static, this maybe
+						     null, else must give a library name*/
+        "loadtype": "static",			   /*library load type: static or dynamic*/
+        "deploytype": "1",			   /*deploy model type:model type1, model type2,
+						     model type3. Indicating single or multi process
+						     deployment. Used during shared memory initialization.*/
+        "maxfd": "1024",			   /*the max fd supported*/
+        "minfd": "0",				   /*the min fd supported*/
+        "priorty": "1",				   /*priorty when executing, reserv*/
+        "stackid": "0",				   /*stack id, this must be ordered and not be repeated*/
+        },
+    {
+        "stack_name": "stackx",
+        "function_name": "vpphs_stack_register",
+        "libname": "../lib64/libdmm_vcl.so",
+        "loadtype": "dynmic",
+        "deploytype": "1",
+        "maxfd": "1024",
+        "minfd": "0",
+        "priorty": "1",
+        "stackid": "1",
+        },
+    ]
+}
