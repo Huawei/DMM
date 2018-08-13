@@ -1,0 +1,31 @@
+{
+  "containerID": "9112d2b6aa31",
+  "primary_port": "PortA",
+  "ports_list": [
+    {
+      "port_name": "PortA",
+      "ref_nic": [
+        "eth7"
+      ],
+      "mac": [
+        "00:54:32:19:3d:19"
+      ],
+      "net_name": "IDX-M",
+      "ip_cidr": ["192.168.1.207/24"],
+      "multicast_id": [
+        {
+          "group_id": "cast_group_1",
+          "group_ip": "239.0.0.1"
+        },
+        {
+          "group_id": "cast_group_2",
+          "group_ip": "239.0.0.2"
+        }
+      ],
+      "vlan_id": 42,
+      "vlan_inside": true,
+      "vxlan_id": -1,
+      "vxlan_inside": false
+    }
+  ]
+}

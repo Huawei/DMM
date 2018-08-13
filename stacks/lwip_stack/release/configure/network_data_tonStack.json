@@ -1,0 +1,32 @@
+[
+  {
+    "cniVersion": "0.2.0",
+    "name": "IDX-M",
+    "multi_entry": "3",
+    "type": "nstack-dpdk",
+    "vlanID": 42,
+    "vlan_inside": true,
+    "ipam": {
+      "type": "canal-ipam",
+      "subnet": "192.168.1.1/24",
+      "gateway": "192.168.1.254",
+      "range-start": "192.168.1.198",
+      "range-end": "192.168.1.209",
+      "routes": [
+        {
+          "dst": "192.168.1.0/24",
+          "gw": "192.168.1.254"
+        }
+      ]
+    },
+    "args": {
+      "phynet": {
+        "ref_nic": [
+          "eth7"
+        ],
+        "bond_name": "",
+        "bond_mode": -1
+      }
+    }
+  },
+]

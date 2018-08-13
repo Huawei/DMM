@@ -1,0 +1,32 @@
+{
+"cfg_seg_socket": [
+{
+		"socket_num": 8192,
+		"arp_stale_time": 300,
+		"arp_bc_retrans_num": 5
+}
+],
+"cfg_seg_log": [
+{
+		"run_log_size": 50,
+		"run_log_count": 10,
+		"mon_log_size": 10,
+		"mon_log_count": 10
+}
+],
+"cfg_seg_thread_pri": [
+{
+    "comment":"0:SCHED_OTHER, 1:SCHED_FIFO, 2:SCHED_RR",
+		"sched_policy": 0,
+		"thread_pri": 0
+}
+],
+"cfg_seg_path": [
+{
+		"stackpool_log_path": "/var/log/nStack",
+		"master_log_path": "/var/log/nStack",
+		"nstack_log_path": "/var/log/nStack",
+		"dpdk_log_path": "/var/log/nstack-dpdk"
+}
+]
+}

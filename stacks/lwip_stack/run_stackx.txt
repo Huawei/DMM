@@ -1,0 +1,131 @@
+#########################################################################
+#
+# Copyright (c) 2018 Huawei Technologies Co.,Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at:
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#########################################################################
+
+#build DPDK
+#Note: build path /root/dpdk/ , install path /root/dpdk_install/tmp
+===================================================================
+if [ -d /root/dpdk_install/tmp ]; then
+  rm -rf /root/dpdk_install/tmp
+fi
+
+mkdir -p /root/dpdk
+
+cd /root/dpdk
+rm -rf dpdk-16.04/
+wget https://fast.dpdk.org/rel/dpdk-16.04.tar.xz
+tar xvf dpdk-16.04.tar.xz
+cd dpdk-16.04/
+
+sed -i 's!CONFIG_RTE_EXEC_ENV=.*!CONFIG_RTE_EXEC_ENV=y!1' config/common_base
+sed -i 's!CONFIG_RTE_BUILD_SHARED_LIB=.*!CONFIG_RTE_BUILD_SHARED_LIB=y!1' config/common_base
+sed -i 's!CONFIG_RTE_LIBRTE_EAL=.*!CONFIG_RTE_LIBRTE_EAL=y!1' config/common_base
+
+make install  T=x86_64-native-linuxapp-gcc DESTDIR=/root/dpdk_install/tmp
+cd x86_64-native-linuxapp-gcc
+make
+
+cp -r /root/dpdk/dpdk-16.04/tools/dpdk_nic_bind.py /root/dpdk/dpdk-16.04/tools/dpdk-devbind.py
+
+mount -t hugetlbfs -o pagesize=1G none /mnt/nstackhuge/
+mkdir /var/run/ip_module
+
+#verify hugepages 8GB free hugepages are required
+=================================================
+cat /proc/meminfo
+
+#build DMM
+============
+#got to DMM/
+
+cd thirdparty/glog/glog-0.3.4/
+sudo autoreconf -ivf
+
+cd -
+cd build/
+
+cmake ..
+make -j 8
+
+#build stackx
+================
+cd ../thirdparty/glog/glog-0.3.4/
+sudo autoreconf -ivf
+
+cd -
+cd ../stacks/lwip_stack/build/
+
+cmake ..
+make -j 8
+
+#run app
+========
+cd ../
+chmod +x release_tar.sh
+./release_tar.sh
+
+tar -zxf  nStackServer.tar.gz
+
+cd nStackServer/
+cp configure/*.json bin/
+
+##make json file changes
+#I have copied the working configs in the path /home/sharath/working_config/
+
+#server
+cp -r /home/sharath/working_config/server/ip_data.json bin/
+cp -r /home/sharath/working_config/server/network_data_tonStack.json bin/
+cp -r /home/sharath/working_config/server/nStackConfig.json bin/
+
+#client
+cp -r /home/sharath/working_config/client/ip_data.json bin/
+cp -r /home/sharath/working_config/client/network_data_tonStack.json bin/
+cp -r /home/sharath/working_config/client/nStackConfig.json bin/
+
+#dpdk download path : /root/dpdk/dpdk-16.04/
+sed -i 's!export DPDK_INSTALL_PATH.*!export DPDK_INSTALL_PATH="/root/dpdk/dpdk-16.04"!1' ../release/script/nstack_var.sh
+
+cd ../../../release/bin/
+cp ../configure/*.json .
+
+#server
+cp -r /home/sharath/working_config/server/module_config.json .
+cp -r /home/sharath/working_config/server/nStackConfig.json .
+cp -r /home/sharath/working_config/server/rd_config.json .
+
+#client
+cp -r /home/sharath/working_config/client/module_config.json .
+cp -r /home/sharath/working_config/client/nStackConfig.json .
+cp -r /home/sharath/working_config/client/rd_config.json .
+
+cd -
+./stop_nstack.sh
+./start_nstack.sh
+
+#verify process up
+ps aux | grep nS
+
+cd bin
+./nStackCtrl -a add -p ./network_data_tonStack.json -t network
+./nStackCtrl -a add -p ./ip_data.json -t ip
+
+cd ../../../../release/bin/
+cp ../../stacks/lwip_stack/release/lib64/libnstack.so .
+
+#server
+./vs_epoll -p 20000 -d 192.168.1.207 -a 10000 -s 192.168.1.206 -l 200 -t 5000000 -i 0 -f 1 -r 20000 -n 1 -w 10 -u 10000 -e 10 -x 1
+
+#client
+./vc_epoll -p 20000 -d 192.168.1.206 -a 10000 -s 192.168.1.207 -l 200 -t 50000 -i 1000 -f 1 -r 20000 -n 1 -w 10 -u 10000 -e 10 -x 1
