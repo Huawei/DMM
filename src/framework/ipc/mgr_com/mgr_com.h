@@ -29,7 +29,7 @@
 #include "pthread.h"
 #include "nsfw_mem_api.h"
 #include "common_mem_api.h"
-
+#include "common_mem_memzone.h"
 #include "common_func.h"
 
 #ifdef __cplusplus

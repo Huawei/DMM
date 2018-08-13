@@ -29,7 +29,7 @@ sys_sem_init_v2 (sys_sem_t_v2 sem)
 
 /** Returns the current time in milliseconds,
  * may be the same as sys_jiffies or at least based on it. */
-long
+u32_t
 sys_now (void)
 {
   struct timespec now;

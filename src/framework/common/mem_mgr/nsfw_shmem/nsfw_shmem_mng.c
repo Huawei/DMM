@@ -699,53 +699,6 @@ nsfw_shmem_static (void *handle, nsfw_mem_struct_type type)
 i32
 nsfw_shmem_mbuf_recycle (mpool_handle handle)
 {
-#if 0
-  const struct common_mem_mempool *mp = (struct common_mem_mempool *) handle;
-  struct common_mem_ring *rteRing = NULL;
-  struct common_mem_mbuf *m_buf = NULL;
-  uint32_t item;
-  u32_t *recycle_flg;
-  uint32_t size = mp->size;
-  uint32_t threadsize = (size >> 2) * 3;
-  rteRing = (struct common_mem_ring *) ADDR_SHTOL (mp->ring);
-
-  if (rteRing->prod.tail - rteRing->cons.head < threadsize)
-    {
-      for (item = 0; item < size - 1; item++)
-        {
-          m_buf = (struct common_mem_mbuf *) ADDR_SHTOL (mp->elt_va_start + item * (mp->header_size + mp->elt_size + mp->trailer_size) + mp->header_size);      /*lint !e647 */
-          recycle_flg =
-            (uint32_t *) ((char *) (ADDR_SHTOL (m_buf->buf_addr_align)) +
-                          RTE_PKTMBUF_HEADROOM - sizeof (uint32_t));
-
-          if (m_buf->refcnt > 0 && *recycle_flg == MBUF_HLD_BY_APP)
-            {
-              NSCOMM_LOGINF ("free mbuf hold by app]ring=%p, mbuf=%p", handle,
-                             m_buf);
-              *recycle_flg = MBUF_UNUSED;
-              common_mem_pktmbuf_free (m_buf);
-            }
-        }
-    }
-
-  NSCOMM_LOGINF ("To recycle app_tx_pool now]ring=%p,prod.head=%u,"
-                 "prod.tail=%u,cons.head=%u,cons.tail=%u.", handle,
-                 rteRing->prod.head, rteRing->prod.tail,
-                 rteRing->cons.head, rteRing->cons.tail);
-
-  /*we Must check and recorrect the Queue if Queue is not correct
-     1.if proc.head != proc.tail  set proc.head to proc.tail [may lost some buf,but the queue still can use]
-     App May not putIn Data , just done head++, we can't set proc.tail to proc.head.
-     2.if cons.head != cons.tail set cons.tail to cons.head [may lost some buf,but the queue still can use]
-     App May already finish deque,just not tail++, we can't set cons.head to cons.tail.
-   */
-  if ((rteRing->prod.head != rteRing->prod.tail)
-      || (rteRing->cons.head != rteRing->cons.tail))
-    {
-      rteRing->prod.head = rteRing->prod.tail;
-      rteRing->cons.tail = rteRing->cons.head;
-    }
-#endif
   return NSFW_MEM_OK;
 }
 

@@ -17,13 +17,14 @@
 #!/bin/bash
 
 CURR_DIR=`dirname $0`
-DMM_DIR=${CURR_DIR}/..
+DMM_DIR=${CURR_DIR}/../
 EXIT_CODE=0
 FIX="0"
 FULL="0"
 CHECKSTYLED_FILES=""
 UNCHECKSTYLED_FILES=""
 UNCHECK_LIST=""
+DOS2UNIX="0"
 
 SHOW_HELP="1"
 FIX="0"
@@ -39,6 +40,7 @@ key="$1"
 case $key in
     -f|--fixstyle)
     FIX="1"
+    DOS2UNIX="1"
     SHOW_HELP="0"
     shift # past argument
     ;;
@@ -106,9 +108,12 @@ HAVE_CLANG_FORMAT=0
 #fi
 
 for i in ${FILELIST}; do
-     if [ -f ${i} ] &&  ( [ ${i: -2} == ".c" ] || [ ${i: -2} == ".h" ] ) && [[ ${i} != *"thirdparty"* ]] && [[ ${i} != *"testcode"* ]] ; then
+     if [ -f ${i} ] &&  ( [ ${i: -2} == ".c" ] || [ ${i: -2} == ".h" ] ) && [[ ${i} != *"glog"* ]] && [[ ${i} != *"lwip_src/lwip"* ]] && [[ ${i} != *"lwip_helper_files"* ]]; then
        #grep -q "fd.io coding-style-patch-verification: ON" ${i}
        if [ $? == 0 ]; then
+            if [ ${DOS2UNIX} == 1 ]; then
+                dos2unix ${i}
+            fi
             EXTENSION=`basename ${i} | sed 's/^\w\+.//'`
             case ${EXTENSION} in
                 hpp|cpp|cc|hh)
@@ -173,8 +178,8 @@ done
 
 if [ ${FULL} == "1" ] && [ ${FULL} == "1" ] ; then
   for i in ${FILELIST}; do
-      #egrep -qlr $'\r'\$ ${i}
-      if [ $? == 0 ] && [[ ${i} != *"thirdparty"* ]] && [[ ${i} != *"testcode"* ]] && [[ ${i} != *"resources"* ]] && [[ ${i} != *"build"* ]] && ( [ ${i: -2} == ".c" ] || [ ${i: -2} == ".h" ] || [ ${i: -3} == ".sh" ] ); then
+      egrep -qlr $'\r'\$ ${i}
+      if [ $? == 0 ] && [[ ${i} != *"glog"* ]] && [[ ${i} != *"lwip_src/lwip"* ]] && [[ ${i} != *"lwip_helper_files"* ]] && [[ ${i} != *"resources"* ]] && [[ ${i} != *"build"* ]] && ( [ ${i: -2} == ".c" ] || [ ${i: -2} == ".h" ] || [ ${i: -3} == ".sh" ] && [ ${i} != "checkstyle.sh" ]); then
           sed -e 's/\r//g' ${i} > ${i}.tmp
           echo "dos2unix conoversion happened for ${i}"
           mv ${i}.tmp ${i} 

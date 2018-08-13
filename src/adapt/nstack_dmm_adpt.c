@@ -55,13 +55,6 @@ nstack_event_callback (void *pdata, int events)
       NSSOC_LOGWAR ("!!!!!!!err pdata=%p,get null epInfo", pdata);
       return -1;
     }
-#if 0
-  if (epInfo->rmidx >= 0 && epInfo->rmidx != modInx)
-    {
-      NSSOC_LOGDBG ("This fd should not issue events");
-      return -1;
-    }
-#endif
 
   NSSOC_LOGDBG ("Got one event]fd=%d,events=%u", epInfo->fd, events);
 

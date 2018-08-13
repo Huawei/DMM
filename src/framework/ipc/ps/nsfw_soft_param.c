@@ -97,13 +97,15 @@ nsfw_soft_set_int (u32 param, char *buf, u32 buf_len)
   nsfw_set_soft_item *int_item = &g_soft_int_cfg[param];
   if (NULL == int_item->data)
     {
-      NSFW_LOGERR ("data err]buf=%s,param=%u,min=%llu,max=%llu", buf, param, int_item->min, int_item->max);     //[DTS2017112402499][2017-11-24][z00316269] Issue #40, fix type dismatch
+      NSFW_LOGERR ("data err]buf=%s,param=%u,min=%llu,max=%llu", buf, param,
+                   int_item->min, int_item->max);
       return FALSE;
     }
 
   if (buf_value < int_item->min || buf_value > int_item->max)
     {
-      NSFW_LOGERR ("argv err]buf=%s,param=%u,min=%llu,max=%llu", buf, param, int_item->min, int_item->max);     //[DTS2017112402499][2017-11-24][z00316269] Issue #40, fix type dismatch
+      NSFW_LOGERR ("argv err]buf=%s,param=%u,min=%llu,max=%llu", buf, param,
+                   int_item->min, int_item->max);
       return FALSE;
     }
 

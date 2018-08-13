@@ -123,7 +123,6 @@ nscomm_pal_module_init (common_mem_pal_module_info * pinfo)
     {
       PARA1_SET (argv, tempargv, agindex, "nStackMain");
 
-      /*[DTS2017032711606 ][2017-04-08][z00353090] There are some unsafe function ,need to be replace with safe function */
       retVal = SPRINTF_S (tempbuf, PATA_STRLENT, "0x");
       if (-1 == retVal)
         {

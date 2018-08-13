@@ -83,7 +83,7 @@ typedef struct
                                  *              must add '_0' at the end of name, if the memory was created by app and the role of process is NSFW_PROC_MASTER, must add
                                  *              _(pid) at the end of name, nstack_123.
                                  */
-  i8 aname[NSFW_MEM_NAME_LENGTH];        /*the length of name must be less than NSFW_MEM_APPNAME_LENGTH. */
+  i8 aname[NSFW_MEM_NAME_LENGTH];       /*the length of name must be less than NSFW_MEM_APPNAME_LENGTH. */
 } nsfw_mem_name;
 
 typedef struct
