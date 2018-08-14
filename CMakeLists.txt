@@ -141,10 +141,6 @@ ADD_DEPENDENCIES(DPDK dmm_api)
 ADD_CUSTOM_TARGET(pkg-rpm COMMAND sh ../scripts/generate_dmm_rpm.sh)
 
 ADD_CUSTOM_TARGET(pkg-deb COMMAND sh ../scripts/generate_dmm_deb.sh)
-
-ADD_CUSTOM_TARGET(vpp-stack COMMAND sh ../scripts/build_vpp.sh)
-ADD_DEPENDENCIES(vpp-stack DPDK)
-
 ADD_CUSTOM_TARGET(checkstyle
  COMMAND bash  ${CMAKE_CURRENT_LIST_DIR}/scripts/checkstyle.sh -c)
 ADD_CUSTOM_TARGET(fixstyle
