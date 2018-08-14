@@ -124,6 +124,8 @@ nscomm_pal_module_init (common_mem_pal_module_info * pinfo, u8 app_mode)
         {
           sprintf (name, "dmm_app_%ld", (long) getpid ());
           PARA2_SET (argv, tempargv, agindex, "--file-prefix", name);
+          PARA1_SET (argv, tempargv, agindex, "--no-pci");
+
           // TODO: the size of the memory should not be fixed
           PARA2_SET (argv, tempargv, agindex, "-m", "32");
         }
