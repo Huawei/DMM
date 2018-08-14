@@ -1,0 +1,6 @@
+set int state GigabitEthernet0/9/0 up
+set int ip addr GigabitEthernet0/9/0 192.168.1.1/24
+show version
+show version verbose
+show cpu
+show int

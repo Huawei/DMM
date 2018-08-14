@@ -1,0 +1,63 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+
+  # Pick the right distro and bootstrap, default is ubuntu1604
+  distro = ( ENV['DMM_VAGRANT_DISTRO'] || "ubuntu")
+  if distro == 'centos7'
+    config.vm.box = "puppetlabs/centos-7.2-64-nocm"
+  else
+    config.vm.box = "puppetlabs/ubuntu-16.04-64-nocm"
+  end
+  config.vm.box_check_update = false
+
+  # Create DMM client and server VM's
+  config.vm.define "dmm-vpp-server" do |server|
+    server.vm.provision :shell, :path => File.join(File.dirname(__FILE__),"install_prereq.sh")
+    server.vm.provision :shell, :path => File.join(File.dirname(__FILE__),"build.sh"), :args => "/dmm vagrant"
+  end
+  config.vm.define "dmm-vpp-client" do |client|
+    client.vm.provision :shell, :path => File.join(File.dirname(__FILE__),"install_prereq.sh")
+    client.vm.provision :shell, :path => File.join(File.dirname(__FILE__),"build.sh"), :args => "/dmm vagrant"
+  end
+
+
+  # vagrant-cachier caches apt/yum etc to speed subsequent
+  # vagrant up
+  # to enable, run
+  # vagrant plugin install vagrant-cachier
+  #
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.scope = :box
+  end
+
+  # Define some physical ports for your VMs to be used by DPDK
+  nics = (ENV['DMM_VAGRANT_NICS'] || "2").to_i(10)
+  for i in 1..nics
+    config.vm.network "private_network", type: "dhcp"
+   # config.vm.network "private_network", ip: "172.28.128.200"
+   # config.vm.network "private_network", ip: "172.28.128.201"
+  end
+
+  # use http proxy if avaiable
+  if ENV['http_proxy'] && Vagrant.has_plugin?("vagrant-proxyconf")
+   config.proxy.http     = ENV['http_proxy']
+   config.proxy.https    = ENV['https_proxy']
+   config.proxy.no_proxy = "localhost,127.0.0.1"
+  end
+
+  vmcpu=(ENV['DMM_VAGRANT_VMCPU'] || 4)
+  vmram=(ENV['DMM_VAGRANT_VMRAM'] || 5120)
+
+  config.ssh.forward_agent = true
+  config.ssh.forward_x11 = true
+
+  config.vm.provider "virtualbox" do |vb|
+      vb.customize ["modifyvm", :id, "--ioapic", "on"]
+      vb.memory = "#{vmram}"
+      vb.cpus = "#{vmcpu}"
+
+      config.vm.synced_folder "../../../", "/dmm", type: "rsync"
+  end
+end
