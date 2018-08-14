@@ -87,6 +87,6 @@ typedef struct __nstack_proc_cb
 } nstack_proc_cb;
 
 typedef int (*nstack_stack_register_fn) (nstack_proc_cb * proc_fun,
-                                        nstack_event_cb * event_ops);
+                                         nstack_event_cb * event_ops);
 
 #endif

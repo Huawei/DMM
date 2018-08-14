@@ -14,25 +14,22 @@
 * limitations under the License.
 */
 
-RR_SAPI(socket)
-RR_SAPI(close)
-RR_SAPI(bind)
-RR_SAPI(connect)
-RR_SAPI(getpeername)
-RR_SAPI(getsockname)
-
-RR_SAPI(fcntl)
-RR_SAPI(setsockopt)
-RR_SAPI(getsockopt)
-
-RR_SAPI(read)
-RR_SAPI(write)
-
-RR_SAPI(sendmsg)
-RR_SAPI(recvfrom)
-
-RR_SAPI(poll)
-
-RR_SAPI(epoll_create)
-RR_SAPI(epoll_ctl)
-RR_SAPI(epoll_wait)
+/* *INDENT-OFF* */
+RR_SAPI (socket)
+RR_SAPI (close)
+RR_SAPI (bind)
+RR_SAPI (connect)
+RR_SAPI (getpeername)
+RR_SAPI (getsockname)
+RR_SAPI (fcntl)
+RR_SAPI (setsockopt)
+RR_SAPI (getsockopt)
+RR_SAPI (read)
+RR_SAPI (write)
+RR_SAPI (sendmsg)
+RR_SAPI (recvfrom)
+RR_SAPI (poll)
+RR_SAPI (epoll_create)
+RR_SAPI (epoll_ctl)
+RR_SAPI (epoll_wait)
+/* *INDENT-ON* */

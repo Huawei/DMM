@@ -1859,8 +1859,6 @@ nsfw_mgr_com_module_init (void *param)
           return -1;
         }
 
-      //TODO: check the path exist or not
-
       NSFW_LOGINF ("module mgr init]NSFW_PROC_MAIN domain_path=%s",
                    mgr_cfg->domain_path);
 

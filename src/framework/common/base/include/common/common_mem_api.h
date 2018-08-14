@@ -75,6 +75,7 @@ typedef s8_t err_t;
 
 void sys_sem_signal_s_v2 (sys_sem_t_v2 sem);
 void sys_sem_init_v2 (sys_sem_t_v2 sem);
+u32_t sys_arch_sem_trywait_v2 (sys_sem_t_v2 * sem);
 
 u32_t sys_arch_sem_wait_s_v2 (sys_sem_t_v2 sem);
 
@@ -90,7 +91,7 @@ get_sys_pid ()
 }
 
 pid_t updata_sys_pid ();
-long sys_now (void);
+u32_t sys_now (void);
 
 #define sys_sem_t sys_sem_t_v2
 #define sys_sem_st sys_sem_st_v2
@@ -126,9 +127,7 @@ sys_arch_lock_with_pid_v2 (sys_sem_t_v2 sem)
 #define NSTACK_SEM_MALLOC(sys_sem,count) \
 { \
     rte_spinlock_init(&(sys_sem)); \
-    /*lint -e506*/\
     if (!(count)) \
-    /*lint +e506*/\
     { \
         rte_spinlock_lock(&(sys_sem)); \
     } \

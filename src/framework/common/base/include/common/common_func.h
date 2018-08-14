@@ -93,6 +93,23 @@
 #define  common_memzone_data_lookup_name nscomm_memzone_data_lookup_name
 
 #define common_dump_stack  rte_dump_stack
+#define COMMON_PKTMBUF_HEADROOM  RTE_PKTMBUF_HEADROOM
+
+#define common_pktmbuf_mtod rte_pktmbuf_mtod
+#define common_memcpy rte_memcpy
+#define common_spinlock_try_lock_with_pid dmm_spinlock_try_lock_with_pid
+#define common_spinlock_unlock rte_spinlock_unlock
+#define common_atomic64_t rte_atomic64_t
+#define common_atomic64_inc rte_atomic64_inc
+#define common_atomic64_read rte_atomic64_read
+#define common_atomic64_dec rte_atomic64_dec
+#define common_mbuf_refcnt_set rte_mbuf_refcnt_set
+#define common_mbuf_refcnt_read rte_mbuf_refcnt_read
+#define common_exit rte_exit
+#define COMMON_CACHE_LINE_SIZE RTE_CACHE_LINE_SIZE
+#define common_eal_process_type rte_eal_process_type
+#define COMMON_PROC_PRIMARY RTE_PROC_PRIMARY
+
 #endif
 
 #endif // _RTE_COMM_FUNC_H_

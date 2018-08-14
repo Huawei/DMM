@@ -762,7 +762,6 @@ nsep_epoll_close (int sock)
 
   nsep_set_infoSockMap (sock, NULL);
 
-
   nstack_each_modInx (modInx)
   {
     if (0 == (epInfo->epaddflag & (1 << modInx)))

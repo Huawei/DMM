@@ -29,12 +29,13 @@
 #include <fcntl.h>
 #include <time.h>
 
-enum {
-    RR_LOG_OFF = 0x00,
-    RR_LOG_ERR = 0x01,
-    RR_LOG_WRN = 0x02,
-    RR_LOG_LOG = 0x03,
-    RR_LOG_DBG = 0x04,
+enum
+{
+  RR_LOG_OFF = 0x00,
+  RR_LOG_ERR = 0x01,
+  RR_LOG_WRN = 0x02,
+  RR_LOG_LOG = 0x03,
+  RR_LOG_DBG = 0x04,
 };
 
 #define RR_OUT(level, name, fmt, arg...) do { \
@@ -54,44 +55,42 @@ enum {
 #define RR_DBG(fmt, arg...) ((void)0)
 #endif
 
-
 #define _err(err_no) ((errno = (err_no)), -1)
 
+int rr_rs_ep_add (int fd, void *pdata, uint32_t * revent);
+int rr_rs_ep_mod (int fd, void *pdata, uint32_t * revent);
+int rr_rs_ep_del (int fd);
 
-int rr_rs_ep_add(int fd, void *pdata, uint32_t *revent);
-int rr_rs_ep_mod(int fd, void *pdata, uint32_t *revent);
-int rr_rs_ep_del(int fd);
+uint32_t rr_rs_poll (int fd, uint32_t revents);
 
-uint32_t rr_rs_poll(int fd, uint32_t revents);
+int rr_notify_event (void *pdata, int events);
 
-int rr_notify_event(void *pdata, int events);
-
-
-typedef struct rr_socket_api {
-    #define RR_SAPI(name) typeof(name) *n_##name;/* native api */
-    #include "rsocket_sapi.h"
-    #undef RR_SAPI
+typedef struct rr_socket_api
+{
+#define RR_SAPI(name) typeof(name) *n_##name;   /* native api */
+#include "rsocket_sapi.h"
+#undef RR_SAPI
 } rr_sapi_t;
 
 extern rr_sapi_t g_sapi;
 
 #define GSAPI(name) g_sapi.n_##name
 
+int rr_epoll_ctl (int op, int evfd, uint32_t events, int rsfd);
 
-int rr_epoll_ctl(int op, int evfd, uint32_t events, int rsfd);
-
-inline static int rr_ep_add(int evfd, int rsfd)
+inline static int
+rr_ep_add (int evfd, int rsfd)
 {
-    return rr_epoll_ctl(EPOLL_CTL_ADD, evfd, EPOLLET | EPOLLIN | EPOLLOUT, rsfd);
+  return rr_epoll_ctl (EPOLL_CTL_ADD, evfd, EPOLLET | EPOLLIN | EPOLLOUT,
+                       rsfd);
 }
 
-inline static int rr_ep_del(int evfd)
+inline static int
+rr_ep_del (int evfd)
 {
-    if (evfd < 0)
-        return 0;
-    return rr_epoll_ctl(EPOLL_CTL_DEL, evfd, 0, 0);
+  if (evfd < 0)
+    return 0;
+  return rr_epoll_ctl (EPOLL_CTL_DEL, evfd, 0, 0);
 }
 
-
-#endif/* #ifndef _RSOCKET_RDMA_H_ */
-
+#endif /* #ifndef _RSOCKET_RDMA_H_ */

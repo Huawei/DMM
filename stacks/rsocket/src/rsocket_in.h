@@ -19,15 +19,14 @@
 
 #include "rsocket_rdma.h"
 
-inline static void rr_rs_init(struct rsocket *rs);
-inline static void rr_rs_dest(struct rsocket *rs);
+inline static void rr_rs_init (struct rsocket *rs);
+inline static void rr_rs_dest (struct rsocket *rs);
 
-static inline void rr_rs_notify_tcp(struct rsocket *rs);
-static inline void rr_rs_notify_udp(struct rsocket *rs);
+static inline void rr_rs_notify_tcp (struct rsocket *rs);
+static inline void rr_rs_notify_udp (struct rsocket *rs);
 
-inline static void rr_rs_handle_tcp(struct rsocket *rs);
-inline static int rr_rs_evfd(struct rsocket *rs);
-inline static void rr_rs_connected(struct rsocket *rs);
+inline static void rr_rs_handle_tcp (struct rsocket *rs);
+inline static int rr_rs_evfd (struct rsocket *rs);
+inline static void rr_rs_connected (struct rsocket *rs);
 
-#endif/* #ifndef _RSOCKET_IN_H_ */
-
+#endif /* #ifndef _RSOCKET_IN_H_ */

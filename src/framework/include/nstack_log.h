@@ -41,7 +41,7 @@
 #define NSTACK_GETVER_MODULE    "nStack"
 
 #ifndef NSTACK_GETVER_VERSION
-  #error "need define version first"
+#error "need define version first"
 #endif
 
 #define NSTACK_GETVER_BUILDTIME "[" __DATE__ "]" "[" __TIME__ "]"

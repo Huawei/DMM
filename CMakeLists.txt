@@ -86,6 +86,9 @@ if(RMWS)
   message(STATUS  "Setting git pre-commit hook...done")
 endif()
 
+option(WITH_SECUREC_LIB "Option description" OFF)
+option(WITH_HAL_LIB "Option description" OFF)
+
 if(WITH_SECUREC_LIB)
   add_definitions(-DSECUREC_LIB)
 endif()
@@ -113,7 +116,7 @@ cp -rf ${CMAKE_CURRENT_LIST_DIR}/src/framework/common/base/include/common/* ${CM
 cp -f ${CMAKE_CURRENT_LIST_DIR}/src/framework/common/include/* ${CMAKE_CURRENT_LIST_DIR}/release/include/
 cp -f ${CMAKE_CURRENT_LIST_DIR}/src/framework/ipc/mgr_com/mgr_com.h ${CMAKE_CURRENT_LIST_DIR}/release/include/
 cp -f ${CMAKE_CURRENT_LIST_DIR}/src/framework/hal/hal.h ${CMAKE_CURRENT_LIST_DIR}/release/include/
-cp -f ${CMAKE_CURRENT_LIST_DIR}/build/libdmm_api.a ${CMAKE_CURRENT_LIST_DIR}/release/lib64/
+cp -f ${CMAKE_CURRENT_LIST_DIR}/src/nSocket/include/nstack_dmm_api.h ${CMAKE_CURRENT_LIST_DIR}/release/include/
 echo post compile process success.
 "
 )
@@ -126,7 +129,7 @@ FILE(APPEND ${clean_compile}
 
 rm -rf ${CMAKE_CURRENT_LIST_DIR}/release/include/*.h
 rm -rf ${CMAKE_CURRENT_LIST_DIR}/release/include/generic
-rm -rf ${CMAKE_CURRENT_LIST_DIR}/release/lib64/libdmm_api.a
+rm -rf ${CMAKE_CURRENT_LIST_DIR}/release/lib64/libdmm_api.so
 
 echo post clean process success.
 "
