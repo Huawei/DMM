@@ -1,7 +1,9 @@
 #ignoring the changes in sub folders of release folder
 /release/bin/
 /release/lib64/
+/release/include/
 /release/include/common/
+/release/include/generic/
 /release/include/*.h
 !/release/include/declare_syscalls.h
 !/release/include/nsocket_dmm_api.h
@@ -20,6 +22,23 @@
 /build/Makefile
 /build/post_compile.sh
 /build/src/
-
+/build/stacks/
+/build/thirdparty/
+/build/libnStackMaintain.a
+/build/libsocket.a
+/stacks/lwip_stack/lwip_src/lwip-2.0.3.zip
+/stacks/lwip_stack/lwip_src/lwip/
+/stacks/lwip_stack/build/
+/stacks/lwip_stack/release/
+/scripts/checkstyle.sh
+/stacks/lwip_stack/release/bin/
+/stacks/lwip_stack/release/script/
+/stacks/lwip_stack/src/include/
+!/stacks/lwip_stack/src/include/nsfw_msg_api.h
+!/stacks/lwip_stack/src/include/nsfw_msg.h
+!/stacks/lwip_stack/src/include/nsfw_mt_config.h
+!/stacks/lwip_stack/src/include/nsfw_rti.h
 #ignoring the changes in sub folders of thirdparty folder
 /thirdparty/
+/thirdparty/glog/glog-0.3.4/compile/
+/thirdparty/glog/glog-0.3.4/m4/
