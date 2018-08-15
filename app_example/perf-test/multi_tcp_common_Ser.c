@@ -444,10 +444,10 @@ process_server_accept_thread (void *pArgv)
       bind (listenFd, (struct sockaddr *) &g_recv, sizeof (struct sockaddr)))
     {
       printf ("ERROR:bind failed. fd[%d] errno [%d]\n", listenFd, errno);
-      printf ("Info Bind Success, port %d IP:%s\n", ntohs (g_recv.sin_port),
+      printf ("INFO:Bind Failed, port %d IP:%s\n", ntohs (g_recv.sin_port),
               inet_ntoa (*((struct in_addr *) &(g_recv.sin_addr.s_addr))));
       close (listenFd);
-      return;
+      exit (-1);
     }
   else
     {
