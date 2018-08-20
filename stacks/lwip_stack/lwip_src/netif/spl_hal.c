@@ -1470,7 +1470,8 @@ spl_hal_send (struct netif *pnetif)
   do
     {
       sent +=
-        hal_send_packet (pnetifExt->hdl, 0, &(tx_ptks[sent]), tx_num - sent);
+        hal_send_packet (pnetifExt->hdl, 0, (hal_mbuf_t **) & (tx_ptks[sent]),
+                         tx_num - sent);
       _retry++;
 
       if (_retry > SPL_HAL_SEND_TRY)
@@ -1514,7 +1515,8 @@ spl_hal_recv (struct netif *pnetif, u8_t id)
     return 0;
 
   rx_c =
-    hal_recv_packet (pnetifExt->hdl, 0, spl_hal_pkts[netif_id].rx.pkts,
+    hal_recv_packet (pnetifExt->hdl, 0,
+                     (hal_mbuf_t **) spl_hal_pkts[netif_id].rx.pkts,
                      PKT_BURST);
 
   if (rx_c <= 0)

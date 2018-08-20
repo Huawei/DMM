@@ -59,7 +59,7 @@ typedef struct dpdk_if
 
   uint32_t rx_queue_num;
   uint32_t rx_ring_size[HAL_ETH_MAX_QUEUE_NUM];
-  struct rte_mempool *rx_pool[HAL_ETH_MAX_QUEUE_NUM];
+  hal_mempool_t *rx_pool[HAL_ETH_MAX_QUEUE_NUM];
 
   uint32_t tx_queue_num;
   uint32_t tx_ring_size[HAL_ETH_MAX_QUEUE_NUM];
@@ -103,9 +103,9 @@ typedef struct netif_ops
   int (*macaddr) (netif_inst_t * inst, void *mac_addr);
   int (*capability) (netif_inst_t * inst, hal_netif_capa_t * info);
     uint16_t (*recv) (netif_inst_t * inst, uint16_t queue_id,
-                      struct common_mem_mbuf ** rx_pkts, uint16_t nb_pkts);
+                      hal_mbuf_t ** rx_pkts, uint16_t nb_pkts);
     uint16_t (*send) (netif_inst_t * inst, uint16_t queue_id,
-                      struct common_mem_mbuf ** tx_pkts, uint16_t nb_pkts);
+                      hal_mbuf_t ** tx_pkts, uint16_t nb_pkts);
     uint32_t (*link_status) (netif_inst_t * inst);
   int (*stats) (netif_inst_t * inst, hal_netif_stats_t * stats);
   int (*stats_reset) (netif_inst_t * inst);

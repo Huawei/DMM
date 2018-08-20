@@ -35,6 +35,9 @@
 #include <rte_mbuf.h>
 #include <rte_eth_bond.h>
 #include "nsfw_init.h"
+#include "common_mem_mbuf.h"
+#include "common_mem_mempool.h"
+#include "common_func.h"
 #include "hal.h"
 #include "nstack_securec.h"
 #include <rte_ethdev_driver.h>
@@ -1524,7 +1527,8 @@ dpdk_setup_port (netif_inst_t * inst)
   struct rte_eth_txconf *tx_conf;
 
   uint8_t port_id = inst->data.dpdk_if.port_id;
-  struct rte_mempool **mp = inst->data.dpdk_if.rx_pool;
+  struct rte_mempool **mp =
+    (struct rte_mempool **) inst->data.dpdk_if.rx_pool;
   uint32_t *rx_ring_size = inst->data.dpdk_if.rx_ring_size;
   uint32_t *tx_ring_size = inst->data.dpdk_if.tx_ring_size;
   uint32_t rx_queue_num = inst->data.dpdk_if.rx_queue_num;
@@ -1797,7 +1801,7 @@ dpdk_get_capability (netif_inst_t * inst, hal_netif_capa_t * capa)
 *****************************************************************************/
 NSTACK_STATIC uint16_t
 dpdk_recv (netif_inst_t * inst, uint16_t queue_id,
-           struct common_mem_mbuf ** rx_pkts, uint16_t nb_pkts)
+           hal_mbuf_t ** rx_pkts, uint16_t nb_pkts)
 {
   return hal_rte_eth_rx_burst (inst->data.dpdk_if.port_id, queue_id,
                                (struct rte_mbuf **) rx_pkts, nb_pkts);
@@ -1818,7 +1822,7 @@ dpdk_recv (netif_inst_t * inst, uint16_t queue_id,
 *****************************************************************************/
 NSTACK_STATIC uint16_t
 dpdk_send (netif_inst_t * inst, uint16_t queue_id,
-           struct common_mem_mbuf **tx_pkts, uint16_t nb_pkts)
+           hal_mbuf_t ** tx_pkts, uint16_t nb_pkts)
 {
   return hal_rte_eth_tx_burst (inst->data.dpdk_if.port_id, queue_id,
                                (struct rte_mbuf **) tx_pkts, nb_pkts);

@@ -17,15 +17,14 @@
 #ifndef _HAL_API_H_
 #define _HAL_API_H_
 
-#include "common_mem_mbuf.h"
-#include "common_mem_mempool.h"
-#include "common_func.h"
-
 #ifdef __cplusplus
 /* *INDENT-OFF* */
 extern "C" {
 /* *INDENT-ON* */
 #endif
+
+typedef void hal_mempool_t;
+typedef void hal_mbuf_t;
 
 #define HAL_ETH_MAX_QUEUE_NUM    4
 
@@ -98,7 +97,7 @@ typedef struct hal_netif_config
   {
     uint32_t queue_num;
     uint32_t ring_size[HAL_ETH_MAX_QUEUE_NUM];
-    struct common_mem_mempool *ring_pool[HAL_ETH_MAX_QUEUE_NUM];
+    hal_mempool_t *ring_pool[HAL_ETH_MAX_QUEUE_NUM];
   } rx;
 
   struct
@@ -125,9 +124,9 @@ uint32_t hal_get_mtu (hal_hdl_t hdl);
 void hal_get_macaddr (hal_hdl_t hdl, void *mac_addr);
 void hal_get_capability (hal_hdl_t hdl, hal_netif_capa_t * info);
 uint16_t hal_recv_packet (hal_hdl_t hdl, uint16_t queue_id,
-                          struct common_mem_mbuf **rx_pkts, uint16_t nb_pkts);
+                          hal_mbuf_t ** rx_pkts, uint16_t nb_pkts);
 uint16_t hal_send_packet (hal_hdl_t hdl, uint16_t queue_id,
-                          struct common_mem_mbuf **tx_pkts, uint16_t nb_pkts);
+                          hal_mbuf_t ** tx_pkts, uint16_t nb_pkts);
 uint32_t hal_link_status (hal_hdl_t hdl);
 int hal_stats (hal_hdl_t hdl, hal_netif_stats_t * stats);
 void hal_stats_reset (hal_hdl_t hdl);

@@ -31,8 +31,6 @@ static char* hal_invalid_str_script[] = {"&&", "||", ">>", "${", ";;", "/./", "/
 
 static char* hal_invalid_str_script_begin[] = {"./", "../"};
 
-extern const netif_ops_t dpdk_netif_ops;
-
 static hal_hdl_t hal_invaldi_hdl = {.id = -1};
 
 static const netif_ops_t* netif_ops_table[HAL_DRV_MAX];
@@ -598,7 +596,7 @@ hal_get_capability (hal_hdl_t hdl, hal_netif_capa_t * info)
 *****************************************************************************/
 uint16_t
 hal_recv_packet (hal_hdl_t hdl, uint16_t queue_id,
-                 struct common_mem_mbuf **rx_pkts, uint16_t nb_pkts)
+                 hal_mbuf_t ** rx_pkts, uint16_t nb_pkts)
 {
   netif_inst_t *inst;
 
@@ -627,7 +625,7 @@ hal_recv_packet (hal_hdl_t hdl, uint16_t queue_id,
 *****************************************************************************/
 uint16_t
 hal_send_packet (hal_hdl_t hdl, uint16_t queue_id,
-                 struct common_mem_mbuf ** tx_pkts, uint16_t nb_pkts)
+                 hal_mbuf_t ** tx_pkts, uint16_t nb_pkts)
 {
   netif_inst_t *inst;
 

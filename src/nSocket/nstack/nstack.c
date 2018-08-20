@@ -56,9 +56,7 @@ nStack_info_t g_nStackInfo = {
 /*if this flag was set, maybe all socket interface called during initializing*/
 __thread int g_tloadflag = 0;
 
-/* app_mode 1: simple stack with APP*/
-u8 app_mode=0;
-
+extern u8 app_mode;
 
 /*check init stack*/
 #define NSTACK_INIT_STATE_CHECK_RET(state)  do {\
