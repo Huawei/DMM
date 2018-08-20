@@ -22,11 +22,13 @@ endif()
 
 INCLUDE_DIRECTORIES(
 	framework/log/
+	framework/mem
 	framework/include/
 	framework/common/include/
+	framework/common/include/arch/${DMM_ARCH}
 	framework/common/base/include/
-    framework/common/base/include/common/
-    ${PRI_DIRECTORIES}
+	framework/common/base/include/common/
+	${PRI_DIRECTORIES}
 	../platform/SecureC/include/
 	../thirdparty/glog/glog-0.3.4/src/
 )

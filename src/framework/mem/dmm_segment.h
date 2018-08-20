@@ -1,0 +1,35 @@
+/*
+*
+* Copyright (c) 2018 Huawei Technologies Co.,Ltd.
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at:
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+#ifndef _DMM_SEGMENT_H_
+#define _DMM_SEGMENT_H_
+
+#define DMM_MEM_NAME_SIZE 32
+
+struct dmm_segment *dmm_seg_create (void *base, size_t size);
+struct dmm_segment *dmm_seg_attach (void *base, size_t size);
+void dmm_seg_dump (struct dmm_segment *seg);
+
+void *dmm_mem_alloc (struct dmm_segment *seg, size_t size);
+int dmm_mem_free (struct dmm_segment *seg, void *mem);
+
+void *dmm_mem_lookup (struct dmm_segment *seg,
+                      const char name[DMM_MEM_NAME_SIZE]);
+void *dmm_mem_map (struct dmm_segment *seg, size_t size,
+                   const char name[DMM_MEM_NAME_SIZE]);
+int dmm_mem_unmap (struct dmm_segment *seg,
+                   const char name[DMM_MEM_NAME_SIZE]);
+
+#endif /* #ifndef _DMM_SEGMENT_H_ */

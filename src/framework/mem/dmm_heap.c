@@ -1,0 +1,83 @@
+/*
+*
+* Copyright (c) 2018 Huawei Technologies Co.,Ltd.
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at:
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+#include <stdlib.h>
+#include <sys/types.h>
+
+#include "dmm_config.h"
+#include "dmm_share.h"
+
+struct heap_path
+{
+  void *base;
+  size_t size;
+};
+
+int
+dmm_heap_create (struct dmm_share *share)
+{
+  share->base = malloc (share->size);
+
+  if (share->base)
+    {
+      struct heap_path *hp = (struct heap_path *) share->path;
+      hp->base = share->base;
+      hp->size = share->size;
+      return 0;
+    }
+
+  return -1;
+}
+
+int
+dmm_heap_delete (struct dmm_share *share)
+{
+  free (share->base);
+  return 0;
+}
+
+int
+dmm_heap_attach (struct dmm_share *share)
+{
+  struct heap_path *hp = (struct heap_path *) share->path;
+
+  if (share->base)
+    {
+      if (hp->base != share->base)
+        return -1;
+    }
+  else
+    {
+      share->base = hp->base;
+    }
+
+  if (share->size)
+    {
+      if (share->size != hp->size)
+        return -1;
+    }
+  else
+    {
+      share->size = hp->size;
+    }
+
+  return 0;
+}
+
+int
+dmm_heap_detach (struct dmm_share *share)
+{
+  return 0;
+}
