@@ -32,7 +32,6 @@ extern "C" {
 #include "nstack_eventpoll.h"
 #include "nstack_dmm_api.h"
 #include "nstack_dmm_adpt.h"
-#include "nstack_rd_mng.h"
 #include "mgr_com.h"
 
 int g_same_process = 1;
@@ -173,12 +172,6 @@ nstack_adpt_init (nstack_dmm_para * para)
           NSFW_LOGERR ("nsep_create_memory failed");
           return -1;
         }
-
-      if (nstack_rd_mng_int (0) != 0)
-        {
-          NSFW_LOGERR ("nstack_rd_mng_int failed");
-          return -1;
-        }
     }
   else
     {
@@ -195,12 +188,6 @@ nstack_adpt_init (nstack_dmm_para * para)
       if (0 != nsep_adpt_attach_memory ())
         {
           NSFW_LOGERR ("nsep_adpt_attach_memory failed");
-          return -1;
-        }
-
-      if (nstack_rd_mng_int (1) != 0)
-        {
-          NSFW_LOGERR ("nstack_rd_mng_int failed");
           return -1;
         }
     }

@@ -134,7 +134,6 @@ u8_t ip_tos2prio[(IPTOS_TOS_MASK >> 1) + 1] = {
 /********************/
 extern err_t ethernetif_init (struct netif *pnetif);
 extern int nstack_stackx_init (int flag);
-extern int nstack_rd_mng_int (int flag);
 extern void tcp_sys_rmem_init ();
 extern void ethernetif_packets_input (struct netif *pstnetif);
 

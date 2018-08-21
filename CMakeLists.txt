@@ -113,7 +113,6 @@ FILE(APPEND ${post_compile}
 cp -f ${CMAKE_CURRENT_LIST_DIR}/src/nSocket/include/nstack_dmm_api.h ${CMAKE_CURRENT_LIST_DIR}/release/include/
 cp -f ${CMAKE_CURRENT_LIST_DIR}/src/adapt/nstack_dmm_adpt.h ${CMAKE_CURRENT_LIST_DIR}/release/include/
 cp -f ${CMAKE_CURRENT_LIST_DIR}/src/adapt/nstack_share_res.h ${CMAKE_CURRENT_LIST_DIR}/release/include/
-cp -f ${CMAKE_CURRENT_LIST_DIR}/src/adapt/nstack_rd_mng.h ${CMAKE_CURRENT_LIST_DIR}/release/include/
 cp -f ${CMAKE_CURRENT_LIST_DIR}/src/nSocket/include/declare_syscalls.h ${CMAKE_CURRENT_LIST_DIR}/release/include/
 cp -f ${CMAKE_CURRENT_LIST_DIR}/src/framework/include/* ${CMAKE_CURRENT_LIST_DIR}/release/include/
 cp -rf ${CMAKE_CURRENT_LIST_DIR}/src/framework/common/base/include/*.h ${CMAKE_CURRENT_LIST_DIR}/release/include/

@@ -34,7 +34,6 @@
 #include "nstack_fd_mng.h"
 #include "nstack_info_parse.h"
 #include "nstack_dmm_adpt.h"
-#include "nstack_rd_mng.h"
 #include "nstack_rd.h"
 #include "nstack_module.h"
 #include "nstack_select.h"
@@ -447,16 +446,13 @@ nstack_init_shmem ()
 NSTACK_STATIC int
 nstack_init_mem (void)
 {
-
   int ret = ns_fail;
-  int initflag = 0;
   int deploytype = nstack_get_deploy_type ();
     /* record unmatched app version*/
     /* check lib version match - Begin */
   if (deploytype != NSTACK_MODEL_TYPE1 && deploytype != NSTACK_MODEL_TYPE_SIMPLE_STACK )
     {
       check_main_version ();
-      initflag = 1;
     }
 
   ret = nstack_init_shmem ();
@@ -465,14 +461,6 @@ nstack_init_mem (void)
       NSSOC_LOGERR ("nstack init shmem fail");
       return ns_fail;
     }
-
-  /*stack-x rd mng init*/
-  ret = nstack_rd_mng_int(initflag);
-  if (ns_success != ret)
-  {
-     NSSOC_LOGERR("nstack_rd_mng_int fail");
-     return ns_fail;
-  }
 
   /*rd info sys*/
   ret = nstack_rd_sys();

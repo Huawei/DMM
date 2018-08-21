@@ -38,6 +38,7 @@
 #define NSFW_SHMEM_FLAG   (g_shmem_localdata->enflag)
 
 extern u8 app_mode;
+u8 app_mode = 0;
 nsfw_mem_localdata *g_shmem_localdata = NULL;
 
 /*check g_mem_localdata*/

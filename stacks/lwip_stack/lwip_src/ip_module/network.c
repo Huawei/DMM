@@ -26,7 +26,6 @@
 #include "stackx/spl_api.h"
 #include "sharedmemory.h"
 #include "nstack_securec.h"
-#include "nstack_rd_mng.h"
 #include "spl_hal.h"
 #include "inet.h"
 
@@ -441,59 +440,6 @@ nic_already_bond (struct network_configuration *pnetwork,
   return 0;
 }
 
-/*add network to rd*/
-void
-network_rd_proc (struct network_configuration *network, int op)
-{
-  struct ip_subnet *ptsubnet = NULL;
-  struct network_configuration *pn = NULL;
-  rd_ip_data rd_ip = { 0 };
-  int ret = 0;
-
-  pn = network;
-
-  while (pn)
-    {
-      if (0 == strcmp ("nstack-dpdk", pn->type_name))
-        {
-          ptsubnet = network->ip_subnet;
-          while (ptsubnet)
-            {
-              rd_ip.addr = ptsubnet->subnet;
-              rd_ip.masklen = ptsubnet->mask_len;
-              if (0 == op)
-                {
-                  ret = nstack_rd_ip_node_insert (network->type_name, &rd_ip);
-                }
-              else
-                {
-                  ret = nstack_rd_ip_node_delete (&rd_ip);
-                }
-
-              if (0 != ret)
-                {
-                  NSOPR_LOGERR ("nstack rd subnet:0x%x, masklen:0x%x %s fail",
-                                rd_ip.addr, rd_ip.masklen,
-                                (0 == op ? "insert" : "delete"));
-                }
-              else
-                {
-                  NSOPR_LOGDBG
-                    ("nstack rd subnet:0x%x, masklen:0x%x %s success",
-                     rd_ip.addr, rd_ip.masklen,
-                     (0 == op ? "insert" : "delete"));
-                }
-
-              ptsubnet = ptsubnet->next;
-            }
-        }
-
-      pn = pn->next;
-    }
-
-  return;
-}
-
 /* add network to list in descending sort */
 void
 add_network_to_list (struct network_configuration *network)
@@ -502,9 +448,6 @@ add_network_to_list (struct network_configuration *network)
   struct network_configuration *prev = NULL;
 
   network->next = NULL;
-
-  /*add network to rd */
-  network_rd_proc (network, 0);
 
   while (curr)
     {
@@ -1088,9 +1031,6 @@ del_network_by_name (char *name)
         {
           *ref = network->next;
           network->next = NULL;
-
-          /*delete netework from rd */
-          network_rd_proc (network, 1);
 
           free_network_configuration (network, IP_MODULE_FALSE);
           return 0;

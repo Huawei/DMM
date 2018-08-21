@@ -36,7 +36,6 @@
 #include "nstack_dmm_adpt.h"
 #include "nstack_rd_init.h"
 #include "nstack_info_parse.h"
-#include "nstack_rd_mng.h"
 
 /* *INDENT-OFF* */
 nstack_module_info g_nstack_modules = {
@@ -176,7 +175,6 @@ nstack_register_module ()
 
   nstack_get_route_data rd_fun[] = {
     nstack_stack_rd_parse,
-    nstack_rd_ip_get
   };
 
   pstacks =

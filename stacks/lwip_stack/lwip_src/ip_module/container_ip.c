@@ -28,7 +28,6 @@
 #include "netif.h"
 #include "nstack_log.h"
 #include "nstack_securec.h"
-#include "nstack_rd_mng.h"
 #include "config_common.h"
 #include "igmp.h"
 #include "spl_def.h"
@@ -164,38 +163,6 @@ free_container_port_ip_cidr (struct container_port_ip_cidr *ip_cidr,
     }
 }
 
-/*note:::the ip must be local order*/
-void
-container_multicast_rd (unsigned int ip, int op)
-{
-  rd_ip_data rd_ip = { 0 };
-  int ret = 0;
-
-  rd_ip.addr = ip;
-  rd_ip.masklen = 32;
-  if (0 == op)
-    {
-      ret = nstack_rd_ip_node_insert ("nstack-dpdk", &rd_ip);
-    }
-  else
-    {
-      ret = nstack_rd_ip_node_delete (&rd_ip);
-    }
-
-  if (0 != ret)
-    {
-      NSOPR_LOGERR ("nstack rd multicast ip:0x%x %s fail", ip,
-                    (0 == op ? "insert" : "delete"));
-    }
-  else
-    {
-      NSOPR_LOGDBG ("nstack rd multicast ip:0x%x %s success", ip,
-                    (0 == op ? "insert" : "delete"));
-    }
-
-  return;
-}
-
 static void
 free_container_multicast (struct container_multicast_id *multicast,
                           bool_t only_free)
@@ -208,9 +175,6 @@ free_container_multicast (struct container_multicast_id *multicast,
       multicast = multicast->next;
       if (!only_free)
         {
-          /*note:::multicast ip is network, need to change to local order, delete multicast ip from rd. */
-          container_multicast_rd (spl_ntohl (tmp->ip), 1);
-
           trp_rb_erase ((void *) (u64_t) tmp->ip, &g_container_multicast_root,
                         ip_compare);
         }
