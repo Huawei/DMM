@@ -69,7 +69,7 @@ if [ "$OS_ID" == "ubuntu" ]; then
 
     APT_OPTS="--assume-yes --no-install-suggests --no-install-recommends -o Dpkg::Options::=\"--force-confdef\" -o Dpkg::Options::=\"--force-confold\""
     sudo apt-get update ${APT_OPTS}
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump libpcre3 libpcre3-dev zlibc zlib1g zlib1g-dev vim ethtool
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq git cmake gcc g++ automake libtool wget lsof lshw pciutils net-tools tcpdump libpcre3 libpcre3-dev zlibc zlib1g zlib1g-dev vim ethtool unzip
 elif [ "$OS_ID" == "debian" ]; then
     echo "not tested for debian and exit"
     exit 1
@@ -207,11 +207,11 @@ if [ "$OS_ID" == "centos" ]; then
     ifmac=$(ifconfig enp0s8 | grep 'ether' | awk -F " " '{print $2}')
     echo $ifmac
 elif [ "$OS_ID" == "ubuntu" ]; then
-    ifaddress1=$(ifconfig eth1 | grep 'inet' | head -n 1 | cut -d: -f2 | awk '{print $1}')
+    ifaddress1=$(ifconfig enp0s8 | grep 'inet' | head -n 1 | cut -d: -f2 | awk '{print $1}')
     echo $ifaddress1
-    ifaddresscut=$(ifconfig eth1 | grep 'inet' | head -n 1 | cut -d: -f2 | awk '{print $1}' | awk -F "." '{print $1"."$2"."$3}')
+    ifaddresscut=$(ifconfig enp0s8 | grep 'inet' | head -n 1 | cut -d: -f2 | awk '{print $1}' | awk -F "." '{print $1"."$2"."$3}')
     echo $ifaddresscut
-    ifmac=$(ifconfig eth1 | grep 'HWaddr' | awk -F " " '{print $5}')
+    ifmac=$(ifconfig enp0s8 | grep 'HWaddr' | awk -F " " '{print $5}')
     echo $ifmac
 fi
 
@@ -227,7 +227,7 @@ cd bin
 if [ "$OS_ID" == "centos" ]; then
     sed -i 's!eth7!enp0s8!1' ip_data.json
 elif [ "$OS_ID" == "ubuntu" ]; then
-    sed -i 's!eth7!eth1!1' ip_data.json
+    sed -i 's!eth7!enp0s8!1' ip_data.json
 fi
 
 sed -i 's!00:54:32:19:3d:19!'$ifmac'!1' ip_data.json
@@ -243,7 +243,7 @@ sed -i 's!192.168.1.254!'$ifaddresscut'.1!1' network_data_tonStack.json
 if [ "$OS_ID" == "centos" ]; then
     sed -i 's!eth7!enp0s8!1' network_data_tonStack.json
 elif [ "$OS_ID" == "ubuntu" ]; then
-    sed -i 's!eth7!eth1!1' network_data_tonStack.json
+    sed -i 's!eth7!enp0s8!1' network_data_tonStack.json
 fi
 sed -i 's!eth7!enp0s8!1' network_data_tonStack.json
 
