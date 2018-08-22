@@ -43,3 +43,20 @@ ExternalProject_Add(
 )
 
 set_target_properties(NGINX PROPERTIES EXCLUDE_FROM_ALL TRUE)
+
+
+SET(IPERF_URL https://iperf.fr/download/source/iperf-3.1.3-source.tar.gz)
+
+INCLUDE(ExternalProject)
+ExternalProject_Add(
+        IPERF
+        URL ${IPERF_URL}
+        DOWNLOAD_DIR ${CMAKE_CURRENT_LIST_DIR}
+        SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/iperf-3.1.3
+        BUILD_IN_SOURCE 1
+        CONFIGURE_COMMAND sh -c "LDFLAGS=\"-L${LIB_PATH_SHARED} -Wl,-rpath=${LIB_PATH_SHARED} -lnStackAPI\" ./configure"
+        BUILD_COMMAND make
+        DEPENDS nStackAPI
+)
+
+set_target_properties(IPERF PROPERTIES EXCLUDE_FROM_ALL TRUE)
