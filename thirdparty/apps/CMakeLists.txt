@@ -60,3 +60,19 @@ ExternalProject_Add(
 )
 
 set_target_properties(IPERF PROPERTIES EXCLUDE_FROM_ALL TRUE)
+
+SET(NETPERF_URL https://github.com/HewlettPackard/netperf/archive/netperf-2.7.0.tar.gz)
+
+INCLUDE(ExternalProject)
+ExternalProject_Add(
+        NETPERF
+        URL ${NETPERF_URL}
+        DOWNLOAD_DIR ${CMAKE_CURRENT_LIST_DIR}
+        SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/netperf-2.7.0
+        BUILD_IN_SOURCE 1
+        CONFIGURE_COMMAND sh -c "LDFLAGS=\"-L${LIB_PATH_SHARED} -Wl,-rpath=${LIB_PATH_SHARED} -lnStackAPI\" ./configure"
+        BUILD_COMMAND make
+        DEPENDS nStackAPI
+)
+
+set_target_properties(NETPERF PROPERTIES EXCLUDE_FROM_ALL TRUE)
