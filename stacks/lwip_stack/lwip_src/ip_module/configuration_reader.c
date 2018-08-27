@@ -885,7 +885,7 @@ ip_module_new_msg (i32 epfd, i32 fd, u32 events)
 int
 init_ip_module_unix_socket_path ()
 {
-  const char *directory = "/var/run";
+  const char *directory = "/var/log/nStack";
   const char *home_dir = getenv ("HOME");
 
   if (getuid () != 0 && home_dir != NULL)

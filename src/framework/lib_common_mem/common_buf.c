@@ -141,6 +141,7 @@ nscomm_pal_module_init (common_mem_pal_module_info * pinfo, u8 app_mode)
   else
     {
       PARA1_SET (argv, tempargv, agindex, "nStackMain");
+      PARA2_SET (argv, tempargv, agindex, "--file-prefix", "nStackMain");
 
       retVal = SPRINTF_S (tempbuf, PATA_STRLENT, "0x");
       if (-1 == retVal)

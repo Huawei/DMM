@@ -192,6 +192,7 @@ elif [ "$hugepagesize" == "1048576" ]; then
     sudo mount -t hugetlbfs -o pagesize=1G none /mnt/nstackhuge/
 fi
 sudo mkdir -p /var/run/ip_module/
+sudo mkdir -p /var/log/nStack/ip_module/
 
 export LD_LIBRARY_PATH=$LIB_PATH
 export NSTACK_LOG_ON=DBG
