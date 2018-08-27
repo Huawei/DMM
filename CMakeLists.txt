@@ -31,6 +31,7 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_PATH})
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_PATH_SHARED})
 SET(DMM_DPDK_INSTALL_DIR "" CACHE STRING "to get the dpdk install path by cmd")
 SET(DMM_REL_INC_DIR ${CMAKE_CURRENT_LIST_DIR}/release/include)
+SET(DMM_ARCH x86)
 
 SET(GENERATE_RPM_PATH ${CMAKE_CURRENT_LIST_DIR}/release/rpm)
 file(MAKE_DIRECTORY ${GENERATE_RPM_PATH})
@@ -118,7 +119,9 @@ cp -f ${CMAKE_CURRENT_LIST_DIR}/src/framework/include/* ${CMAKE_CURRENT_LIST_DIR
 cp -rf ${CMAKE_CURRENT_LIST_DIR}/src/framework/common/base/include/*.h ${CMAKE_CURRENT_LIST_DIR}/release/include/
 cp -rf ${CMAKE_CURRENT_LIST_DIR}/src/framework/common/base/include/common/* ${CMAKE_CURRENT_LIST_DIR}/release/include/
 
-cp -f ${CMAKE_CURRENT_LIST_DIR}/src/framework/common/include/* ${CMAKE_CURRENT_LIST_DIR}/release/include/
+cp -f ${CMAKE_CURRENT_LIST_DIR}/src/framework/common/include/*.h ${CMAKE_CURRENT_LIST_DIR}/release/include/
+cp -rf ${CMAKE_CURRENT_LIST_DIR}/src/framework/common/include/generic ${CMAKE_CURRENT_LIST_DIR}/release/include/
+cp -f ${CMAKE_CURRENT_LIST_DIR}/src/framework/common/include/arch/${DMM_ARCH}/* ${CMAKE_CURRENT_LIST_DIR}/release/include/
 cp -f ${CMAKE_CURRENT_LIST_DIR}/src/framework/ipc/mgr_com/mgr_com.h ${CMAKE_CURRENT_LIST_DIR}/release/include/
 cp -f ${CMAKE_CURRENT_LIST_DIR}/src/framework/hal/hal.h ${CMAKE_CURRENT_LIST_DIR}/release/include/
 cp -f ${CMAKE_CURRENT_LIST_DIR}/src/nSocket/include/nstack_dmm_api.h ${CMAKE_CURRENT_LIST_DIR}/release/include/
