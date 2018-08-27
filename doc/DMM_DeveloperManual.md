@@ -1042,7 +1042,7 @@ typedef enum _LOG_MODULE
 #define NSLOG_OFF     0x00
 
 ```
-App logs stored in nStack_nSocket.log. Stackx logs will be stored in running.log. Other operational
+App logs stored in app_$pname_$pid.log. Stackx logs will be stored in running.log. Other operational
 logs will be stored in operation.log. App logs will be stored in file if following is set to 1.
 ```
 export NSTACK_LOG_FILE_FLAG=1
