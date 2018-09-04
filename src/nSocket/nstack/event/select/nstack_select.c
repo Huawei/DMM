@@ -753,4 +753,26 @@ nssct_set_index (i32 fd, i32 inx)
   select_set_index (fd, inx);
 }
 
+i32
+select_module_init_child ()
+{
+  pthread_t select_thread_id;
+  i32 retval;
+
+  if (pthread_create (&select_thread_id, NULL, nstack_select_thread, NULL))
+    {
+      goto ERR_RET;
+    }
+
+  retval = pthread_setname_np (select_thread_id, "nstack_select_child");
+  if (retval)
+    {
+      /*set thread name failed */
+    }
+  return TRUE;
+
+ERR_RET:
+  return FALSE;
+}
+
 #endif /* NSTACK_SELECT_MODULE */

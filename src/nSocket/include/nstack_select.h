@@ -141,6 +141,8 @@ extern i32 select_add_cb (struct select_entry *entry);
 extern i32 select_rm_cb (struct select_entry *entry);
 extern i32 select_entry_reset (struct select_entry *entry);
 extern i32 select_module_init ();
+extern i32 select_module_init_child ();
+
 extern struct select_module_info *get_select_module (void);
 #ifdef __cplusplus
 /* *INDENT-OFF* */

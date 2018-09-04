@@ -117,6 +117,37 @@ sbr_lookup_sk (int fd)
   return sk;
 }
 
+/*****************************************************************************
+*   Prototype    : sbr_free_sk
+*   Description  : free sock
+*   Input        : sbr_socket_t * sk
+*   Output       : None
+*   Return Value : static inline void
+*   Calls        :
+*   Called By    :
+*
+*****************************************************************************/
+static inline void
+sbr_free_fd (int fd)
+{
+  if ((fd < 1) || (fd > SBR_MAX_FD_NUM))
+    {
+      NSSBR_LOGERR ("fd is not ok]fd=%d", fd);
+      sbr_set_errno (EBADF);
+      return;
+    }
+
+  sbr_socket_t *sk = &g_res_group.sk[fd];
+  if (!sk->fdopt && !sk->sk_obj && !sk->stack_obj)
+    {
+      NSSBR_LOGERR
+        ("can't free empty fd] fd=%d, fdopt=%p, sk_obj=%p, stack_obj=%p", fd,
+         sk->fdopt, sk->sk_obj, sk->stack_obj);
+      return;
+    }
+  sbr_free_sk (sk);
+}
+
 int sbr_init_res ();
 
 #ifdef __cplusplus

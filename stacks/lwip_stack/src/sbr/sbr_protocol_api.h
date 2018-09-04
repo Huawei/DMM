@@ -70,6 +70,8 @@ typedef struct
   int (*peak) (sbr_socket_t *);
   void (*lock_common) (sbr_socket_t *);
   void (*unlock_common) (sbr_socket_t *);
+  void (*fork_parent) (sbr_socket_t *, pid_t);
+  void (*fork_child) (sbr_socket_t *, pid_t, pid_t);
   unsigned int (*ep_ctl) (sbr_socket_t *, int triggle_ops,
                           struct epoll_event * event, void *pdata);
   unsigned int (*ep_getevt) (sbr_socket_t *, unsigned int events);
@@ -86,7 +88,7 @@ struct sbr_socket_s
 };
 
 int sbr_init_protocol ();
-
+int sbr_fork_protocol ();
 sbr_fdopt *sbr_get_fdopt (int domain, int type, int protocol);
 void sbr_app_touch_in (void);   /*app send its version info to nStackMain */
 

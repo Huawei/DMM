@@ -265,3 +265,23 @@ nstack_stack_module_init ()
     }
   return 0;
 }
+
+int
+nstack_stack_module_init_child ()
+{
+  ns_uint32 idx;
+  for (idx = 0; idx < g_module_num; idx++)
+    {
+      if (g_nstack_modules.modules[idx].mops.extern_ops.module_init_child)
+        {
+          if (0 !=
+              g_nstack_modules.modules[idx].mops.
+              extern_ops.module_init_child ())
+            {
+              NSSOC_LOGERR ("nstack[%s] modx:%d init child fail",
+                            g_nstack_modules.modules[idx].modulename, idx);
+            }
+        }
+    }
+  return 0;
+}

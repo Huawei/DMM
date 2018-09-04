@@ -44,6 +44,25 @@ sbr_init_protocol ()
 }
 
 /*****************************************************************************
+*   Prototype    : sbr_fork_protocol
+*   Description  : init protocol
+*   Input        : None
+*   Output       : None
+*   Return Value : int
+*   Calls        :
+*   Called By    :
+*
+*****************************************************************************/
+int
+sbr_fork_protocol ()
+{
+  pid_t pid = updata_sys_pid ();
+
+  NSSBR_LOGINF ("update pid in child]pid=%d", pid);
+  return sbr_fork_stackx ();
+}
+
+/*****************************************************************************
 *   Prototype    : sbr_get_fdopt
 *   Description  : get fdopt by domain type protocol
 *   Input        : int domain

@@ -56,6 +56,7 @@ sbr_get_spl_msg_box (sbr_socket_t * sk, u8 tos)
 }
 
 int sbr_init_stackx ();
+int sbr_fork_stackx ();
 int sbr_malloc_conn_for_sk (sbr_socket_t * sk, spl_netconn_type_t type);
 int sbr_init_conn_for_accept (sbr_socket_t * sk, spl_netconn_t * conn);
 void sbr_free_conn_from_sk (sbr_socket_t * sk);

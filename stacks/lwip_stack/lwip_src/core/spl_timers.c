@@ -283,7 +283,6 @@ deal_timeout_sig (void)
   int retval;
   if (ptimer.first == NULL)
     {
-      NSPOL_LOGERR ("ptimer.first=NULL!!");
       return;
     }
   tmo = rb_entry (ptimer.first, struct ptimer_node, node);

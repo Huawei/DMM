@@ -14,5 +14,5 @@
 # limitations under the License.
 #########################################################################
 
-ADD_SUBDIRECTORY(perf-test)
-ADD_SUBDIRECTORY(func-test)
+ADD_SUBDIRECTORY(fork)
+

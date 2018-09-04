@@ -431,9 +431,21 @@ ss_set_is_listen_conn (spl_netconn_t * sh, i8 is_listen_conn)
 }
 
 static inline i32
+ss_inc_fork_ref (spl_netconn_t * sh)
+{
+  return __sync_add_and_fetch (&sh->recycle.fork_ref, 1);
+}
+
+static inline i32
 ss_dec_fork_ref (spl_netconn_t * sh)
 {
   return __sync_sub_and_fetch (&sh->recycle.fork_ref, 1);
+}
+
+static inline i32
+ss_get_fork_ref (spl_netconn_t * sh)
+{
+  return sh->recycle.fork_ref;
 }
 
 static inline int

@@ -135,6 +135,7 @@ extern nstack_module_keys g_nstack_module_desc[];
         for ((modInx) = 0; ((modInx) < nstack_get_modNum() && (pMod = nstack_get_module((modInx)))); (modInx)++)
 
 int nstack_stack_module_init ();
+int nstack_stack_module_init_child ();
 
 int nstack_get_deploy_type ();
 

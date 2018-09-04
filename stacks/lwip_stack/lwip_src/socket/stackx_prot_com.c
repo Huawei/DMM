@@ -522,6 +522,34 @@ sbr_com_lock_common (sbr_socket_t * sk)
 
 }
 
+void
+sbr_com_fork_parent (sbr_socket_t * sk, pid_t p)
+{
+  i32 ref = ss_inc_fork_ref (sbr_get_conn (sk));
+  NSSBR_LOGINF ("inc fork ref] fd=%d, p=%d, ref=%d, conn=%p, private_data=%p",
+                sk->fd, p, ref, sbr_get_conn (sk),
+                sbr_get_conn (sk)->private_data);
+}
+
+void
+sbr_com_fork_child (sbr_socket_t * sk, pid_t p, pid_t c)
+{
+  if (ss_add_pid (sbr_get_conn (sk), c) != 0)
+    {
+      NSSBR_LOGERR
+        ("add pid failed] fd=%d, p=%d, c=%d, ref=%d, conn=%p, private_data=%p",
+         sk->fd, p, c, ss_get_fork_ref (sbr_get_conn (sk)), sbr_get_conn (sk),
+         sbr_get_conn (sk)->private_data);
+    }
+  else
+    {
+      NSSBR_LOGINF
+        ("add pid ok] fd=%d, p=%d, c=%d, ref=%d, conn=%p, private_data=%p",
+         sk->fd, p, c, ss_get_fork_ref (sbr_get_conn (sk)), sbr_get_conn (sk),
+         sbr_get_conn (sk)->private_data);
+    }
+}
+
 /*****************************************************************************
 *   Prototype    : sbr_com_unlock_common
 *   Description  : unlock common

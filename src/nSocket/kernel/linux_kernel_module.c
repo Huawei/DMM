@@ -324,6 +324,7 @@ kernel_stack_register (nstack_proc_cb * ops, nstack_event_cb * val)
   ops->extern_ops.ep_ctl = kernel_ep_fd_add;
   ops->extern_ops.ep_prewait_proc = kernel_prewait_proc;
   ops->extern_ops.module_init = kernel_module_init;
+  ops->extern_ops.module_init_child = kernel_module_init;
   ops->extern_ops.stack_alloc_fd = kernel_fd_alloc;
 
   /* don't close file descriptor */

@@ -3186,9 +3186,12 @@ update_tcp_state (spl_netconn_t * conn, enum tcp_state state)
           spl_state = SPL_CLOSED;
           break;
         }
-      conn->tcp_state = spl_state;
-      NSTCP_LOGINF ("conn=%p,private_data=%p,state=%d", conn,
-                    conn->private_data, spl_state);
+      if (conn->tcp_state != spl_state)
+        {
+          conn->tcp_state = spl_state;
+          NSTCP_LOGINF ("conn=%p,private_data=%p,state=%d", conn,
+                        conn->private_data, spl_state);
+        }
     }
 }
 

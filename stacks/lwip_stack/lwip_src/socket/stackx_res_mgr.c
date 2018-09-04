@@ -172,6 +172,39 @@ sbr_init_stackx ()
 }
 
 /*****************************************************************************
+*   Prototype    : sbr_fork_stackx
+*   Description  : init stackx res
+*   Input        : None
+*   Output       : None
+*   Return Value : int
+*   Calls        :
+*   Called By    :
+*
+*****************************************************************************/
+int
+sbr_fork_stackx ()
+{
+
+  if (sbr_attach_group_array () != 0)
+    {
+      NSSBR_LOGERR ("sbr_attach_group_array failed");
+      return -1;
+    }
+
+  NSSBR_LOGDBG ("sbr_attach_group_array ok");
+
+  if (sbr_init_tx_pool () != 0)
+    {
+      NSSBR_LOGERR ("init tx pool failed");
+      return -1;
+    }
+
+  NSSBR_LOGDBG ("init tx pool ok");
+  NSSBR_LOGDBG ("sbr_fork_stackx ok");
+  return 0;
+}
+
+/*****************************************************************************
 *   Prototype    : sbr_malloc_conn_for_sk
 *   Description  : malloc netconn for sk,need add pid
 *   Input        : sbr_socket_t* sk

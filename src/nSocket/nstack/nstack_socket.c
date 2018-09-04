@@ -2775,6 +2775,8 @@ nstack_fork (void)
           dmm_spinlock_lock_with_pid (nstack_get_fork_share_lock (),
                                       get_sys_pid ());
           nsep_fork_child_proc (parent_pid);
+
+          (void) select_module_init_child ();
           common_mem_spinlock_unlock (nstack_get_fork_share_lock ());
         }
       else if (pid > 0)

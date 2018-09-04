@@ -150,6 +150,9 @@ int sbr_get_sockaddr_and_len (u16 port, spl_ip_addr_t * ip_addr,
                               struct sockaddr *addr, socklen_t * addrlen);
 void sbr_com_set_app_info (sbr_socket_t * sk, void *appinfo);
 
+void sbr_com_fork_parent (sbr_socket_t * sk, pid_t p);
+void sbr_com_fork_child (sbr_socket_t * sk, pid_t p, pid_t c);
+
 #ifdef __cplusplus
 /* *INDENT-OFF* */
 }

@@ -13,6 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #########################################################################
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -g -fPIC -m64 -mssse3 -std=gnu89")
 
-ADD_SUBDIRECTORY(perf-test)
-ADD_SUBDIRECTORY(func-test)
+LINK_DIRECTORIES(${LIB_PATH_SHARED} ${LIB_PATH_STATIC})
+
+ADD_EXECUTABLE(tcp_fork_server tcpserver.c)
+ADD_DEPENDENCIES(tcp_fork_server nStackAPI)
+TARGET_LINK_LIBRARIES(tcp_fork_server libnStackAPI.so -lpthread -lrt)
+
+ADD_EXECUTABLE(tcp_client tcpclient.c)
+ADD_DEPENDENCIES(tcp_client nStackAPI)
+TARGET_LINK_LIBRARIES(tcp_client libnStackAPI.so -lpthread -lrt)
+

@@ -57,6 +57,7 @@ typedef enum
 typedef struct __nstack_extern_ops
 {
   int (*module_init) (void);    /*stack module init */
+  int (*module_init_child) (void);      /*stack module init for child process */
   int (*fork_init_child) (pid_t p, pid_t c);    /*after fork, stack child process init again if needed. */
   void (*fork_parent_fd) (int s, pid_t p);      /*after fork, stack parent process proc again if needed. */
   void (*fork_child_fd) (int s, pid_t p, pid_t c);      /*after fork, child record pid for recycle if needed. */

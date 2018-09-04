@@ -1197,6 +1197,45 @@ SBR_INTERCEPT (int, fd_alloc, ())
   return sbr_socket (AF_INET, SOCK_STREAM, 0);
 }
 
+SBR_INTERCEPT (int, fork_init_child, (pid_t p, pid_t c))
+{
+  NSSBR_LOGDBG ("fork_init_child() is called]");
+  return sbr_fork_protocol ();
+}
+
+SBR_INTERCEPT (void, fork_parent_fd, (int s, pid_t p))
+{
+  NSSBR_LOGDBG ("fork_parent_fd() is called]");
+  sbr_socket_t *sk = sbr_lookup_sk (s);
+
+  if (!sk)
+    {
+      return;
+    }
+
+  sk->fdopt->fork_parent (sk, p);
+}
+
+SBR_INTERCEPT (void, fork_child_fd, (int s, pid_t p, pid_t c))
+{
+  NSSBR_LOGDBG ("fork_child_fd() is called]");
+  sbr_socket_t *sk = sbr_lookup_sk (s);
+
+  if (!sk)
+    {
+      return;
+    }
+
+  sk->fdopt->fork_child (sk, p, c);
+
+}
+
+SBR_INTERCEPT (void, fork_free_fd, (int s, pid_t p, pid_t c))
+{
+  NSSBR_LOGDBG ("fork_free_fd() is called]");
+  sbr_free_fd (s);
+}
+
 /*****************************************************************************
 *   Prototype    : nstack_stack_register
 *   Description  : reg api to nsocket
@@ -1227,5 +1266,9 @@ nstack_stack_register (nstack_proc_cb * ops, nstack_event_cb * val)
   (ops->extern_ops).ep_ctl = GET_SBR_INTERCEPT (ep_ctl);
   (ops->extern_ops).peak = GET_SBR_INTERCEPT (peak);
   (ops->extern_ops).stack_alloc_fd = GET_SBR_INTERCEPT (fd_alloc);      /*alloc a fd id for epoll */
+  (ops->extern_ops).fork_init_child = GET_SBR_INTERCEPT (fork_init_child);
+  (ops->extern_ops).fork_parent_fd = GET_SBR_INTERCEPT (fork_parent_fd);
+  (ops->extern_ops).fork_child_fd = GET_SBR_INTERCEPT (fork_child_fd);
+  (ops->extern_ops).fork_free_fd = GET_SBR_INTERCEPT (fork_free_fd);
   return 0;
 }

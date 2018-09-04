@@ -587,7 +587,7 @@ nstack_for_epoll_init ()
       NSSOC_LOGINF ("fork]g_nStackInfo.pid=%u,getpid=%d", g_nStackInfo.pid,
             getpid ());
 
-        nstack_stack_module_init();
+        nstack_stack_module_init_child();
     }
   return 0;
 }
