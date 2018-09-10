@@ -65,10 +65,10 @@ sudo yum install -y  libpcap-devel python-sphinx inkscape
 echo "generate the rpm package"
 rpmbuild -ba dpdk.spec --define "_sourcedir ${PWD}"
 if [ $? -eq 0 ]; then
-	echo "rpm build success"
+	echo "dpdk rpm build success"
 else
-	echo "rpm build error"
-	exit
+	echo "dpdk rpm build error"
+	exit 1
 fi
 
 echo "install the rpm"
