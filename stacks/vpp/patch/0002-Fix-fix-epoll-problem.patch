@@ -1,0 +1,62 @@
+From bdb9568fe64c6bdfde17f61dac57a7f54214912c Mon Sep 17 00:00:00 2001
+From: Jiang Wenjiang <jiangwenjiang@huawei.com>
+Date: Mon, 10 Sep 2018 03:01:41 +0800
+Subject: [PATCH] Fix: fix epoll problem
+
+The same fd can add to different epoll.
+---
+ src/vcl/vppcom.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/src/vcl/vppcom.c b/src/vcl/vppcom.c
+index cab2f60..9cb52cb 100644
+--- a/src/vcl/vppcom.c
++++ b/src/vcl/vppcom.c
+@@ -162,6 +162,7 @@ typedef struct
+   u64 options[16];
+   elog_track_t elog_track;
+   vce_event_handler_reg_t *poll_reg;
++  u32 ep_count;         //the count that add to epoll
+ } session_t;
+ 
+ typedef struct vppcom_cfg_t_
+@@ -3430,6 +3431,7 @@ vppcom_session_write_ready (session_t * session, u32 session_index)
+ 
+   if (PREDICT_FALSE (session->state & STATE_LISTEN))
+     {
++      return 0;
+       clib_warning ("VCL<%d>: ERROR: vpp handle 0x%llx, sid %u: "
+ 		    "cannot write to a listen session!",
+ 		    getpid (), session->vpp_handle, session_index);
+@@ -3802,6 +3804,7 @@ vppcom_epoll_ctl (uint32_t vep_idx, int op, uint32_t session_index,
+   session_t *vep_session;
+   session_t *session;
+   int rv;
++  int ep_cnt = 0;
+ 
+   if (vep_idx == session_index)
+     {
+@@ -3846,6 +3849,9 @@ vppcom_epoll_ctl (uint32_t vep_idx, int op, uint32_t session_index,
+   switch (op)
+     {
+     case EPOLL_CTL_ADD:
++      ep_cnt = __sync_add_and_fetch (&(session->ep_count), 1);
++      if (ep_cnt != 1)
++        break;
+       if (PREDICT_FALSE (!event))
+ 	{
+ 	  clib_warning ("VCL<%d>: ERROR: EPOLL_CTL_ADD: NULL pointer to "
+@@ -3950,6 +3956,10 @@ vppcom_epoll_ctl (uint32_t vep_idx, int op, uint32_t session_index,
+       break;
+ 
+     case EPOLL_CTL_DEL:
++      ep_cnt = __sync_sub_and_fetch (&(session->ep_count), 1);
++      if (ep_cnt != 0)
++        break;
++
+       if (PREDICT_FALSE (!session->is_vep_session))
+ 	{
+ 	  clib_warning ("VCL<%d>: ERROR: sid %u EPOLL_CTL_DEL: "
+-- 
+1.8.3.1
+

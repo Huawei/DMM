@@ -35,6 +35,7 @@ vpphs_ep_ctl_ops (int epFD, int proFD, int ctl_ops,
 
   tmpEvt.data.ptr = pdata;
   tmpEvt.events = events->events;
+  tmpEvt.events |= (EPOLLIN | EPOLLOUT);
 
   if (DMM_VCL_ADPT_DEBUG > 0)
     clib_warning ("DMM VCL ADPT<%d>: epfd=%d,fd=%d,ops=%d, events=%u",
