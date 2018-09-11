@@ -98,7 +98,7 @@ nstack_event_callback (void *pdata, int events)
           ep_hlist_add_tail (&ep->rdlist, &epi->rdllink);
           sem_post (&ep->waitSem);
         }
-      epi->revents |= events;
+      epi->revents |= (epi->event.events & events);
     out_unlock:
       sys_sem_s_signal (&ep->lock);
     }
