@@ -158,11 +158,9 @@ ns_alarm_module_init (void *param)
   switch (proc_type)
     {
     case NSFW_PROC_MAIN:
-
-    case NSFW_PROC_MASTER:
     case NSFW_PROC_CTRL:
 
-      /* [S138713][p00329905][20171219]modify ip address to vm id */
+      /* modify ip address to vm id */
       pst_vm_id = getenv ("VM_ID");
 
       if (INVALID_STR_LEN (pst_vm_id, MIN_VM_ID_LEN, MAX_VM_ID_LEN))

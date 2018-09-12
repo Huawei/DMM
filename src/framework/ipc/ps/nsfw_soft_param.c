@@ -270,7 +270,6 @@ nsfw_softparam_module_init (void *param)
   switch (proc_type)
     {
     case NSFW_PROC_MAIN:
-    case NSFW_PROC_MASTER:
       (void) nsfw_mgr_reg_msg_fun (MGR_MSG_SOF_PAR_REQ,
                                    nsfw_softparam_msg_proc);
       return 0;

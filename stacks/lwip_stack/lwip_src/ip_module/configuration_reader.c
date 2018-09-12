@@ -823,13 +823,7 @@ read_fn (i32 fd)
       return;
     }
 
-  const char *old_hbt_cnt = "6";
-  const char *new_hbt_cnt = "60";
-  nsfw_set_soft_para (NSFW_PROC_MASTER, NSFW_HBT_COUNT_PARAM,
-                      (void *) new_hbt_cnt, sizeof (u16));
   (void) read_configuration (); // if it returns -1, the err desc info will be wrote to g_config_data, so no need to check return value.
-  nsfw_set_soft_para (NSFW_PROC_MASTER, NSFW_HBT_COUNT_PARAM,
-                      (void *) old_hbt_cnt, sizeof (u16));
 
   offset = 0;
   left = MAX_IP_MODULE_BUFF_SIZE;

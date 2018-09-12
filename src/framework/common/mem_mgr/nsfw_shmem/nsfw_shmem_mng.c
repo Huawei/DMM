@@ -73,11 +73,7 @@ nsfw_shmem_init (nsfw_mem_para * para)
 
   NSCOMM_LOGINF ("nsfw shmem init begin");
 
-  if (NSFW_PROC_MASTER == para->enflag)
-    {
-      iret = common_mem_pal_init (para->iargsnum, para->pargs);
-    }
-  else if (NSFW_PROC_MAIN == para->enflag)
+  if (NSFW_PROC_MAIN == para->enflag)
     {
       iret = common_pal_module_init (NULL, app_mode);
     }
@@ -189,11 +185,7 @@ nsfw_shmem_createv (nsfw_mem_zone * pmeminfo, i32 inum,
 {
   NSFW_INIT_CHK_RET ();
 
-  if (NSFW_PROC_MASTER == NSFW_SHMEM_FLAG)
-    {
-      return NSFW_MEM_ERR;
-    }
-  else if (NSFW_PROC_MAIN == NSFW_SHMEM_FLAG)
+  if (NSFW_PROC_MAIN == NSFW_SHMEM_FLAG)
     {
       return nsfw_memzone_remote_reserv_v (pmeminfo, paddr_array, iarray_num,
                                            0);
@@ -321,11 +313,7 @@ nsfw_shmem_mbfmpcreatev (nsfw_mem_mbfpool * pmbfname, i32 inum,
 {
   NSFW_INIT_CHK_RET ();
 
-  if (NSFW_PROC_MASTER == NSFW_SHMEM_FLAG)
-    {
-      return NSFW_MEM_ERR;
-    }
-  else if (NSFW_PROC_MAIN == NSFW_SHMEM_FLAG)
+  if (NSFW_PROC_MAIN == NSFW_SHMEM_FLAG)
     {
       return nsfw_remote_shmem_mbf_createv (pmbfname, phandle_array,
                                             iarray_num, 0);
@@ -431,11 +419,7 @@ nsfw_shmem_spcreatev (nsfw_mem_sppool * pmpinfo, i32 inum,
 {
   NSFW_INIT_CHK_RET ();
 
-  if (NSFW_PROC_MASTER == NSFW_SHMEM_FLAG)
-    {
-      return NSFW_MEM_ERR;
-    }
-  else if (NSFW_PROC_MAIN == NSFW_SHMEM_FLAG)
+  if (NSFW_PROC_MAIN == NSFW_SHMEM_FLAG)
     {
       return nsfw_remote_shmem_mpcreatev (pmpinfo, pringhandle_array, inum,
                                           0);

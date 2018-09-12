@@ -607,8 +607,6 @@ nsfw_recycle_module_init (void *param)
   g_rec_cfg.rec_waite_end_tvalue = NSFW_REC_WEND_TVLAUE_DEF;
   switch (proc_type)
     {
-    case NSFW_PROC_MASTER:
-      return 0;
     case NSFW_PROC_MAIN:
       (void) nsfw_mgr_reg_msg_fun (MGR_MSG_APP_EXIT_REQ, mem_app_exit_proc);
       (void) nsfw_mgr_reg_msg_fun (MGR_MSG_RCC_END_REQ,
@@ -644,7 +642,6 @@ nsfw_recycle_fork_init ()
 {
   /* reconnect to master after fork in child proc */
   nsfw_mgr_close_dst_proc (NSFW_PROC_MAIN, 0);
-  nsfw_mgr_close_dst_proc (NSFW_PROC_MASTER, 0);
   if (0 == nsfw_recycle_module_init ((void *) ((long long) NSFW_PROC_APP)))
     {
       return TRUE;
