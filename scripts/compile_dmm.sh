@@ -21,9 +21,21 @@ else
 fi
 
 if [ "$OS_ID" == "centos" ]; then
-    make pkg-rpm || exit 1
+    make pkg-rpm
+    if [ $? -eq 0 ]; then
+        echo "DMM rpm build is SUCCESS"
+    else
+        echo "DMM rpm build has FAILED"
+        exit 1
+    fi
 elif [ "$OS_ID" == "ubuntu" ]; then
-    make pkg-deb || exit 1
+    make pkg-deb
+    if [ $? -eq 0 ]; then
+        echo "DMM deb build is SUCCESS"
+    else
+        echo "DMM deb build has FAILED"
+        exit 1
+    fi
 fi
 
 echo "DMM build has FINISHED"
