@@ -1,5 +1,5 @@
 Name:           dmm
-Version:        18.04
+Version:        18.07
 Release:        1%{?dist}
 Summary:        DMM Project
 
