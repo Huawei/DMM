@@ -2,6 +2,11 @@
 
 set -x
 
+# add inherited proxy for sudo user
+LINE='Defaults env_keep += "ftp_proxy http_proxy https_proxy no_proxy"'
+FILE=/etc/sudoers
+grep -qF -- "$LINE" "$FILE" || sudo echo "$LINE" >> "$FILE"
+
 OS_ID=$(grep '^ID=' /etc/os-release | cut -f2- -d= | sed -e 's/\"//g')
 
 #set and check the environment for Linux

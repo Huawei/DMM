@@ -62,9 +62,15 @@ sed -i '94a sed -ri '\''s!CONFIG_RTE_LIBRARY_PMD_KNI=.*!CONFIG_RTE_LIBRARY_PMD_K
 sed -i '95a sed -ri '\''s!CONFIG_RTE_KNI_KMOD=.*!CONFIG_RTE_KNI_KMOD=n!1'\'' %{target}/.config' dpdk.spec
 sed -i '96a sed -ri '\''s!CONFIG_RTE_KNI_PREEMPT_DEFAULT=.*!CONFIG_RTE_KNI_PREEMPT_DEFAULT=n!1'\'' %{target}/.config' dpdk.spec
 
+#Add debug info
+sed -i '98s!$! EXTRA_CFLAGS="-O0 -g" !' dpdk.spec
+
+#Not strip the debug info when generate the rpm
+sed -i '43 i%global __os_install_post %{nil}\n%define debug_package %{nil}'  dpdk.spec
+
 echo "build the dependence"
 #sudo yum-builddep -y dpdk.spec
-sudo yum install -y  libpcap-devel python-sphinx inkscape
+sudo yum install -y  libpcap-devel python-sphinx inkscape kernel-devel-`uname -r` doxygen libnuma-devel kernel-`uname -r`
 
 
 echo "generate the rpm package"
@@ -83,5 +89,6 @@ sudo rpm -ivh dpdk-devel-18.02-1.x86_64.rpm || exit 1
 
 mkdir -p /tmp/dpdk/drivers/
 cp -f /usr/lib64/librte_mempool_ring.so /tmp/dpdk/drivers/
+cp -f /usr/share/dpdk/usertools/dpdk-devbind.py /usr/sbin/
 
 cd ${cur_directory}

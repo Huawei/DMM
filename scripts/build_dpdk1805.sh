@@ -59,7 +59,7 @@ sed -i '58a sed -i '\''s!CONFIG_RTE_LIBRTE_DPAA2_USE_PHYS_IOVA=.*!CONFIG_RTE_LIB
 
 echo "build the dependence"
 #sudo yum-builddep -y dpdk.spec
-sudo yum install -y  libpcap-devel python-sphinx inkscape
+sudo yum install -y  libpcap-devel python-sphinx inkscape kernel-devel-`uname -r` doxygen libnuma-devel kernel-`uname -r`
 
 
 echo "generate the rpm package"
