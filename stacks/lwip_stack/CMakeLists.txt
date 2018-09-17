@@ -61,8 +61,6 @@ execute_process(
     COMMAND cp -rf ${CMAKE_CURRENT_LIST_DIR}/../../release/include	${CMAKE_CURRENT_LIST_DIR}/src/
     COMMAND cp ${CMAKE_CURRENT_LIST_DIR}/../../release/lib64/libnStackAPI.so	${CMAKE_CURRENT_LIST_DIR}/release/lib64/
     COMMAND cp ${CMAKE_CURRENT_LIST_DIR}/../../release/lib64/libdmm_api.so	${CMAKE_CURRENT_LIST_DIR}/release/lib64/
-    COMMAND cp ${CMAKE_CURRENT_LIST_DIR}/../../build/libnStackMaintain.a        ${CMAKE_CURRENT_LIST_DIR}/release/lib64/
-	COMMAND cp ${CMAKE_CURRENT_LIST_DIR}/../../build/libsocket.a	${CMAKE_CURRENT_LIST_DIR}/build/
     COMMAND echo "stacklwip prepare ok"
 )
 execute_process(

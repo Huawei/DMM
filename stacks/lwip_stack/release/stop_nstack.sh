@@ -1,9 +1,11 @@
 #!/bin/bash
 
-. ./script/nstack_var.sh
-. ./script/nstack_fun.sh
 
 script_path=$(cd "$(dirname "$0")"; pwd)
+
+. ${script_path}/script/nstack_var.sh
+. ${script_path}/script/nstack_fun.sh
+
 config_name=${script_path}/script/nstack_var.sh
 if [ ! -e $config_name ]; then
     log $LINENO "$config_name not exit, plz pay attention and add back!,or it has resourcce leak."

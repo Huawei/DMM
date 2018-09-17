@@ -1,9 +1,11 @@
 #!/bin/bash
 
-. ./script/nstack_var.sh
-. ./script/nstack_fun.sh
 
 script_path=$(cd "$(dirname "$0")"; pwd)
+
+. ${script_path}/script/nstack_var.sh
+. ${script_path}/script/nstack_fun.sh
+
 config_name=${script_path}/script/nstack_var.sh
 if [ ! -e $config_name ]; then
     log $LINENO "nstack_var.sh not exit, plz check!"
@@ -59,7 +61,7 @@ if [ -f "lockfile" ]; then
     rm lockfile
 fi
 
-. ./script/nstack_var.sh
+. ${script_path}/script/nstack_var.sh
 
 
 ########################################################
@@ -115,8 +117,7 @@ install_config
 core_mask=1
 START_TYPE="primary"
 log $LINENO "./script/run_nstack_main.sh ${core_mask} $HUGE_DIR $MEM_SIZE $START_TYPE"
-cd script
-./run_nstack_main.sh $HUGE_DIR $MEM_SIZE
+${script_path}/script/run_nstack_main.sh $HUGE_DIR $MEM_SIZE
 
 print_pid=$(ps -ux | grep nStackMain | awk '{print $2}' | awk 'NR == 2')
 echo "nStackMain PID:$print_pid"
