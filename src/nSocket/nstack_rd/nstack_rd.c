@@ -189,7 +189,7 @@ nstack_rd_sys_default ()
   /*get the protocol default route */
   (void) MEMSET_S (&item, sizeof (item), 0, sizeof (item));
   for (icnt = 0;
-       icnt < sizeof (g_default_protcol) / sizeof (rd_data_defaut_ip); icnt++)
+       icnt < sizeof (g_default_protcol) / sizeof (rd_data_defaut_protocol); icnt++)
     {
       pprotodata = &g_default_protcol[icnt];
       for (iindex = 0; iindex < g_rd_map_num; iindex++)
