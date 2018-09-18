@@ -21,9 +21,9 @@ else
 fi
 
 if [ "$OS_ID" == "centos" ]; then
-    make pkg-rpm
+    make pkg-rpm || exit 1
 elif [ "$OS_ID" == "ubuntu" ]; then
-    make pkg-deb
+    make pkg-deb || exit 1
 fi
 
 echo "DMM build has FINISHED"
