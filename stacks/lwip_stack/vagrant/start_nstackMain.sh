@@ -60,9 +60,8 @@ elif [ "$OS_ID" == "ubuntu" ]; then
 fi
 
 cd $LWIP_BUILD_DIR/../
-bash ./release_tar.sh
-cd nStackServer/script
-sed -i 's!/root/dpdk/dpdk-18.02!'$DPDK_DOWNLOAD_PATH'/dpdk-18.02!1' nstack_var.sh
+cd release/script
+sed -i 's!DPDK_INSTALL_PATH=.*!DPDK_INSTALL_PATH='$DPDK_DOWNLOAD_PATH'/dpdk-18.02!1' nstack_var.sh
 
 cd ../
 chmod 775 *
@@ -105,7 +104,7 @@ sudo mkdir -p /var/log/nStack/ip_module/
 export LD_LIBRARY_PATH=$LIB_PATH
 export NSTACK_LOG_ON=DBG
 
-cd $LWIP_BUILD_DIR/../nStackServer
+cd $LWIP_BUILD_DIR/../release
 bash -x ./stop_nstack.sh
 bash -x ./start_nstack.sh
 check_result=$(pgrep nStackMain)
