@@ -2,25 +2,25 @@
   "ip_route": [
     {
 	  "subnet": "192.168.1.1/24",
-	  "type": "nstack-kernel",
+	  "stack_name": "kernel",
     },
 	{
       "subnet": "192.167.1.1/24",
-	  "type": "nstack-kernel",
+	  "stack_name": "kernel",
     },
 	{
       "subnet": "192.166.1.1/24",
-	  "type": "nstack-kernel",
+	  "stack_name": "kernel",
     }
   ],
   "prot_route": [
     {
 	  "proto_type": "1",
-	  "type": "nstack-kernel",
+	  "stack_name": "kernel",
     },
     {
 	  "proto_type": "2",
-	  "type": "nstack-kernel",
+	  "stack_name": "kernel",
     }
   ],
 }

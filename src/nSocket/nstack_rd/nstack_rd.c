@@ -30,18 +30,15 @@
 typedef struct __rd_data_defaut_ip
 {
   char ip[RD_IP_STR_MAX_LEN];
-  char planename[RD_PLANE_NAMELEN];
+  char stackname[RD_PLANE_NAMELEN];
   int masklent;
 } rd_data_defaut_ip;
 
 typedef struct __rd_data_defaut_protocol
 {
   unsigned int proto_type;
-  char planename[RD_PLANE_NAMELEN];
+  char stackname[RD_PLANE_NAMELEN];
 } rd_data_defaut_protocol;
-
-extern rd_stack_plane_map g_nstack_plane_info[];
-extern int g_rd_map_num;
 
 rd_data_proc g_rd_cpy[RD_DATA_TYPE_MAX] = {
   {
@@ -63,12 +60,12 @@ rd_data_proc g_rd_cpy[RD_DATA_TYPE_MAX] = {
 };
 
 rd_data_defaut_ip g_default_ip_config[] = {
-  {{"127.0.0.1"}, {RD_LINUX_PLANENAME}, 32},
-  {{"0.0.0.0"}, {RD_LINUX_PLANENAME}, 32},
+  {{"127.0.0.1"}, {RD_KERNEL}, 32},
+  {{"0.0.0.0"}, {RD_KERNEL}, 32},
 };
 
 rd_data_defaut_protocol g_default_protcol[] = {
-  {0xf001, {RD_STACKX_PLANENAME}},
+  {0xf001, {RD_LWIP}},
 };
 
 /*****************************************************************************
@@ -151,6 +148,9 @@ nstack_rd_sys_default ()
   rd_data_defaut_ip *pdata = NULL;
   rd_data_defaut_protocol *pprotodata = NULL;
   int icnt = 0, iindex = 0;
+  int stack_num = 0;
+
+  stack_num = g_rd_local_data->stack_num;
 
   /*get the ip default route */
   for (icnt = 0;
@@ -158,21 +158,21 @@ nstack_rd_sys_default ()
        icnt++)
     {
       pdata = &g_default_ip_config[icnt];
-      for (iindex = 0; iindex < g_rd_map_num; iindex++)
+      for (iindex = 0; iindex < stack_num; iindex++)
         {
           if (0 ==
-              strcmp (g_nstack_plane_info[iindex].planename,
-                      pdata->planename))
+              strcmp (g_rd_local_data->pstack_info[iindex].name,
+                      pdata->stackname))
             {
-              item.stack_id = g_nstack_plane_info[iindex].stackid;
+              item.stack_id = g_rd_local_data->pstack_info[iindex].stack_id;
               break;
             }
         }
-      if (iindex >= g_rd_map_num)
+      if (iindex >= stack_num)
         {
           NSSOC_LOGINF
-            ("default plane name:%s was not fount, ip:%s msklen:%d was dropped",
-             pdata->planename, pdata->ip, pdata->masklent);
+            ("default stack name:%s was not fount, ip:%s msklen:%d was dropped",
+             pdata->stackname, pdata->ip, pdata->masklent);
           continue;
         }
       item.type = RD_DATA_TYPE_IP;
@@ -189,24 +189,25 @@ nstack_rd_sys_default ()
   /*get the protocol default route */
   (void) MEMSET_S (&item, sizeof (item), 0, sizeof (item));
   for (icnt = 0;
-       icnt < sizeof (g_default_protcol) / sizeof (rd_data_defaut_protocol); icnt++)
+       icnt < sizeof (g_default_protcol) / sizeof (rd_data_defaut_protocol);
+       icnt++)
     {
       pprotodata = &g_default_protcol[icnt];
-      for (iindex = 0; iindex < g_rd_map_num; iindex++)
+      for (iindex = 0; iindex < stack_num; iindex++)
         {
           if (0 ==
-              strcmp (g_nstack_plane_info[iindex].planename,
-                      pprotodata->planename))
+              strcmp (g_rd_local_data->pstack_info[iindex].name,
+                      pprotodata->stackname))
             {
-              item.stack_id = g_nstack_plane_info[iindex].stackid;
+              item.stack_id = g_rd_local_data->pstack_info[iindex].stack_id;
               break;
             }
         }
-      if (iindex >= g_rd_map_num)
+      if (iindex >= stack_num)
         {
           NSSOC_LOGINF
-            ("default plane name:%s was not fount, protocoltype:%d was dropped",
-             pprotodata->planename, pprotodata->proto_type);
+            ("default stack name:%s was not fount, protocoltype:%d was dropped",
+             pprotodata->stackname, pprotodata->proto_type);
           continue;
         }
       item.type = RD_DATA_TYPE_PROTO;
@@ -233,6 +234,7 @@ nstack_rd_save (rd_route_data * rd_data, int num)
 {
   int icnt = 0;
   int iindex = 0;
+  int stack_num = 0;
   rd_data_item item;
   rd_data_type type = RD_DATA_TYPE_MAX;
 
@@ -242,6 +244,8 @@ nstack_rd_save (rd_route_data * rd_data, int num)
       NSSOC_LOGERR ("MEMSET_S failed]retVal=%d", retVal);
       return;
     }
+
+  stack_num = g_rd_local_data->stack_num;
 
   for (iindex = 0; iindex < num; iindex++)
     {
@@ -258,17 +262,17 @@ nstack_rd_save (rd_route_data * rd_data, int num)
                                       (void *) &rd_data[iindex]))
         {
           item.agetime = NSTACK_RD_AGETIME_MAX;
-          for (icnt = 0; icnt < g_rd_map_num; icnt++)
+          for (icnt = 0; icnt < stack_num; icnt++)
             {
               if (0 ==
-                  strcmp (g_nstack_plane_info[icnt].planename,
+                  strcmp (g_rd_local_data->pstack_info[icnt].name,
                           rd_data[iindex].stack_name))
                 {
-                  item.stack_id = g_nstack_plane_info[icnt].stackid;
+                  item.stack_id = g_rd_local_data->pstack_info[icnt].stack_id;
                   break;
                 }
             }
-          if (icnt >= g_rd_map_num)
+          if (icnt >= stack_num)
             {
               NSSOC_LOGINF
                 ("plane name:%s was not fount, protocoltype:%d was dropped",

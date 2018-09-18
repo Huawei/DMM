@@ -26,7 +26,7 @@
 
 #include "nstack_ip_addr.h"
 
-#define NSTACK_IP_MLSTACKID  RD_STACKX_NAME
+#define NSTACK_IP_MLSTACKID  RD_LWIP
 
 #define PP_HTONL(x) ((((x) & 0xff) << 24) | \
                      (((x) & 0xff00) << 8) | \

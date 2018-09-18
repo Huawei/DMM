@@ -36,17 +36,6 @@ if (!ptr)\
    goto lab;  \
 }
 
-/* *INDENT-OFF* */
-rd_stack_plane_map g_nstack_plane_info[] = {
-   {{RD_LINUX_NAME}, {RD_LINUX_PLANENAME}, -1},
-   {"rsocket", "nstack-rsocket", -1},
-   {{RD_STACKX_NAME}, {RD_STACKX_PLANENAME}, -1},
-   {"vpp_hoststack", "nstack-vpp", -1},
-};
-/* *INDENT-ON* */
-
-int g_rd_map_num = sizeof (g_nstack_plane_info) / sizeof (rd_stack_plane_map);
-
 rd_local_data *g_rd_local_data = NULL;
 
 /*****************************************************************************
@@ -68,7 +57,6 @@ nstack_rd_init (nstack_stack_info * pstack, int num,
                 nstack_get_route_data * pfun, int fun_num)
 {
   int icnt = 0;
-  int itemp = 0;
   int hindex = 0;
   int tindex = num - 1;
   int iindex = 0;
@@ -119,39 +107,18 @@ nstack_rd_init (nstack_stack_info * pstack, int num,
 
       /* modify destMax from RD_PLANE_NAMELEN to STACK_NAME_MAX */
       ret =
-        STRCPY_S (ptemstack[iindex].stack.stackname, STACK_NAME_MAX,
-                  pstack[icnt].name);
+        STRCPY_S (ptemstack[iindex].name, STACK_NAME_MAX, pstack[icnt].name);
       if (ret != EOK)
         {
           NSSOC_LOGERR ("STRCPY_S failed");
           goto ERR;
         }
 
-      for (itemp = 0; itemp < g_rd_map_num; itemp++)
-        {
-          if (0 ==
-              strcmp (pstack[icnt].name,
-                      g_nstack_plane_info[itemp].stackname))
-            {
-              ret =
-                STRCPY_S (ptemstack[iindex].stack.planename, RD_PLANE_NAMELEN,
-                          g_nstack_plane_info[itemp].planename);
-              g_nstack_plane_info[itemp].stackid = pstack[icnt].stack_id;
-              NSTACK_RD_ERR_CHECK_GOTO (ret, "plane name copy fail", ERR);
-              break;
-            }
-        }
-
-      if (itemp >= g_rd_map_num)
-        {
-          NSSOC_LOGERR ("rd route info not found");
-          goto ERR;
-        }
       ptemstack[iindex].priority = pstack[icnt].priority;
       ptemstack[iindex].stack_id = pstack[icnt].stack_id;
       NSSOC_LOGDBG
-        ("nstack rd init]stackname=%s,planename=%s,priority=%d,stackid=%d was added",
-         ptemstack[iindex].stack.stackname, ptemstack[iindex].stack.planename,
+        ("nstack rd init]stackname=%s,priority=%d,stackid=%d was added",
+         ptemstack[iindex].name,
          ptemstack[iindex].priority, ptemstack[iindex].stack_id);
     }
 
@@ -195,7 +162,7 @@ nstack_get_stackid_byname (char *name)
   for (iindex = 0; iindex < stacknum; iindex++)
     {
       pstack = &(g_rd_local_data->pstack_info[iindex]);
-      if (0 == strcmp (pstack->stack.stackname, name))
+      if (0 == strcmp (pstack->name, name))
         {
           return pstack->stack_id;
         }

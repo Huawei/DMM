@@ -25,24 +25,13 @@
 #define NSTACK_RD_AGETIME_MAX   (1)
 #define NSTACK_SYS_FUN_MAX      (16)
 
-#define RD_STACKX_NAME   "stackx"
-#define RD_LINUX_NAME       "kernel"
-
-#define RD_STACKX_PLANENAME  "nstack-dpdk"
-#define RD_LINUX_PLANENAME  "nstack-kernel"
-#define RD_LINUX_PLANENULL  "null"
+#define RD_LWIP   "lwip"
+#define RD_KERNEL "kernel"
 
 #define NSTACK_RD_INDEX_BYIP(ip) (((ip) & 0xff) \
                                   + (((ip) >> 8)&0xff) \
                                   + (((ip) >> 16)&0xff) \
                                   + (((ip) >> 24)&0xff))
-
-typedef struct __rd_stack_plane_map
-{
-  char stackname[STACK_NAME_MAX];
-  char planename[RD_PLANE_NAMELEN];
-  int stackid;
-} rd_stack_plane_map;
 
 /*route data*/
 typedef struct __rd_data_item
@@ -73,7 +62,7 @@ typedef struct __nstack_rd_list
 typedef struct __nstack_rd_stack_info
 {
   /*stack name */
-  rd_stack_plane_map stack;
+  char name[STACK_NAME_MAX];
   /*stack id */
   int stack_id;
   /*when route info not found, high priority stack was chose, same priority chose fist input one */
