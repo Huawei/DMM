@@ -558,8 +558,7 @@ init_base_config (cfg_module_param * param)
 {
   /* initial default config */
   /* omc_ctrl single log file should be 10M */
-  if (param->proc_type == NSFW_PROC_MASTER
-      || param->proc_type == NSFW_PROC_CTRL)
+  if (param->proc_type == NSFW_PROC_CTRL)
     {
       init_master_def_config_items ();
     }
@@ -684,26 +683,6 @@ init_main_log_cfg_para ()
   set_log_init_para (&log_para);
 }
 
-NSTACK_STATIC void
-init_master_log_cfg_para ()
-{
-  struct log_init_para log_para;
-  log_para.mon_log_size = g_cfg_item_info[CFG_SEG_LOG][0].value;
-  log_para.mon_log_count = g_cfg_item_info[CFG_SEG_LOG][1].value;
-
-  /* log path valid check */
-  if (0 == access (g_cfg_item_info[CFG_SEG_PATH][0].pvalue, W_OK))
-    {
-      log_para.mon_log_path = g_cfg_item_info[CFG_SEG_PATH][0].pvalue;
-    }
-  else
-    {
-      log_para.mon_log_path = g_cfg_item_info[CFG_SEG_PATH][0].default_str;
-    }
-
-  set_log_init_para (&log_para);
-}
-
 /* nStackCtrl is the diff process with main, cannot use main process info,
    need get the configure info respectively */
 /* omc_ctrl single log file should be 10M */
@@ -739,17 +718,6 @@ init_module_cfg_nstackmain ()
   init_main_log_cfg_para ();
 }
 
-/*===========config init for nstack master=============*/
-
-NSTACK_STATIC void
-init_module_cfg_nstackmaster ()
-{
-  /* init config data */
-  init_module_cfg_default ();
-
-  init_master_log_cfg_para ();
-}
-
 /*===========config init for nstack ctrl=============*/
 
 /* nStackCtrl is the diff process with main,
@@ -774,10 +742,6 @@ config_module_init (cfg_module_param * param)
     {
     case NSFW_PROC_MAIN:
       init_module_cfg_nstackmain ();
-      break;
-
-    case NSFW_PROC_MASTER:
-      init_module_cfg_nstackmaster ();
       break;
 
     case NSFW_PROC_CTRL:

@@ -199,7 +199,6 @@ nsfw_cfg_module_init (void *param)
   switch (proc_type)
     {
     case NSFW_PROC_MAIN:
-    case NSFW_PROC_MASTER:
       (void) nsfw_mgr_reg_msg_fun (MGR_MSG_SET_LOG_REQ,
                                    nsfw_set_log_msg_proc);
       g_log_cfg.proc_type = proc_type;

@@ -423,9 +423,6 @@ nsfw_mgr_get_connect_socket (u8 proc_type, u32 host_pid)
     case NSFW_PROC_MAIN:
       name = NSFW_MAIN_FILE;
       break;
-    case NSFW_PROC_MASTER:
-      name = NSFW_MASTER_FILE;
-      break;
     case NSFW_PROC_ALARM:
       directory = "/tmp";
       name = NSFW_ALARM_FILE;
@@ -1930,27 +1927,7 @@ nsfw_mgr_com_module_init (void *param)
         }
 
       break;
-    case NSFW_PROC_MASTER:
-      /* modify destMax, remove "-1" */
-      if (EOK !=
-          STRCPY_S (mgr_cfg->domain_path, NSFW_MGRCOM_PATH_LEN, directory))
-        {
-          NSFW_LOGERR ("module mgr init STRCPY_S failed!");
-          lint_unlock_1 ();
-          return -1;
-        }
 
-      NSFW_LOGINF ("module mgr init]NSFW_PROC_MASTER domain_path=%s",
-                   mgr_cfg->domain_path);
-
-      if (TRUE != nsfw_mgr_com_start ())
-        {
-          NSFW_LOGERR ("module mgr nsfw_mgr_com_start failed!");
-          lint_unlock_1 ();
-          return -1;
-        }
-
-      break;
     case NSFW_PROC_TOOLS:
       break;
     case NSFW_PROC_CTRL:

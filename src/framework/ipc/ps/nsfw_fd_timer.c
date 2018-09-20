@@ -322,7 +322,6 @@ nsfw_timer_module_init (void *param)
   NSFW_LOGINF ("ps module init]type=%u", proc_type);
   switch (proc_type)
     {
-    case NSFW_PROC_MASTER:
     case NSFW_PROC_MAIN:
       (void) NSFW_REG_SOFT_INT (NSFW_DBG_MODE_PARAM, g_hbt_switch, 0, 1);
       break;

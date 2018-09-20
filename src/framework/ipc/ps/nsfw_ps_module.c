@@ -468,7 +468,7 @@ u8
 nsfw_ps_exit_end_notify (u32 pid)
 {
   nsfw_mgr_msg *rsp_msg =
-    nsfw_mgr_msg_alloc (MGR_MSG_APP_EXIT_RSP, NSFW_PROC_MASTER);
+    nsfw_mgr_msg_alloc (MGR_MSG_APP_EXIT_RSP, NSFW_PROC_MAIN);
   if (NULL == rsp_msg)
     {
       NSFW_LOGERR ("alloc rsp msg failed]pid=%u", pid);
@@ -1590,42 +1590,6 @@ nsfw_ps_module_init (void *param)
 
   switch (proc_type)
     {
-    case NSFW_PROC_MASTER:
-      {
-        (void) nsfw_mgr_reg_msg_fun (MGR_MSG_CHK_HBT_RSP,
-                                     nsfw_ps_recv_hbt_rsp);
-        (void) NSFW_REG_SOFT_INT (NSFW_HBT_TIMER, NSFW_CHK_HBT_TVLAUE, 1,
-                                  0xFFFF);
-        (void) NSFW_REG_SOFT_INT (NSFW_HBT_COUNT_PARAM,
-                                  NSFW_SOFT_HBT_CHK_COUNT, 1, 0xFFFF);
-        (void) NSFW_REG_SOFT_INT (NSFW_APP_EXIT_TIMER, NSFW_PS_WEXIT_TVLAUE,
-                                  1, 0xFFFF);
-
-        pid_info = nsfw_mem_zone_lookup (&pzoneinfo.stname);
-        if (NULL == pid_info)
-          {
-            pid_info = nsfw_mem_zone_create (&pzoneinfo);
-            if (NULL == pid_info)
-              {
-                NSFW_LOGERR ("alloc rec nul!");
-                return -1;
-              }
-
-            retval =
-              MEMSET_S (pid_info, (sizeof (nsfw_pid_item) * NSFW_MAX_PID),
-                        0, (sizeof (nsfw_pid_item) * NSFW_MAX_PID));
-            if (EOK != retval)
-              {
-                NSFW_LOGERR ("MEMSET_S failed]retval=%d.\n", retval);
-                return -1;
-              }
-          }
-
-        MEM_STAT (NSFW_PS_MODULE, pzoneinfo.stname.aname, NSFW_SHMEM,
-                  pzoneinfo.length);
-        g_ps_info = pid_info;
-        break;
-      }
     case NSFW_PROC_MAIN:
       {
         pid_info = malloc (sizeof (nsfw_pid_item) * NSFW_MAX_PID);
@@ -1693,7 +1657,7 @@ nsfw_ps_module_init (void *param)
   MEM_STAT (NSFW_PS_MODULE, pmpinfo.stname.aname, NSFW_NSHMEM,
             nsfw_mem_get_len (ps_cfg->ps_info_pool, NSFW_MEM_SPOOL));
 
-  if (NSFW_PROC_MASTER != proc_type)
+  if (NSFW_PROC_MAIN != proc_type)
     {
       return 0;
     }

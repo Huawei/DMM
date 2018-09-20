@@ -29,6 +29,7 @@
 #include "nstack_share_res.h"
 #include "nsfw_mgr_com_api.h"
 #include "nsfw_ps_mem_api.h"
+#include "nsfw_fd_timer_api.h"
 #include "nsfw_ps_api.h"
 #include "nsfw_recycle_api.h"
 #include "nstack_fd_mng.h"
@@ -788,6 +789,7 @@ nstack_fw_init ()
       stinfo.enflag = (fw_poc_type)proc_type;
       nstack_framework_setModuleParam(NSFW_MEM_MGR_MODULE, (void*)&stinfo);
       nstack_framework_setModuleParam(NSFW_MGR_COM_MODULE, (void*) ((long long)proc_type));
+      nstack_framework_setModuleParam(NSFW_TIMER_MODULE, (void*) ((long long)proc_type));
       nstack_framework_setModuleParam(NSFW_PS_MODULE,     (void*) ((long long)proc_type));
       nstack_framework_setModuleParam(NSFW_PS_MEM_MODULE, (void*) ((long long)proc_type));
       nstack_framework_setModuleParam(NSFW_RECYCLE_MODULE, (void*) ((long long)proc_type));
