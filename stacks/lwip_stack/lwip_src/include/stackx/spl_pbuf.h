@@ -48,6 +48,9 @@ struct spl_pbuf *spl_pbuf_alloc_hugepage (spl_pbuf_layer l, u16_t length,
                                           spl_pbuf_type type,
                                           u16_t thread_index, void *net_conn);
 struct pbuf *spl_convert_spl_pbuf_to_pbuf (struct spl_pbuf *p_from);
+err_t
+splpbuf_to_pbuf_transport_copy (struct pbuf *p_to, struct spl_pbuf *p_from);
+
 err_t pbuf_to_splpbuf_copy (struct spl_pbuf *p_to, struct pbuf *p_from);
 err_t splpbuf_to_pbuf_copy (struct pbuf *p_to, struct spl_pbuf *p_from);
 spl_pbuf_layer get_pbuf_layer_from_pbuf_payload (struct pbuf *buf);

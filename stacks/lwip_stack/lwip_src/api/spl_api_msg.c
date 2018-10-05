@@ -414,7 +414,7 @@ spl_recv_udp (void *arg, struct udp_pcb *pcb, struct pbuf *p,
 {
   struct spl_netbuf *buf;
   spl_netconn_t *conn = (spl_netconn_t *) arg;
-  struct spl_pbuf *spb = NULL;  //??
+  struct spl_pbuf *spl_pb = NULL;       //??
 
   if (NULL == pcb)
     {
@@ -432,12 +432,28 @@ spl_recv_udp (void *arg, struct udp_pcb *pcb, struct pbuf *p,
   /* //@TODO: malloc and Copy splbuf */
   struct common_pcb *cpcb = (struct common_pcb *) (conn->comm_pcb_data);
 
-  buf = (struct spl_netbuf *) ((char *) p + sizeof (struct spl_pbuf));
-  buf->p = spb;
+  u16_t proc_id = spl_get_lcore_id ();
+
+  spl_pb = spl_pbuf_alloc_hugepage (SPL_PBUF_TRANSPORT,
+                                    p->tot_len +
+                                    g_offSetArry[SPL_PBUF_TRANSPORT],
+                                    SPL_PBUF_HUGE, proc_id, conn);
+
+  if (!spl_pb)
+    {
+      NSPOL_LOGINF (TCP_DEBUG, "spl_pbuf_alloc_hugepage Failed!!!");
+      return;
+    }
+
+  pbuf_to_splpbuf_copy (spl_pb, p);
+  pbuf_free (p);
+
+  buf = (struct spl_netbuf *) ((char *) spl_pb + sizeof (struct spl_pbuf));
+  buf->p = spl_pb;
   spl_ip_addr_set (&buf->addr, ipaddr);
   buf->port = port;
 
-  err_t ret = sp_enqueue (cpcb, (void *) p);
+  err_t ret = sp_enqueue (cpcb, (void *) spl_pb);
   if (ret != ERR_OK)
     {
       NSPOL_LOGDBG (UDP_DEBUG, "mbox post failed");
@@ -1808,6 +1824,56 @@ do_listen (struct common_pcb *cpcb, msg_listen * lmsg)
 }
 
 /**
+ * Send some data on UDP pcb contained in a netconn
+ * Called from do_send
+ *
+ * @param msg the api_msg_msg pointing to the connection
+ */
+void
+spl_udp_send (struct common_pcb *cpcb, msg_send_buf * smsg)
+{
+  struct spl_pbuf *p_from = smsg->p;
+  spl_netconn_t *conn = cpcb->conn;
+  struct udp_pcb *upcb = (struct udp_pcb *) (cpcb->conn->private_data);
+  data_com_msg *m = MSG_ENTRY (smsg, data_com_msg, buffer);
+  struct pbuf *p_to = NULL;
+  err_t err = ERR_OK;
+
+  //allocate pbuf and copy spl_pbuf, send , free pbuf and spl_pbuf
+  do
+    {
+      p_to = pbuf_alloc (PBUF_TRANSPORT, p_from->len, PBUF_RAM);
+      if (NULL == p_to)
+        {
+          NSPOL_LOGERR ("pbuf is NULL]conn=%p,pcb=%p", conn, upcb);
+          return;
+        }
+
+      err = splpbuf_to_pbuf_transport_copy (p_to, p_from);
+      if (err != ERR_OK)
+        {
+          SET_MSG_ERR (m, conn->last_err);
+          return;
+        }
+
+      if (ip_addr_isany (&smsg->addr))
+        {
+          SET_MSG_ERR (m, udp_send (upcb, p_to));
+        }
+      else
+        {
+          SET_MSG_ERR (m,
+                       udp_sendto (upcb, p_to, (ip_addr_t *) & smsg->addr,
+                                   smsg->port));
+        }
+
+      p_from = (struct spl_pbuf *) ADDR_SHTOL (p_from->next_a);
+    }
+  while (p_from != NULL);
+
+}
+
+/**
  * Send some data on a RAW or UDP pcb contained in a netconn
  * Called from netconn_send
  *
@@ -1825,8 +1891,8 @@ do_send (struct common_pcb *cpcb, msg_send_buf * smsg)
   if (SPL_ERR_IS_FATAL (conn->last_err))
     {
       SET_MSG_ERR (m, conn->last_err);
-      spl_pbuf_free (p);
-      return;
+      NSPOL_LOGERR ("Invalid param]msg->conn=%p", conn);
+      goto err_return;
     }
 
   switch (SPL_NETCONNTYPE_GROUP (cpcb->type))
@@ -1840,20 +1906,8 @@ do_send (struct common_pcb *cpcb, msg_send_buf * smsg)
             ss_set_local_ip (conn, smsg->local_ip.addr);
           }
 
-        //spl_ip_addr_t *destIP = &smsg->addr;
+        spl_udp_send (cpcb, smsg);
 
-        //@TODO udp send need to update like TCP. copy pbuf here. Once testing done for TCP we'll update it here.
-        if (ip_addr_isany (&smsg->addr))
-          {
-            //SET_MSG_ERR(m, udp_send(upcb, p));
-            /* destIP.addr == IPADDR_ANY means it is from stackx_send
-               and the destination is stored in remote_ip and remote port */
-            //destIP = &upcb->remote_ip;
-          }
-        else
-          {
-            //SET_MSG_ERR(m, udp_sendto(upcb, p, &smsg->addr, smsg->port));
-          }
         break;
       }
 
@@ -1861,6 +1915,10 @@ do_send (struct common_pcb *cpcb, msg_send_buf * smsg)
       SET_MSG_ERR (m, ERR_CONN);
       break;
     }
+
+err_return:
+  pbuf_free_safe (smsg->p);
+  ASYNC_MSG_FREE (m);
 
   return;
 }

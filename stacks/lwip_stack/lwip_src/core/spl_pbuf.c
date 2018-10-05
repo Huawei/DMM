@@ -369,6 +369,20 @@ spl_pbuf_copy (struct spl_pbuf * p_to, struct spl_pbuf * p_from)
 }
 
 err_t
+splpbuf_to_pbuf_transport_copy (struct pbuf * p_to, struct spl_pbuf * p_from)
+{
+  if (EOK != MEMMOVE_S ((u8_t *) p_to->payload,
+                        p_to->len, (u8_t *) ADDR_SHTOL (p_from->payload_a),
+                        p_from->len))
+    {
+      NSPOL_LOGERR ("MEMMOVE_S failed");
+      return ERR_MEM;
+    }
+
+  return ERR_OK;
+}
+
+err_t
 splpbuf_to_pbuf_copy (struct pbuf * p_to, struct spl_pbuf * p_from)
 {
   u32_t offset_to = 0;
