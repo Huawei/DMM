@@ -1065,7 +1065,7 @@ SBR_INTERCEPT (int, select,
                (int nfds, fd_set * readfd, fd_set * writefd,
                 fd_set * exceptfd, struct timeval * timeout))
 {
-  return -1;
+  return lwip_try_select (nfds, readfd, writefd, exceptfd, timeout);
 }
 
 SBR_INTERCEPT (unsigned int, ep_getevt,

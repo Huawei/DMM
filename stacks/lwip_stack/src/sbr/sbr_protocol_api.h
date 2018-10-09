@@ -91,6 +91,8 @@ int sbr_init_protocol ();
 int sbr_fork_protocol ();
 sbr_fdopt *sbr_get_fdopt (int domain, int type, int protocol);
 void sbr_app_touch_in (void);   /*app send its version info to nStackMain */
+int lwip_try_select (int fdsize, fd_set * fdread, fd_set * fdwrite,
+                     fd_set * fderr, struct timeval *timeout);
 
 #ifdef __cplusplus
 /* *INDENT-OFF* */
