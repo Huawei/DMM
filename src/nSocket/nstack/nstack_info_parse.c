@@ -241,7 +241,8 @@ nstack_parse_rd_cfg_json (char *param, rd_route_data ** data, int *num)
         {
           rddata = rdtemp + icnt;
           rddata->type = RD_DATA_TYPE_IP;
-          (void) json_object_object_get_ex (module_obj, "type", &temp_obj);
+          (void) json_object_object_get_ex (module_obj, "stack_name",
+                                            &temp_obj);
           if (temp_obj)
             {
               temp_value = json_object_get_string (temp_obj);
@@ -280,21 +281,21 @@ nstack_parse_rd_cfg_json (char *param, rd_route_data ** data, int *num)
         }
     }
 
-  for (index = 0; index < ip_list_num; index++)
+  for (index = 0; index < proto_list_num; index++)
     {
       module_obj = json_object_array_get_idx (proto_list_obj, index);
       if (module_obj)
         {
           rddata = rdtemp + icnt;
           rddata->type = RD_DATA_TYPE_PROTO;
-          (void) json_object_object_get_ex (module_obj, "type", &temp_obj);
+          (void) json_object_object_get_ex (module_obj, "stack_name",
+                                            &temp_obj);
           if (temp_obj)
             {
               temp_value = json_object_get_string (temp_obj);
               if (!temp_value)
                 {
-                  NSSOC_LOGERR ("can't get value from subnet index:%d",
-                                index);
+                  NSSOC_LOGERR ("can't get value from proto index:%d", index);
                   goto RETURN_ERROR;
                 }
               (void) STRNCPY_S (rddata->stack_name, RD_PLANE_NAMELEN,
@@ -307,8 +308,7 @@ nstack_parse_rd_cfg_json (char *param, rd_route_data ** data, int *num)
               temp_value = json_object_get_string (temp_obj);
               if (!temp_value)
                 {
-                  NSSOC_LOGERR ("can't get value from subnet index:%d",
-                                index);
+                  NSSOC_LOGERR ("can't get value from proto index:%d", index);
                   goto RETURN_ERROR;
                 }
               rddata->proto_type = atoi (temp_value);

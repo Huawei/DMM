@@ -13,7 +13,7 @@
       "stackid": "0",
     },
     {
-      "stack_name": "stackx",
+      "stack_name": "lwip",
       "function_name": "nstack_stack_register",
       "libname": "libnstack.so",
       "loadtype": "dynmic",
